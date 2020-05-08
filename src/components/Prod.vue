@@ -20,7 +20,7 @@
 import { Button, Toast } from "mand-mobile";
 
 export default {
-  name: "HelloWorld",
+  name: "Prod",
   components: {
     "md-button": Button
   },

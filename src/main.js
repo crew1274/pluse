@@ -7,6 +7,15 @@ import "normalize.css"
 
 Vue.config.productionTip = false
 
+if (process.platform != "browser")
+{
+    const ipc = require('electron').ipcRenderer
+    
+    ipc.on('RFID', (event, msg) => {
+      store.commit('update_rfid_msg', msg)
+    })
+}
+
 new Vue({
   router,
   store,

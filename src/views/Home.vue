@@ -1,16 +1,20 @@
 <template>
   <div class="home">
-    <HelloWorld msg="Welcome to Your Mand Mobile"/>
+    <AGV msg="Welcome to Your Mand Mobile"/>
+    <Prod />
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
+import AGV from "@/components/AGV.vue";
+import Prod from "@/components/Prod.vue";
+
 export default {
   name: "home",
   components: {
-    HelloWorld
+    AGV,
+    Prod,
   }
 };
 </script>

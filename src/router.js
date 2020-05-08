@@ -10,10 +10,10 @@ const routes = [{
         component: () => import('@/views/Home.vue')
     },
     {
-        path: '/about',
-        name: 'About',
+        path: '/ENG',
+        name: 'ENG',
         meta: { title: "化金" },
-        component: () => import('@/views/About.vue')
+        component: () => import('@/views/ENG.vue')
     }
 ]
 

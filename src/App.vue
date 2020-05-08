@@ -1,45 +1,61 @@
 <template>
   <div id="app">
-    <div id="c">
-        {{version}}
-    </div>
-    <!-- <div v-if="isLogin"> -->
-      <div id="nav">
-        <router-link to="/">噴砂</router-link> |
-        <router-link to="/about">化金</router-link>
+    <div v-if="isLoading">
+      <div style="display:flex;justify-content:center;align-items:center;height:715px;">
+        <md-activity-indicator type="spinner" :size="50" :text-size="50">
+          處理中...
+        </md-activity-indicator>
       </div>
-      <router-view/>
-    <!-- </div> -->
-    <!-- <div v-else>
-      test
-    </div> -->
+    </div>
+    <div v-else>
+      <md-scroll-view ref="scrollView" auto-reflow :scrolling-x="false">
+      <div id="c">
+          {{version}}
+      </div>
+        <div id="nav">
+          <router-link to="/">噴砂</router-link> |
+          <router-link to="/ENG">化金</router-link>
+        </div>
+        <router-view/>
+      </md-scroll-view>
+    </div>
+    <md-dialog title="到站通知" :closable="false" v-model="isDialogShow" :btns="DialogShowBtns" >
+      <md-field title="需工號確認" brief="透過RFID讀取識別證">
+          <md-input-item title="工號" v-model="operator.name" clearable/>
+      </md-field>
+    </md-dialog>
+    <audio ref="inflicted" src="http://10.11.0.156/inflicted.mp3" />
   </div>
 </template>
 
 <script>
+import {ScrollView, ActivityIndicator, Dialog, Toast, FieldItem, Field, InputItem} from 'mand-mobile'
+
 export default {
   name: "App",
+  components: {
+    [ScrollView.name]: ScrollView,
+    [ActivityIndicator.name]: ActivityIndicator,
+    [Dialog.name]: Dialog,
+    [FieldItem.name]: FieldItem,
+    [InputItem.name]: InputItem,
+    [Field.name]: Field,
+  },
   data()
   {
     return {
-      settings: //設定檔
-      {
-        test: "test"
-      },
-      admin_settings:
-      {
-        agv:
-          {
-            server: "10.11.50.36",
-            port: "9122",
-            my_tunnel: "P121",
-            du_tunnel: "P112"
-          }
-      },
       token_timer: undefined,
       agv_timer: undefined,
-      agv_response: "", /* AGV */
       CMD: "",
+      isDialogShow: false,
+      DialogShowBtns: [
+        {
+            text: '確認到站',
+            type: 'danger',
+            handler: this.onActConfirm,
+        },
+      ],
+      operator: {},
     }
   },
   computed:
@@ -51,6 +67,30 @@ export default {
     isLogin()
     {
       return this.$store.state.isLogin
+    },
+    agv_response()
+    {
+      return this.$store.state.agv_response
+    },
+    admin_settings()
+    {
+      return this.$store.state.admin_settings
+    },
+    du_tunnel()
+    {
+      return this.admin_settings["agv"]["du_tunnel"]
+    },
+    my_tunnel()
+    {
+      return this.admin_settings["agv"]["my_tunnel"]
+    },
+    agv_info()
+    {
+      return this.$store.state.agv_info
+    },
+    isLoading()
+    {
+      return this.$store.state.isLoading
     }
   },
   watch:
@@ -59,7 +99,6 @@ export default {
     {
       document.title = 'CHPT中華精測 ' + (to.meta.title || '' )
     },
-
     '$store.state.errorMessage':
     {
         handler(newValue)
@@ -68,7 +107,6 @@ export default {
         },
         deep: true
     },
-
     async agv_response(val)
     {
       if(Array.isArray(val))
@@ -77,7 +115,6 @@ export default {
         {
             if("CMD" in val[i])
             {
-                this.CMD = val[i]["CMD"]
                 await this.activeResponseAGV(val[i])
             }
         }
@@ -94,16 +131,15 @@ export default {
   async beforeMount()
   {
     await this.get_token()
-    let response = await this.$store.dispatch("_db", { url: "_db/ENG-10/_api/document/SETTINGS/AGV", method: "GET", payload: {}})
-
+    this.$store.commit('update_admin_settings', await this.$store.dispatch("_db", { url: "_db/ENG-10/_api/document/SETTINGS/ADMIN", method: "GET", payload: {}}))
+    this.$store.commit('update_agv_info', await this.$store.dispatch("_db", { url: "_db/ENG-10/_api/document/SETTINGS/AGV", method: "GET", payload: {}}))
   },
   async mounted()
   { 
-    // 取得arangoDB SETTINGS USER
+    this.$refs.inflicted.volume = 1
+    
     this.token_timer = await setInterval( () => { this.get_token() }, 60000) //定期更新token
-    this.agv_timer = await setInterval( () => { this.get_agv_response() }, 2000) 
-
-
+    this.agv_timer = await setInterval( () => { this.getMyTunnel() }, 2000) 
     // await setInterval( () => { this.get_token() }, 5000) //定期更新token
     // await setInterval( () => { this.get_agv_response() }, 1000)
     // console.log(await this._db("http://10.11.0.156:8529/_api/cluster/endpoints", "GET", {}) )
@@ -128,12 +164,7 @@ export default {
       .then( response => {return  response.json()})
       .then( response =>
       {
-          this.agv_response = response
-          this.$store.commit('update_agv_response', this.agv_response)
-          // if("12" in this.agv_response || "2" in this.agv_response)
-          // {
-          //     this.$store.commit('', this.agv_response)
-          // }
+          this.$store.commit('update_agv_response', response)
       })
     },
     async activeResponseAGV(command)
@@ -147,24 +178,23 @@ export default {
             headers: headers,
             method: 'POST',
             body: JSON.stringify(command)
-        })
-        .then( response => {return response.json()})
-        .then( () =>
-        {
-            //啟動 必要回應通知
-            if( (this.CMD  == "2" || this.CMD  == "6") && !this.isDialogShow)
-            {
-                this.isDialogShow = true
-                this.$refs.rush.play()
-                this.prepare_payload = val[i]
-            }
-        })
+         })
         .catch( err =>
         {
             this.$notify.warning({ title: 'AGV Server回應異常', message: err})
         })
+        .finally( () =>
+        {
+            this.CMD = command["CMD"]
+            //啟動 必要回應通知
+            if( (this.CMD  == "2" || this.CMD  == "6") && !this.isDialogShow)
+            {
+                this.isDialogShow = true
+                this.prepare_payload = command
+                this.$refs.rush.play()
+            }
+        }) 
     },
-
     async get_token()
     {
         let response = await this.$store.dispatch("_db", { 
@@ -173,6 +203,23 @@ export default {
             payload: { username: "ENG_10", password: "ENG_10"},
         })
         this.$store.commit('update_token', 'Bearer ' + response["jwt"])
+    },
+    async onActConfirm()
+    {
+        if(this.operator["name"])
+        {
+            this.isDialogShow = false
+            this.$refs.rush.pause()
+            let payload_e = this.prepare_payload
+            payload_e["EECODE"] = this.operator.code
+            payload_e["CMD"] = (+payload_e["CMD"] + 1).toString()
+            await this.send_agv_cmd(payload_e)
+            this.operator = {}
+        }
+        else
+        {
+            Toast.failed("請輸入工號")
+        }
     },
   }
 }
@@ -184,6 +231,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  height: 715px;
 }
 
 #nav {

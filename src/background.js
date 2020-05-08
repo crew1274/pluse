@@ -1,10 +1,7 @@
 'use strict'
 
 import { app, protocol, BrowserWindow } from 'electron'
-import {
-  createProtocol,
-  /* installVueDevtools */
-} from 'vue-cli-plugin-electron-builder/lib'
+import { createProtocol, installVueDevtools } from 'vue-cli-plugin-electron-builder/lib'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -12,14 +9,46 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 let win
 
 // Scheme must be registered before the app is ready
-protocol.registerSchemesAsPrivileged([{scheme: 'app', privileges: { secure: true, standard: true } }])
+protocol.registerSchemesAsPrivileged([{
+  scheme: 'app',
+  privileges: {
+    secure: true,
+    standard: true
+  }
+}])
 
-function createWindow () {
+if (process.platform != "browser")
+{
+  const isPortReachable = require('is-port-reachable');
+  ( async () => {
+    if (await isPortReachable(6379))
+    {
+      const redis = require("redis")
+      const subscriber = redis.createClient()
+      subscriber.subscribe("RFID")
+      subscriber.on("message", function (channel, message)
+      {
+        if (channel == "RFID")
+        {
+          win.webContents.send('RFID', message)
+        }
+      })
+    }
+  }) ()
+}
+
+function createWindow() {
   // Create the browser window.
-  win = new BrowserWindow({ width: 800, height: 600, webPreferences: {
-    nodeIntegration: true
-  } })
-
+  win = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: {
+      nodeIntegration: true,
+      webSecurity: false,
+      fullscreenable: true
+    }
+  })
+  win.setFullScreen(true)
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
     win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
@@ -34,6 +63,8 @@ function createWindow () {
     win = null
   })
 }
+
+app.commandLine.appendSwitch('ignore-certificate-errors', 'true');
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {

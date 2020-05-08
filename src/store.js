@@ -10,6 +10,10 @@ export default new Vuex.Store({
         errorMessage: {},
         _RFID: "",
         token: "token",
+        agv_response: {},
+        admin_settings: {},
+        agv_info: {},
+        isLoading: false,
     },
     mutations: 
     {
@@ -20,9 +24,25 @@ export default new Vuex.Store({
                 "message": err
             }
         },
+        update_isLoading(state, bool)
+        {
+            state.isLoading = bool
+        },
         update_token(state, token)
         {
             state.token = token
+        },
+        update_agv_response(state, agv_response)
+        {
+            state.agv_response = agv_response
+        },
+        update_admin_settings(state, admin_settings)
+        {
+            state.admin_settings = admin_settings
+        },
+        update_agv_info(state, agv_info)
+        {
+            state.agv_info = agv_info
         }
     },
     actions: {
@@ -30,7 +50,7 @@ export default new Vuex.Store({
         {
             if (para.method == "GET")
             {
-                console.log(state.token)
+                // console.log(state.token)
                 return fetch("http://10.11.0.156:8529/" + para.url,
                     {
                         method: para.method,
