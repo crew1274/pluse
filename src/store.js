@@ -14,9 +14,25 @@ export default new Vuex.Store({
         admin_settings: {},
         agv_info: {},
         isLoading: false,
+        redis_msg: {},
+        sand_tab_current: "",
+        prod: {},
+        home: {},
     },
     mutations: 
     {
+        store_prod_state(state, temp)
+        {
+            state.prod = temp
+        },
+        store_home_state(state, temp)
+        {
+            state.home = temp
+        },
+        update_sand_tab_current(state, sand_tab_current)
+        {
+            state.sand_tab_current = sand_tab_current
+        },
         _db_err(state, err)
         {
             state.errorMessage = {
@@ -24,9 +40,16 @@ export default new Vuex.Store({
                 "message": err
             }
         },
-        update_isLoading(state, bool)
+        update_redis_msg(state, redis_msg)
         {
-            state.isLoading = bool
+            state.redis_msg = {
+                datetime: new Date().getMilliseconds(),
+                msg: redis_msg,
+            }
+        },
+        update_isLoading(state, status)
+        {
+            state.isLoading = status
         },
         update_token(state, token)
         {

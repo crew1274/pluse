@@ -1,14 +1,14 @@
 <template>
   <div id="app">
-    <div v-if="isLoading">
+    <div v-show="isLoading">
       <div style="display:flex;justify-content:center;align-items:center;height:715px;">
         <md-activity-indicator type="spinner" :size="50" :text-size="50">
           處理中...
         </md-activity-indicator>
       </div>
     </div>
-    <div v-else>
-      <md-scroll-view ref="scrollView" auto-reflow :scrolling-x="false">
+    <div v-show="!isLoading" class="fixed">
+      <md-scroll-view auto-reflow :scrolling-x="false">
       <div id="c">
           {{version}}
       </div>
@@ -91,7 +91,11 @@ export default {
     isLoading()
     {
       return this.$store.state.isLoading
-    }
+    },
+    redis_msg()
+    {
+        return this.$store.state.redis_msg
+    },
   },
   watch:
   {
@@ -119,7 +123,20 @@ export default {
             }
         }
       }            
-  }
+    },
+    redis_msg(val)
+    {
+        if(this.isDialogShow) //視窗打開狀況下
+        {
+            if(val["type"] == "operator")
+            {
+                Toast.info("偵測到工號")
+                this.$refs.inflicted.play()
+                this.operator.name = val["target"]
+                this.operator.code = val["code"]
+            }
+        }
+    },
   },
   async beforeCreate()
   {
@@ -137,12 +154,9 @@ export default {
   async mounted()
   { 
     this.$refs.inflicted.volume = 1
-    
+
     this.token_timer = await setInterval( () => { this.get_token() }, 60000) //定期更新token
-    this.agv_timer = await setInterval( () => { this.getMyTunnel() }, 2000) 
-    // await setInterval( () => { this.get_token() }, 5000) //定期更新token
-    // await setInterval( () => { this.get_agv_response() }, 1000)
-    // console.log(await this._db("http://10.11.0.156:8529/_api/cluster/endpoints", "GET", {}) )
+    // this.agv_timer = await setInterval( () => { this.getMyTunnel() }, 2000) 
   },
   beforeDestroy()
   {
@@ -223,8 +237,14 @@ export default {
     },
   }
 }
-</script>>
+</script>
 <style scoped>
+
+.fixed
+{
+  height: 715px;
+}
+
 #app {
   font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微軟雅黑",Arial,sans-serif; 
   -webkit-font-smoothing: antialiased;

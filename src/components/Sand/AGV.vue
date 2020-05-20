@@ -1,31 +1,54 @@
 <template>
   <div class="hello">
-    <h1><span>{{ msg }}</span></h1>
+    <!-- <h1><span>{{ msg }}</span></h1>
     <p>
-      A mobile UI toolkit, based on Vue.js 2, designed for financial scenarios.
+      取得料框
     </p>
-    <br/>
+    <br/> -->
     <el-row :gutter="10">
-      <el-col :span="12">
-        <md-button type="primary" @click="greet">取料框</md-button>
+      <el-col :span="8">
+        <md-button type="primary" @click="greet">取得料框</md-button>
       </el-col>
-      <el-col :span="12">
+      <el-col :span="8">
         <md-button type="primary" @click="greet">送料</md-button>
+      </el-col>
+      <el-col :span="8">
+        <md-button type="primary" @click="greet">送回料框</md-button>
       </el-col>
     </el-row>
   </div>
 </template>
 
 <script>
-import { Button, Toast } from "mand-mobile";
+import { Button, Toast, Steps } from "mand-mobile";
 
 export default {
-  name: "Prod",
+  name: "AGV",
   components: {
-    "md-button": Button
+    [Button.name]: Button,
+    [Steps.name]: Steps,
   },
   props: {
     msg: String
+  },
+  data()
+  {
+    return {
+      steps: [
+        {
+          name: '登录',
+        },
+        {
+          name: '开通',
+        },
+        {
+          name: '验证',
+        },
+        {
+          name: '成功',
+        },
+      ],
+    }
   },
   methods: {
     greet() {

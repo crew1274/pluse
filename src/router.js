@@ -5,9 +5,9 @@ Vue.use(VueRouter)
 
 const routes = [{
         path: '/',
-        name: 'Home',
+        name: 'Sand',
         meta: { title: "噴砂" },
-        component: () => import('@/views/Home.vue')
+        component: () => import('@/views/Sand.vue')
     },
     {
         path: '/ENG',
