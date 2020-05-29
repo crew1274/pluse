@@ -263,17 +263,18 @@ export default {
         redis_msg(value)
         {
             let val = value['msg']
-            if(this.prod_step == 1)
+
+            if(this.stage == 1)
             {
                 if(val["target"].length < 8)
                 {
-                    this.$message({ message: "RFID讀取到工號:" + val["target"], type: "info"})
-                    this.Operator = val["target"]
+                    Toast.info("RFID讀取到工號:" + val["target"])
+                    this.op = val["target"]
                 }
                 else
                 {
-                    this.$message({ message: "RFID讀取到工單:" + val["target"], type: "info"})
-                    this.LotNO = val["target"]
+                    Toast.info("RFID讀取到批號:" + val["target"])
+                    this.lot = val["target"]
                 }
             }
         },

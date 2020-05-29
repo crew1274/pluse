@@ -34,7 +34,6 @@ if (process.platform != "browser")
           {
             win.webContents.send('RFID', object)
           })
-          
         }
       })
     }
