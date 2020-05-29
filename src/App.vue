@@ -84,6 +84,10 @@ export default {
     {
       return this.admin_settings["agv"]["my_tunnel"]
     },
+    AGV_URL()
+    {
+      return "http://" + this.admin_settings["agv"]["server"] + ":" + this.admin_settings["agv"]["port"]
+    },
     agv_info()
     {
       return this.$store.state.agv_info
@@ -141,22 +145,21 @@ export default {
   async beforeCreate()
   {
   },
-  async created()
+  async beforeMount()
   {
 
   },
-  async beforeMount()
+  async created()
   {
     await this.get_token()
-    this.$store.commit('update_admin_settings', await this.$store.dispatch("_db", { url: "_db/ENG-10/_api/document/SETTINGS/ADMIN", method: "GET", payload: {}}))
+    await this.$store.dispatch('update_admin_settings_action', await this.$store.dispatch("_db", { url: "_db/ENG-10/_api/document/SETTINGS/ADMIN", method: "GET", payload: {}}))
     this.$store.commit('update_agv_info', await this.$store.dispatch("_db", { url: "_db/ENG-10/_api/document/SETTINGS/AGV", method: "GET", payload: {}}))
   },
   async mounted()
   { 
     this.$refs.inflicted.volume = 1
-
     this.token_timer = await setInterval( () => { this.get_token() }, 60000) //定期更新token
-    // this.agv_timer = await setInterval( () => { this.getMyTunnel() }, 2000) 
+    this.agv_timer = await setInterval( () => { this.getMyTunnel() }, 2000) 
   },
   beforeDestroy()
   {
@@ -171,28 +174,29 @@ export default {
   {
     async getMyTunnel()
     {
+      // 背景擷取通道資訊
       let headers = new Headers()
       headers.append('Authorization', 'Basic ' + btoa( this.my_tunnel + ':' + this.my_tunnel))
-      await fetch("https://10.11.50.36:9122/"+ this.my_tunnel +"/require",
+      await fetch( this.AGV_URL + "/" + this.my_tunnel +"/require",
       { headers: headers, method: 'GET', })
-      .then( response => {return  response.json()})
+      .then( response => { return response.json() })
       .then( response =>
       {
           this.$store.commit('update_agv_response', response)
       })
     },
+
     async activeResponseAGV(command)
     {
         //回應小杜
         let headers = new Headers()
         headers.append('Authorization', 'Basic ' + btoa(this.du_tunnel + ":" + this.du_tunnel))
-        let url = "https://10.11.50.36:9122/"+this.du_tunnel+"/publish"
-        await fetch(url,
+        await fetch( this.AGV_URL + "/" + this.du_tunnel +"/publish",
         {
             headers: headers,
             method: 'POST',
             body: JSON.stringify(command)
-         })
+        })
         .catch( err =>
         {
             this.$notify.warning({ title: 'AGV Server回應異常', message: err})
@@ -227,7 +231,7 @@ export default {
             let payload_e = this.prepare_payload
             payload_e["EECODE"] = this.operator.code
             payload_e["CMD"] = (+payload_e["CMD"] + 1).toString()
-            await this.send_agv_cmd(payload_e)
+            await this.activeResponseAGV(payload_e)
             this.operator = {}
         }
         else

@@ -25,7 +25,7 @@
         <div v-else-if="stage == 2">
             <el-row :gutter="10">
                 <el-col :span="12">
-                    <md-field title="生產資訊">
+                    <md-field title="批號資訊">
                         <md-detail-item title="批號:" :content="lotdata.no" bold />
                         <md-detail-item title="料號:" :content="lotdata.itemno"  />
                         <md-detail-item title="製程序:" :content="lotdata.procseq"  />
@@ -56,9 +56,7 @@
             <el-row :gutter="10">
                 <center>
                     <div v-show="errMsg" class="errMsg">
-                            <md-notice-bar mode="closable" icon="wrong">
-                                {{errMsg}}
-                            </md-notice-bar>
+                        {{errMsg}}
                     </div>
                 </center>
             </el-row>
@@ -175,7 +173,7 @@ export default {
         },
 
       }
-  },
+    },
     computed:
     {
         redis_msg()
@@ -264,18 +262,18 @@ export default {
         // },
         redis_msg(value)
         {
-            let val = value['rfid_msg']
+            let val = value['msg']
             if(this.prod_step == 1)
             {
-                if(val.length < 8)
+                if(val["target"].length < 8)
                 {
-                    this.$message({ message: "RFID讀取到工號:"+val, type: "info"})
-                    this.Operator = val
+                    this.$message({ message: "RFID讀取到工號:" + val["target"], type: "info"})
+                    this.Operator = val["target"]
                 }
                 else
                 {
-                    this.$message({ message: "RFID讀取到工單:"+val, type: "info"})
-                    this.LotNO = val
+                    this.$message({ message: "RFID讀取到工單:" + val["target"], type: "info"})
+                    this.LotNO = val["target"]
                 }
             }
         },
@@ -293,184 +291,184 @@ export default {
     },
     async mounted()
     { 
-        Object.keys(this.$store.state.prod).forEach(key =>
-        {
-            this.$data[key] = this.$store.state.prod[key]
-        })
+        // Object.keys(this.$store.state.prod).forEach(key =>
+        // {
+        //     this.$data[key] = this.$store.state.prod[key]
+        // })
     },
     async beforeDestroy()
     {
-        let tmep = {}
-        Object.keys(this.$data).forEach(key =>
-        {
-            tmep[key] = this.$data[key]
-        })
-        this.$store.commit('store_prod_state', tmep)
+        // let tmep = {}
+        // Object.keys(this.$data).forEach(key =>
+        // {
+        //     tmep[key] = this.$data[key]
+        // })
+        // this.$store.commit('store_prod_state', tmep)
     },
     async destroy()
     {
 
     },
-  methods:
-  {
-    async prod(target)
+    methods:
     {
-        this.$store.commit('update_isLoading', true)
-        this.errMsg = ""
-        await fetch('http://10.11.20.108:9999/api/prod/'+ target,
+        async prod(target)
         {
-            method: "POST",
-            body: JSON.stringify({
-                    lotdata: this.lotdata, 
-                    procdata: this.procdata,
-                    recipe: this.recipe,
-                })
-        })
-        .then( response => {return response.json()})
-        .then( response =>
-        {
-            if(response["Exception"])
+            this.$store.commit('update_isLoading', true)
+            this.errMsg = ""
+            await fetch('http://10.11.20.108:9999/api/prod/'+ target,
             {
-                throw response["Exception"]
-            }
-            Toast.info("投料成功")
-        })
-        .catch( err =>
-        {
-            this.$notify.warning({ title: '投料失敗', message: err})
-            this.errMsg = err
-        })
-        .finally( () =>
-        {
-            this.$store.commit('update_isLoading', false)
-        })
-    },
-
-    editDialogEnter(val)
-    {
-        Toast.info(val)
-        this.editDialog.overwrite += val
-    },
-
-    editDialogDelete()
-    {
-        if (this.editDialog.overwrite === '')
-        {
-            return
-        }
-        this.editDialog.overwrite = this.editDialog.overwrite.substr(0, this.editDialog.overwrite.length - 1)
-    },
-
-    editDialogConfirm()
-    {
-        Toast.info(this.editDialog.target + "->" + this.editDialog.overwrite)
-        this.editDialog.open = false
-        this._.set(this.$data, this.editDialog.target_key, this.editDialog.overwrite)
-    },
-
-    openDialog(target)
-    {
-        this.editDialog.target_key = target.split('.')
-        // this.editDialog.target = undefined
-        // this._(this.editDialog.target_key).forEach( (value) =>
-        // {
-        //     this.editDialog.target ? 
-        //         this.editDialog.target = this.editDialog.target[value] :
-        //         this.editDialog.target = this.$data[value]
-        // })
-        this.editDialog.target = this._.get(this.$data, this.editDialog.target_key)
-        this.editDialog.open = true
-        this.editDialog.overwrite = ""
-    },
-    keyFormatter(val)
-    {
-        if (val === '.')
-        {
-            return this.keyBoardRender
-        }
-    },
-    hint(val)
-    {
-        Toast.info(val)
-    },
-    async prepare()
-    {
-        if(this.lot == "" || this.procseq == "" || this.operator == "" )
-        {
-            Toast.failed('請輸入批號/工號/製程序')
-            return
-        }
-        if(await this.getRecipe())
-        {
-            this.stage ++
-        }
-    },
-    clean()
-    {
-        if(this.stage == 2)
-        {
-            this.stage = 1
-        }
-        else
-        {
-            this.lot = ''
-            this.operator = ''
-            this.procseq = ''
-        }
-    },
-    async getRecipe()
-    {
-        this.$store.commit('update_isLoading', true)
-        this.payload["mfdata"]["lotdata"]["no"] = this.lot
-        this.procseq == 0 ? 
-            this.payload["mfdata"]["lotdata"]["procseq"] = null :
-            this.payload["mfdata"]["lotdata"]["procseq"] = this.procseq
-        let x2js = new X2JS()
-        x2js.js2xml(this.payload)
-        return await this.$axios({ method: 'get', url: 'http://mesap/mesws_chpt/wsmes/wsmes.asmx/GetParameter?InXml='+x2js.js2xml(this.payload)})
-        .then( response =>
-        {
-            let res = response["data"]
-            res = x2js.xml2js(res)
-            res = res["string"]["__text"]
-            res = res.replace(/(μ")/g, 'μ') /*特殊字元取代*/
-            res = x2js.xml2js(res)
-            if(! Object.keys(res).includes("mfdata"))
+                method: "POST",
+                body: JSON.stringify({
+                        lotdata: this.lotdata, 
+                        procdata: this.procdata,
+                        recipe: this.recipe,
+                    })
+            })
+            .then( response => {return response.json()})
+            .then( response =>
             {
-                throw "參數返回格式不符合預期"
-            }
-            if(res["mfdata"]["exception"])
-            {
-                throw res["mfdata"]["exception"]
-            }
-            if(!res["mfdata"]["procdata"]["procname"].match(/化金/g)) /*檢查是否為化金站參數*/
-            {
-                throw "非化金站參數! 請重新檢查製程序!"
-            }
-            this.lotdata = res["mfdata"]["lotdata"]
-            this.procdata = res["mfdata"]["procdata"]
-            for(let item of this.procdata["procprams"]["procpram"])
-            {
-                if(item.procprammes in this.recipe)
+                if(response["Exception"])
                 {
-                    this.recipe[item.procprammes] = +item.procvalue
+                    throw response["Exception"]
                 }
-            }
+                Toast.info("投料成功")
+            })
+            .catch( err =>
+            {
+                this.$notify.warning({ title: '投料失敗', message: err})
+                this.errMsg = err
+            })
+            .finally( () =>
+            {
+                this.$store.commit('update_isLoading', false)
+            })
+        },
 
-            Toast.info("成功取得製程參數")
-            return true
-        })
-        .catch( err =>
+        editDialogEnter(val)
         {
-            this.$notify.warning({ title: 'MES回應異常', message: err})
-            return false
-        })
-        .finally( () =>
+            Toast.info(val)
+            this.editDialog.overwrite += val
+        },
+
+        editDialogDelete()
         {
-            this.$store.commit('update_isLoading', false)
-        })
+            if (this.editDialog.overwrite === '')
+            {
+                return
+            }
+            this.editDialog.overwrite = this.editDialog.overwrite.substr(0, this.editDialog.overwrite.length - 1)
+        },
+
+        editDialogConfirm()
+        {
+            Toast.info(this.editDialog.target + "->" + this.editDialog.overwrite)
+            this.editDialog.open = false
+            this._.set(this.$data, this.editDialog.target_key, this.editDialog.overwrite)
+        },
+
+        openDialog(target)
+        {
+            this.editDialog.target_key = target.split('.')
+            // this.editDialog.target = undefined
+            // this._(this.editDialog.target_key).forEach( (value) =>
+            // {
+            //     this.editDialog.target ? 
+            //         this.editDialog.target = this.editDialog.target[value] :
+            //         this.editDialog.target = this.$data[value]
+            // })
+            this.editDialog.target = this._.get(this.$data, this.editDialog.target_key)
+            this.editDialog.open = true
+            this.editDialog.overwrite = ""
+        },
+        keyFormatter(val)
+        {
+            if (val === '.')
+            {
+                return this.keyBoardRender
+            }
+        },
+        hint(val)
+        {
+            Toast.info(val)
+        },
+        async prepare()
+        {
+            if(this.lot == "" || this.procseq == "" || this.operator == "" )
+            {
+                Toast.failed('請輸入批號/工號/製程序')
+                return
+            }
+            if(await this.getRecipe())
+            {
+                this.stage ++
+            }
+        },
+        clean()
+        {
+            if(this.stage == 2)
+            {
+                this.stage = 1
+            }
+            else
+            {
+                this.lot = ''
+                this.operator = ''
+                this.procseq = ''
+            }
+        },
+        async getRecipe()
+        {
+            this.$store.commit('update_isLoading', true)
+            this.payload["mfdata"]["lotdata"]["no"] = this.lot
+            this.procseq == 0 ? 
+                this.payload["mfdata"]["lotdata"]["procseq"] = null :
+                this.payload["mfdata"]["lotdata"]["procseq"] = this.procseq
+            let x2js = new X2JS()
+            x2js.js2xml(this.payload)
+            return await this.$axios({ method: 'get', url: 'http://mesap/mesws_chpt/wsmes/wsmes.asmx/GetParameter?InXml='+x2js.js2xml(this.payload)})
+            .then( response =>
+            {
+                let res = response["data"]
+                res = x2js.xml2js(res)
+                res = res["string"]["__text"]
+                res = res.replace(/(μ")/g, 'μ') /*特殊字元取代*/
+                res = x2js.xml2js(res)
+                if(! Object.keys(res).includes("mfdata"))
+                {
+                    throw "參數返回格式不符合預期"
+                }
+                if(res["mfdata"]["exception"])
+                {
+                    throw res["mfdata"]["exception"]
+                }
+                if(!res["mfdata"]["procdata"]["procname"].match(/化金/g)) /*檢查是否為化金站參數*/
+                {
+                    throw "非化金站參數! 請重新檢查製程序!"
+                }
+                this.lotdata = res["mfdata"]["lotdata"]
+                this.procdata = res["mfdata"]["procdata"]
+                for(let item of this.procdata["procprams"]["procpram"])
+                {
+                    if(item.procprammes in this.recipe)
+                    {
+                        this.recipe[item.procprammes] = +item.procvalue
+                    }
+                }
+
+                Toast.info("成功取得製程參數")
+                return true
+            })
+            .catch( err =>
+            {
+                this.$notify.warning({ title: 'MES回應異常', message: err})
+                return false
+            })
+            .finally( () =>
+            {
+                this.$store.commit('update_isLoading', false)
+            })
+        }
     }
-  }
 }
 </script>
 

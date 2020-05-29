@@ -18,6 +18,7 @@ export default new Vuex.Store({
         sand_tab_current: "",
         prod: {},
         home: {},
+        AGV_CMD: "",
     },
     mutations: 
     {
@@ -66,9 +67,14 @@ export default new Vuex.Store({
         update_agv_info(state, agv_info)
         {
             state.agv_info = agv_info
+        },
+        update_AGV_CMD(state, CMD)
+        {
+            state.AGV_CMD = CMD
         }
     },
-    actions: {
+    actions:
+    {
         async _db({commit, state}, para)
         {
             if (para.method == "GET")
@@ -120,7 +126,32 @@ export default new Vuex.Store({
                         return false
                     })
             }
-        }
+        },
+        async call_agv({commit, state}, command)
+        {
+            let headers = new Headers()
+            let AGV_URL = "http://" + state.admin_settings.agv.server + ":" + state.admin_settings.agv.port
+            headers.append('Authorization', 'Basic ' + btoa(state.admin_settings.agv.du_tunnel + ":" + state.admin_settings.agv.du_tunnel))
+            await fetch(AGV_URL + "/" + state.admin_settings.agv.du_tunnel + "/publish",
+            {
+                headers: headers,
+                method: 'POST',
+                body: JSON.stringify(command)
+            })
+            .catch( err =>
+            {
+                this.$notify.warning({ title: 'AGV Server回應異常', message: err})
+            })
+            .finally( () =>
+            {
+                commit('update_AGV_CMD', command["CMD"])
+            }) 
+
+        },
+        async update_admin_settings_action({commit}, settings)
+        {
+            commit('update_admin_settings', settings)
+        },
     },
     modules: {},
 })

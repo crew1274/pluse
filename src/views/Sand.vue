@@ -1,20 +1,31 @@
 <template>
   <div>
-    <md-tab-bar v-model="tab_current" :items="tab_items" @change="onTabChange" />
-    <md-swiper ref="swiper" :autoplay="0" :dragable="false" :is-loop="false" :has-dots="false"
+    <md-tab-bar v-model="tab_current" :items="tab_items"/>
+      <keep-alive>
+        <component :is="tab_current"></component>
+      </keep-alive>
+
+    <!-- <md-swiper ref="swiper" :autoplay="0" :dragable="false" :is-loop="false" :has-dots="false"
       @before-change="onSwiperChange">
       <md-swiper-item>
-        <Home />
+        <keep-alive>
+          <Home />
+          <component :is="tab_current"></component>
+        </keep-alive>
       </md-swiper-item>
       <md-swiper-item>
-        <Prod />
+        <keep-alive>
+          <Prod />
+        </keep-alive>
       </md-swiper-item>
       <md-swiper-item>
-        <p class="hello">依照順序操作</p>
-        <md-steps :steps="steps" :current="5"/>
-        <AGV msg="Welcome to Your Mand Mobile"/>
+        <keep-alive>
+          <p class="hello">依照順序操作</p>
+          <md-steps :steps="steps" :current="5"/>
+          <AGV msg="Welcome to Your Mand Mobile"/>
+        </keep-alive>
       </md-swiper-item>
-    </md-swiper>
+    </md-swiper> -->
   </div>
 </template>
 
@@ -38,8 +49,9 @@ export default {
   data()
   {
     return {
-      tab_current: 0,
-      tab_items: [{name: 0, label: '主站狀態'}, {name: 1, label: '投料操作'}, {name: 2, label: 'AGV操作'}],
+
+      tab_current: "Home",
+      tab_items: [{name: "Home", label: '主站狀態'}, {name: "Prod", label: '投料操作'}, {name: "AGV", label: 'AGV操作'}],
 
       steps: [
         {
@@ -66,14 +78,7 @@ export default {
   },
   methods:
   {
-    onTabChange(item, index)
-    {
-      this.$refs.swiper.goto(index)
-    },
-    onSwiperChange(from, to)
-    {
-      this.tab_current = to
-    },
+
   }
 };
 </script>

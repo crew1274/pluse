@@ -30,7 +30,11 @@ if (process.platform != "browser")
       {
         if (channel == "RFID")
         {
-          win.webContents.send('RFID', message)
+          redis.createClient().hgetall('RFID_PAYLOAD', function (err, object)
+          {
+            win.webContents.send('RFID', object)
+          })
+          
         }
       })
     }

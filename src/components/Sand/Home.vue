@@ -1,8 +1,25 @@
 <template>
     <div>
         <el-row :gutter="10">
-            <el-col :span="12">
-            </el-col>
+            <el-card header="上筆資料" class="normalText">
+                <el-col :span="12">
+                    <md-field title="批號資料">
+                        <md-detail-item title="批號:" :content="recipe.lotdata.no" bold />
+                        <md-detail-item title="料號:" :content="recipe.lotdata.itemno"  />
+                        <md-detail-item title="製程序:" :content="recipe.lotdata.procseq"  />
+                        <md-detail-item title="料號版次:" :content="recipe.lotdata.itemno"  />
+                        <md-detail-item title="製造版次:" :content="recipe.lotdata.mfver"  />
+                    </md-field>
+                </el-col>
+                <el-col :span="12">
+                    <md-field title="詳細參數">
+                        <md-detail-item title="板高:" :content="recipe.recipe.Height" />
+                        <md-detail-item title="板寬:" :content="recipe.recipe.Width" />
+                        <md-detail-item title="片數:" :content="recipe.recipe.QTY" />
+                        <md-detail-item title="模式:" :content="recipe.recipe.Mode" />
+                    </md-field>
+                </el-col>
+            </el-card>
         </el-row>
     </div>
 </template>
@@ -45,11 +62,11 @@ export default {
     },
     async beforeCreate()
     {
-
+        
     },
     async created()
     {
-
+        await this.getPrevRecipe()
     },
     async beforeMount()
     {
@@ -57,11 +74,18 @@ export default {
     },
     async mounted()
     { 
-        Object.keys(this.$store.state.home).forEach(key =>
-        {
-            this.$data[key] = this.$store.state.home[key]
-        })
-        if(! this.recipe)
+
+    },
+    async beforeDestroy()
+    {
+    },
+    async destroy()
+    {
+
+    },
+    methods:
+    {
+        async getPrevRecipe()
         {
             await fetch('http://10.11.20.108:9999/api/now', { method: "GET" })
             .then( response => {return response.json()})
@@ -72,31 +96,13 @@ export default {
                     throw response["Exception"]
                 }
                 this.recipe = response["response"]
-                
             })
             .catch( err =>
             {
                 Toast.warning(err)
             })
-            .finally( () =>
-            {
-                // this.$store.commit('update_isLoading', false)
-            })
         }
-    },
-    async beforeDestroy()
-    {
-        let temp = {}
-        Object.keys(this.$data).forEach(key =>
-        {
-            temp[key] = this.$data[key]
-        })
-        this.$store.commit('store_home_state', temp)
-    },
-    async destroy()
-    {
-
-    },
+    }
 }
 </script>
 
@@ -109,10 +115,9 @@ export default {
 {
     height: 715px;
 }
-.errMsg
+.normalText
 {
-    font-size: 36px;
-    color: #f54838;
+    font-size: 24px;
 }
 .dialog
 {
