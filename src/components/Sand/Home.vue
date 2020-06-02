@@ -66,7 +66,7 @@ export default {
     },
     async created()
     {
-        await this.getPrevRecipe()
+        
     },
     async beforeMount()
     {
@@ -74,7 +74,7 @@ export default {
     },
     async mounted()
     { 
-
+            await this.getPrevRecipe()
     },
     async beforeDestroy()
     {

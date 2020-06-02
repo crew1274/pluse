@@ -21,10 +21,10 @@
     </div>
     <md-dialog title="到站通知" :closable="false" v-model="isDialogShow" :btns="DialogShowBtns" >
       <md-field title="需工號確認" brief="透過RFID讀取識別證">
-          <md-input-item title="工號" v-model="operator.name" clearable/>
+          <md-input-item title="工號" v-model="operator.target" clearable/>
       </md-field>
     </md-dialog>
-    <audio ref="inflicted" src="http://10.11.0.156/inflicted.mp3" />
+    <audio ref="inflicted" src="http://10.11.0.156/just-like-magic.mp3" loop/>
   </div>
 </template>
 
@@ -55,7 +55,10 @@ export default {
             handler: this.onActConfirm,
         },
       ],
-      operator: {},
+      operator: {
+        code: "",
+        target: "",
+      },
     }
   },
   computed:
@@ -115,6 +118,19 @@ export default {
         },
         deep: true
     },
+    redis_msg(value)
+    {
+        let val = value['msg']
+        if(this.isDialogShow)
+        {
+            if(val["target"].length < 8)
+            {
+                Toast.info("RFID讀取到識別證:" + val["target"])
+                this.operator["target"] = val["target"]
+                this.operator["code"] = val["code"]
+            }
+        }
+    },
     async agv_response(val)
     {
       if(Array.isArray(val))
@@ -123,23 +139,13 @@ export default {
         {
             if("CMD" in val[i])
             {
-                await this.activeResponseAGV(val[i])
+                if(val[i]["CMD"] == "24" || val[i]["CMD"] == "2" || val[i]["CMD"] == "6")
+                {
+                  await this.activeResponseAGV(val[i])
+                }
             }
         }
       }            
-    },
-    redis_msg(val)
-    {
-        if(this.isDialogShow) //視窗打開狀況下
-        {
-            if(val["type"] == "operator")
-            {
-                Toast.info("偵測到工號")
-                this.$refs.inflicted.play()
-                this.operator.name = val["target"]
-                this.operator.code = val["code"]
-            }
-        }
     },
   },
   async beforeCreate()
@@ -209,7 +215,7 @@ export default {
             {
                 this.isDialogShow = true
                 this.prepare_payload = command
-                this.$refs.rush.play()
+                this.$refs.inflicted.play()
             }
         }) 
     },
@@ -224,10 +230,10 @@ export default {
     },
     async onActConfirm()
     {
-        if(this.operator["name"])
+        if(this.operator["target"])
         {
             this.isDialogShow = false
-            this.$refs.rush.pause()
+            this.$refs.inflicted.pause()
             let payload_e = this.prepare_payload
             payload_e["EECODE"] = this.operator.code
             payload_e["CMD"] = (+payload_e["CMD"] + 1).toString()

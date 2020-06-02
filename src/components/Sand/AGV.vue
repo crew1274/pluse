@@ -17,7 +17,7 @@
     <el-divider />
     <el-row :gutter="10">
       <el-col :span="8">
-        <md-button type="primary" @click="askCassete" inactive >取得料框</md-button>
+        <md-button type="primary" @click="askCassete">取得料框</md-button>
       </el-col>
       <el-col :span="8">
         <md-button type="primary" @click="confirmDialog.open = true" >送料(需先帶入參數)</md-button>
@@ -38,15 +38,22 @@
             </md-field>
         </div>
     </md-dialog>
+    <div style="height:220px">
+      <md-selector v-model="isSelectorShow" :data="cassette_info" 
+      title="選擇料框來源" describe="請先進行料框定位" okText="確認" cancel-text="取消"
+      @confirm="onSelectorConfirm" large-radius />
+    </div>
+    <audio ref="audio" src="http://10.11.0.156/inflicted.mp3"></audio>
   </div>
 </template>
 
 <script>
-import { Button, Toast, Steps, Tag, Dialog, Field, FieldItem, InputItem, Agree} from "mand-mobile";
+import { Button, Toast, Steps, Tag, Dialog, Field, FieldItem, InputItem, Agree, Selector} from "mand-mobile";
 
 export default {
   name: "AGV",
   components: {
+    [Selector.name]: Selector,
     [Agree.name]: Agree,
     [Field.name]: Field,
     [FieldItem.name]: FieldItem,
@@ -63,7 +70,7 @@ export default {
   {
     return {
       checked: false,
-
+      isSelectorShow: false,
       confirmDialog:
       {
         open: false, // 控制開關
@@ -90,7 +97,6 @@ export default {
             disabled: true,
           },
         ],
-        
       },
       steps: [
         {
@@ -107,9 +113,9 @@ export default {
         },
       ],
       cassette_info: [ 
-        {name: "調整站", stop: "210", status: "", color: "#FC7353"},
-        {name :"噴砂上料區", stop: "211", status: "", color: "#FC7353"},
-        {name :"噴砂下料區", stop: "212", status: "", color: "#FC7353"}
+        {name: "調整站", stop: "210", status: "", color: "#FC7353", text:"調整站", value:"210", disabled:true},
+        {name :"噴砂上料區", stop: "211", status: "", color: "#FC7353", text:"噴砂上料區", value:"211", disabled:true},
+        {name :"噴砂下料區", stop: "212", status: "", color: "#FC7353", text:"噴砂下料區", value:"212", disabled:true}
       ]
     }
   },
@@ -165,11 +171,11 @@ export default {
   },
   async created()
   {
-    // this.getCasseteInfo(false)
+    // this.getCasseteInfo(true)
   },
   async mounted()
   { 
-
+    this.getCasseteInfo(false)
   },
   async beforeDestroy()
   {
@@ -181,6 +187,47 @@ export default {
   },
   methods:
   {
+    async onSelectorConfirm({value})
+    {
+      this.isSelectorShow = false
+      this.$store.commit('update_isLoading', true)
+      let payload =
+      {
+        EECODE: "",
+        LOTNO: "",
+        RCCODE: "",
+        TITLE: "W",
+        MSGID: "3017",
+        CMD: "1",
+        FLOOR: "2" ,
+        STOP: "10",
+        EQPTID: value,
+        MSGTYPE: "API",
+        MSG: "",
+      }  
+      await this.$store.dispatch("call_agv", payload) /*發送指令*/
+      await Promise.race([
+        this.waitFor( () => this._.find(this.agv_response, {"CMD": payload["CMD"]})),
+        this.waitFor( () => this._.find(this.agv_response, {"CMD": "23"})),
+        this.timeoutCheck(5000)]) /*等待回應*/
+      .then( (res) =>
+      {
+        if(res == "Timeout")
+        {
+          throw res
+        }
+        else if(res["CMD"] == "23")
+        {
+          throw "拒絕叫車"
+        }
+        Toast.info("叫車成功")
+      })
+      .catch( err =>
+      {
+        Toast.failed(err)
+      })
+      this.$store.commit('update_isLoading', false)
+    },
     onChange()
     {
       this.confirmDialog["btns"][1]["disabled"] = !this.checked
@@ -197,11 +244,12 @@ export default {
     },
     async goCar()
     {
-      if(!this.confirmDialog.op.code || !this.confirmDialog.lot.target || !this.confirmDialog.lot.code)
-      {
-        Toast.failed("資料缺少")
-        return
-      }
+      // if(!this.confirmDialog.op.code || !this.confirmDialog.lot.target || !this.confirmDialog.lot.code)
+      // {
+      //   Toast.failed("資料缺少")
+      //   return
+      // }
+      this.confirmDialog.open = false
       this.$store.commit('update_isLoading', true)
       let payload =
       {
@@ -210,6 +258,7 @@ export default {
         RCCODE: this.confirmDialog.lot.code,
         TITLE: "W",
         MSGID: "3017",
+        // CMD: "1",
         CMD: "31",
         FLOOR: "2" ,
         STOP: "11",
@@ -217,26 +266,39 @@ export default {
         MSGTYPE: "API",
         MSG: "",
       }      
+      // console.log(payload)
       await this.$store.dispatch("call_agv", payload) /*發送指令*/
-      await Promise.race([this.waitFor( () => this._.find(this.agv_response, {"CMD": "31"})), this.timeoutCheck(7000)]) /*等待回應*/
-      .then( () =>
+      await Promise.race([ 
+        this.waitFor( () => this._.find(this.agv_response, {"CMD": payload["CMD"]})),
+        this.waitFor( () => this._.find(this.agv_response, {"CMD": "23"})),
+        this.timeoutCheck(5000)]) /*等待回應*/
+      .then( (res) =>
       {
+        if(res == "Timeout")
+        {
+          throw res
+        }
+        else if(res["CMD"] == "23")
+        {
+          throw "拒絕叫車"
+        }
         Toast.info("叫車成功")
       })
-      .catch( () =>
+      .catch( err =>
       {
-        Toast.failed("Timeout Error!")
+        Toast.failed(err)
       })
       this.$store.commit('update_isLoading', false)
-
     },
     async askCassete()
     {
+      // 檢查料框
       if(this.cassette_info[0]["status"] == "1")
       {
         Toast.info("調整站已有料框")
         return
       }
+      this.isSelectorShow = true
     },
     greet()
     {
@@ -244,9 +306,9 @@ export default {
     },
     async timeoutCheck(delay)
     {
-        return new Promise( (reject) =>
+        return new Promise( reject =>
         {
-          setTimeout( () => { reject() }, delay)
+          setTimeout( () => { reject("Timeout") }, delay)
         })
     },
     async getCasseteInfo(isAwait) //取得料框資訊
@@ -273,6 +335,7 @@ export default {
       let payload =
       {
         EECODE: "",
+        TITLE: "W",
         LOTNO: "",
         RCCODE: "",
         MSGID: "3017",
@@ -294,10 +357,12 @@ export default {
           if(ele["Status"] != "1")
           {
             this.cassette_info[ind]["color"] = "#ada9a8"
+            this.cassette_info[ind]["disabled"] = true
           }
           else
           {
             this.cassette_info[ind]["color"] = "#FC7353"
+            this.cassette_info[ind]["disabled"] = false
           }
         })
         Toast.info("更新成功")

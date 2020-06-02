@@ -269,7 +269,7 @@ export default {
                 if(val["target"].length < 8)
                 {
                     Toast.info("RFID讀取到工號:" + val["target"])
-                    this.op = val["target"]
+                    this.operator = val["target"]
                 }
                 else
                 {
