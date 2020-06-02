@@ -13,8 +13,15 @@
           {{version}}
       </div>
         <div id="nav">
-          <router-link to="/">噴砂</router-link> |
-          <router-link to="/ENG">化金</router-link>
+          <el-row>
+            <el-col :span="6" :offset="6">
+              <router-link to="/">噴砂</router-link> |
+              <router-link to="/ENG">化金</router-link>
+            </el-col>
+            <el-col :span="6" :offset="6">
+              <md-button  @click="close" icon="wrong">結束程式</md-button>
+            </el-col>
+          </el-row>
         </div>
         <router-view/>
       </md-scroll-view>
@@ -29,11 +36,12 @@
 </template>
 
 <script>
-import {ScrollView, ActivityIndicator, Dialog, Toast, FieldItem, Field, InputItem} from 'mand-mobile'
+import {ScrollView, ActivityIndicator, Dialog, Toast, FieldItem, Field, InputItem, Icon} from 'mand-mobile'
 
 export default {
   name: "App",
   components: {
+    [Icon.name]: Icon,
     [ScrollView.name]: ScrollView,
     [ActivityIndicator.name]: ActivityIndicator,
     [Dialog.name]: Dialog,
@@ -178,6 +186,11 @@ export default {
   },
   methods:
   {
+    close()
+    {
+        let w = require('electron').remote.getCurrentWindow()
+        w.close()
+    },
     async getMyTunnel()
     {
       // 背景擷取通道資訊
