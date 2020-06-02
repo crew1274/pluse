@@ -19,7 +19,7 @@
               <router-link to="/ENG">化金</router-link>
             </el-col>
             <el-col :span="6" :offset="6">
-              <p  @click.native="close" >結束程式</p>
+              <md-button  @click.native="close" >結束程式</md-button>
             </el-col>
           </el-row>
         </div>
@@ -36,13 +36,12 @@
 </template>
 
 <script>
-import {ScrollView, ActivityIndicator, Dialog, Toast, FieldItem, Field, InputItem, Icon, Button} from 'mand-mobile'
+import {ScrollView, ActivityIndicator, Dialog, Toast, FieldItem, Field, InputItem, Icon} from 'mand-mobile'
 
 export default {
   name: "App",
   components: {
     [Icon.name]: Icon,
-    [Button.name]: Button,
     [ScrollView.name]: ScrollView,
     [ActivityIndicator.name]: ActivityIndicator,
     [Dialog.name]: Dialog,
