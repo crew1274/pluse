@@ -134,9 +134,9 @@ export default {
             },
           ],
         },
-        lot: "2019070198-3-1-1",
-        operator: "171104",
-        procseq: "32",
+        lot: "",
+        operator: "",
+        procseq: "",
         payload:
         {
             mfdata:
@@ -169,7 +169,7 @@ export default {
             Height: "", //板高
             Width: "", //版寬
             QTY: "",
-            Mode: "2",
+            Mode: "3",
         },
 
       }

@@ -13,7 +13,6 @@
           <md-button type="primary" @click="getCasseteInfo(true)" >刷新料框資料</md-button>
         </el-col>
       </el-row>
-  
     <el-divider />
     <el-row :gutter="10">
       <el-col :span="8">
@@ -26,17 +25,21 @@
         <md-button type="primary" @click="getCasseteInfo" inactive>輸送料框</md-button>
       </el-col>
     </el-row>
-      <md-dialog title="" v-model="confirmDialog.open" :btns="confirmDialog.btns">
-        <!-- <div style="height:600px"> -->
-        <div>
-            <md-field title="確認生產資訊" brief="RFID感應工單、識別證可自動帶入">
-              <md-input-item title="批號:" v-model="confirmDialog.lot.target" :solid="false" />
-              <md-input-item title="工號:" v-model="confirmDialog.op.target" :solid="false" />
-              <md-agree v-model="checked" @change="onChange">
-                已確認先投料完成
-            </md-agree>
-            </md-field>
-        </div>
+    <el-divider />
+    <div v-show="wait_time">
+      到站等待時間: {{wait_time}}(秒)
+    </div>
+    <md-dialog title="" v-model="confirmDialog.open" :btns="confirmDialog.btns">
+      <!-- <div style="height:600px"> -->
+      <div>
+          <md-field title="確認生產資訊" brief="RFID感應工單、識別證可自動帶入">
+            <md-input-item title="批號:" v-model="confirmDialog.lot.target" :solid="false" />
+            <md-input-item title="工號:" v-model="confirmDialog.op.target" :solid="false" />
+            <md-agree v-model="checked" @change="onChange">
+              已確認先投料完成
+          </md-agree>
+          </md-field>
+      </div>
     </md-dialog>
     <div style="height:220px">
       <md-selector v-model="isSelectorShow" :data="cassette_info" 
@@ -69,6 +72,7 @@ export default {
   data()
   {
     return {
+      wait_time: "0",
       checked: false,
       isSelectorShow: false,
       confirmDialog:
@@ -138,7 +142,14 @@ export default {
       {
         this._.forEach(val,  ele =>
         {
-            console.log(ele["CMD"])
+            if(ele["CMD"] == "24")
+            {
+              let msg = JSON.parse(ele["MSG"])
+              if(this._.isArray(msg)) 
+              {
+                this.wait_time = msg[this._.sortedIndexBy(msg, 'SORT')]["MSG"]
+              }
+            }
         })
       }
     },
@@ -258,8 +269,8 @@ export default {
         RCCODE: this.confirmDialog.lot.code,
         TITLE: "W",
         MSGID: "3017",
-        // CMD: "1",
-        CMD: "31",
+        CMD: "1",
+        // CMD: "31",
         FLOOR: "2" ,
         STOP: "11",
         EQPTID: "210",
@@ -354,7 +365,7 @@ export default {
           // 取得目前料盤狀態
           let ind = this._.findIndex(this.cassette_info, { 'stop': ele["ID"]})
           this.cassette_info[ind]["status"] = ele["Status"]
-          if(ele["Status"] != "1")
+          if(ele["Status"] != "2")
           {
             this.cassette_info[ind]["color"] = "#ada9a8"
             this.cassette_info[ind]["disabled"] = true

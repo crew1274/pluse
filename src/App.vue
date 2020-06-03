@@ -148,7 +148,8 @@ export default {
         {
             if("CMD" in val[i])
             {
-                if(val[i]["CMD"] == "24" || val[i]["CMD"] == "2" || val[i]["CMD"] == "6")
+                if( val[i]["CMD"] == "24" || val[i]["CMD"] == "2" || val[i]["CMD"] == "6" ||
+                    val[i]["CMD"] == "5" || val[i]["CMD"] == "10")
                 {
                   await this.activeResponseAGV(val[i])
                 }
