@@ -294,6 +294,12 @@ export default {
           throw "拒絕叫車"
         }
         Toast.info("叫車成功")
+        this.confirmDialog.lot.target = ""
+        this.confirmDialog.lot.code = ""
+        this.confirmDialog.op.target = ""
+        this.confirmDialog.op.code = ""
+        this.checked = false
+        this.confirmDialog["btns"][1]["disabled"] = true
       })
       .catch( err =>
       {

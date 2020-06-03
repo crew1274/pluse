@@ -333,6 +333,7 @@ export default {
                     throw response["Exception"]
                 }
                 Toast.info("投料成功")
+                this.clean()
             })
             .catch( err =>
             {
@@ -455,7 +456,6 @@ export default {
                         this.recipe[item.procprammes] = +item.procvalue
                     }
                 }
-
                 Toast.info("成功取得製程參數")
                 return true
             })

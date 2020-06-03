@@ -253,7 +253,8 @@ export default {
             payload_e["EECODE"] = this.operator.code
             payload_e["CMD"] = (+payload_e["CMD"] + 1).toString()
             await this.activeResponseAGV(payload_e)
-            this.operator = {}
+            this.operator.code = ""
+            this.operator.target = ""
         }
         else
         {
