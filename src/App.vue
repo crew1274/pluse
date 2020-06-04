@@ -231,6 +231,16 @@ export default {
                 this.isDialogShow = true
                 this.prepare_payload = command
                 this.$refs.inflicted.play()
+
+                /*不刷卡*/
+                this.isDialogShow = false
+                this.$refs.inflicted.pause()
+                let payload_e = this.prepare_payload
+                payload_e["EECODE"] = this.operator.code
+                payload_e["CMD"] = (+payload_e["CMD"] + 1).toString()
+                this.activeResponseAGV(payload_e)
+                this.operator.code = ""
+                this.operator.target = ""
             }
         }) 
     },
