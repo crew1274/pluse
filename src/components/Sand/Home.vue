@@ -1,7 +1,11 @@
 <template>
     <div>
         <el-row :gutter="10">
-            <el-card header="上筆資料" class="normalText">
+            <el-card class="normalText">
+                <div slot="header">
+                    <span>上筆套用參數</span>
+                    <el-button style="float: right; padding: 3px 0" type="text" @click="getPrevRecipe">重新整理</el-button>
+                </div>
                 <el-col :span="12">
                     <md-field title="批號資料">
                         <md-detail-item title="批號:" :content="recipe.lotdata.no" bold />
@@ -96,6 +100,7 @@ export default {
                     throw response["Exception"]
                 }
                 this.recipe = response["response"]
+                Toast.info("更新成功")
             })
             .catch( err =>
             {

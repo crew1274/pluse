@@ -225,9 +225,9 @@ export default {
                 ob["Width"] = ""
             }
 
-            if(this.recipe["QTY"] > 3)
+            if(this.recipe["QTY"] > 6)
             {
-                ob["QTY"] = "不可大於3"
+                ob["QTY"] = "不可大於6"
             }
             else if(this.recipe["QTY"] < 1)
             {

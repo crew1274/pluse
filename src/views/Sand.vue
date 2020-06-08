@@ -2,7 +2,7 @@
   <div>
     <md-tab-bar v-model="tab_current" :items="tab_items"/>
       <keep-alive>
-        <component :is="tab_current"></component>
+        <component :is="tab_current" />
       </keep-alive>
 
     <!-- <md-swiper ref="swiper" :autoplay="0" :dragable="false" :is-loop="false" :has-dots="false"
