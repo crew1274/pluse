@@ -203,10 +203,6 @@ export default {
         {
             return this.$store.state.redis_msg
         },
-        isFocus()
-        {
-            return this.$store.state.sand_tab_current
-        },
         isValid()
         {
             return  ! Object.values(this.isValidMsg).every(x => (x === ""))
@@ -214,13 +210,13 @@ export default {
         isValidMsg()
         {
             let ob = this._.clone(this.recipe, true)
-            if(this.recipe["Height"] > this.spec.SAND.HEIGHT_MAX)
+            if(this.recipe["Height"] > this.spec.ENG.HEIGHT_MAX)
             {
-                ob["Height"] = "不可大於" + this.spec.SAND.HEIGHT_MAX.toString()
+                ob["Height"] = "不可大於" + this.spec.ENG.HEIGHT_MAX.toString()
             }
-            else if(this.recipe["Height"] < this.spec.SAND.HEIGHT_MIN)
+            else if(this.recipe["Height"] < this.spec.ENG.HEIGHT_MIN)
             {
-                ob["Height"] = "不可小於" + this.spec.SAND.HEIGHT_MIN.toString()
+                ob["Height"] = "不可小於" + this.spec.ENG.HEIGHT_MIN.toString()
             }
             else if(isNaN(this.recipe["Height"]))
             {
@@ -231,13 +227,13 @@ export default {
                 ob["Height"] = ""
             }
 
-            if(this.recipe["Width"] > this.spec.SAND.WIDTH_MAX)
+            if(this.recipe["Width"] > this.spec.ENG.WIDTH_MAX)
             {
-                ob["Width"] = "不可大於" + this.spec.SAND.WIDTH_MAX.toString()
+                ob["Width"] = "不可大於" + this.spec.ENG.WIDTH_MAX.toString()
             }
-            else if(this.recipe["Width"] < this.spec.SAND.WIDTH_MIN)
+            else if(this.recipe["Width"] < this.spec.ENG.WIDTH_MIN)
             {
-                ob["Width"] = "不可小於" + + this.spec.SAND.WIDTH_MIN.toString()
+                ob["Width"] = "不可小於" + + this.spec.ENG.WIDTH_MIN.toString()
             }
             else if(isNaN(this.recipe["Width"]))
             {
@@ -248,13 +244,13 @@ export default {
                 ob["Width"] = ""
             }
 
-            if(this.recipe["QTY"] > this.spec.SAND.QTY_MAX)
+            if(this.recipe["QTY"] > this.spec.ENG.QTY_MAX)
             {
-                ob["QTY"] = "不可大於" + this.spec.SAND.QTY_MAX.toString()
+                ob["QTY"] = "不可大於" + this.spec.ENG.QTY_MAX.toString()
             }
-            else if(this.recipe["QTY"] < this.spec.SAND.QTY_MIN)
+            else if(this.recipe["QTY"] < this.spec.ENG.QTY_MIN)
             {
-                ob["QTY"] = "不可小於" + + this.spec.SAND.QTY_MIN.toString()
+                ob["QTY"] = "不可小於" + + this.spec.ENG.QTY_MIN.toString()
             }
             else if(isNaN(this.recipe["QTY"]))
             {
@@ -336,7 +332,7 @@ export default {
         {
             this.$store.commit('update_isLoading', true)
             this.errMsg = ""
-            await fetch('http://10.11.20.108:9999/api/prod/'+ target,
+            await fetch('http://10.11.20.108:9999/api/ENG/prod/'+ target,
             {
                 method: "POST",
                 body: JSON.stringify({

@@ -15,8 +15,9 @@
         <div id="nav">
           <el-row>
             <el-col :span="6" :offset="6">
-              <router-link to="/">噴砂</router-link> |
-              <router-link to="/ENG">化金</router-link>
+              <p>
+                <router-link to="/Sand">噴砂</router-link> || <router-link to="/ENG">化金</router-link>
+              </p>
             </el-col>
             <el-col :span="6" :offset="6">
               <md-button @click="close()" inline plain size="small" icon="wrong">結束程式</md-button>
@@ -169,6 +170,7 @@ export default {
   {
     await this.get_token()
     await this.$store.dispatch('update_admin_settings_action', await this.$store.dispatch("_db", { url: "_db/ENG-10/_api/document/SETTINGS/ADMIN", method: "GET", payload: {}}))
+    this.$store.commit('update_recipe_spec', await this.$store.dispatch("_db", { url: "_db/ENG-10/_api/document/SETTINGS/RECIPE", method: "GET", payload: {}}))
     this.$store.commit('update_agv_info', await this.$store.dispatch("_db", { url: "_db/ENG-10/_api/document/SETTINGS/AGV", method: "GET", payload: {}}))
   },
   async mounted()

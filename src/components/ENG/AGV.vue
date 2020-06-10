@@ -16,10 +16,10 @@
     <el-divider>自動操作類型</el-divider>
     <el-row :gutter="20">
       <el-col :span="8">
-        <md-button type="primary" @click="askCassete">取得料框</md-button>
+        <md-button type="primary" @click="askCassete" inactive>取得料框</md-button>
       </el-col>
       <el-col :span="8">
-        <md-button type="primary" @click="confirmDialog.open = true" >送料(需先帶入參數)</md-button>
+        <md-button type="primary" @click="confirmDialog.open = true" inactive>送料(需先帶入參數)</md-button>
       </el-col>
       <el-col :span="8">
         <md-button type="primary" @click="getCasseteInfo" inactive>輸送料框</md-button>

@@ -19,6 +19,7 @@ export default new Vuex.Store({
         prod: {},
         home: {},
         AGV_CMD: "",
+        spec: {},
     },
     mutations: 
     {
@@ -63,6 +64,10 @@ export default new Vuex.Store({
         update_admin_settings(state, admin_settings)
         {
             state.admin_settings = admin_settings
+        },
+        update_recipe_spec(state, spec)
+        {
+            state.spec = spec
         },
         update_agv_info(state, agv_info)
         {

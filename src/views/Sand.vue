@@ -33,6 +33,7 @@
 import AGV from "@/components/Sand/AGV.vue"
 import Prod from "@/components/Sand/Prod.vue"
 import Home from "@/components/Sand/Home.vue"
+import History from "@/components/Sand/History.vue"
 import {TabBar, Steps,  Swiper, SwiperItem } from "mand-mobile"
 
 export default {
@@ -41,6 +42,7 @@ export default {
     AGV,
     Prod,
     Home,
+    History,
     [TabBar.name]: TabBar,
     [Steps.name]: Steps,
     [Swiper.name]: Swiper,
@@ -49,9 +51,9 @@ export default {
   data()
   {
     return {
-
       tab_current: "Home",
-      tab_items: [{name: "Home", label: '主站狀態'}, {name: "Prod", label: '投料操作'}, {name: "AGV", label: 'AGV操作'}],
+      tab_items: [{name: "Home", label: '噴砂主站'}, {name: "Prod", label: '投料操作'},
+      {name: "AGV", label: 'AGV操作'}, {name: "History", label: '生產履歷'}],
 
       steps: [
         {
@@ -82,7 +84,6 @@ export default {
   }
 };
 </script>
-
 
 <style scoped>
 .hello {

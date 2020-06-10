@@ -3,8 +3,13 @@ import VueRouter from 'vue-router'
 
 Vue.use(VueRouter)
 
-const routes = [{
+const routes = [
+    {
         path: '/',
+        redirect: '/Sand'
+    },
+    {
+        path: '/Sand',
         name: 'Sand',
         meta: { title: "噴砂" },
         component: () => import('@/views/Sand.vue')
