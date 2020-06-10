@@ -91,7 +91,7 @@ export default {
     {
         async getPrevRecipe()
         {
-            await fetch('http://10.11.20.108:9999/api/ENG/now', { method: "GET" })
+            await fetch('http://10.11.20.108:9999/api/now/ENG_HISTORY', { method: "GET" })
             .then( response => {return response.json()})
             .then( response =>
             {

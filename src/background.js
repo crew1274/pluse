@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, protocol, BrowserWindow, dialog } from 'electron'
 import { createProtocol, installVueDevtools } from 'vue-cli-plugin-electron-builder/lib'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -39,6 +39,81 @@ if (process.platform != "browser")
     }
   }) ()
 }
+
+const axios = require('axios')
+
+async function DownLoad(flavor, verison, filename) {
+  // console.log('http://10.11.0.156:9666/download/flavor/' + flavor + '/' + verison + '/linux_32/' + filename)
+  var options
+  var os = require('os')
+  if (os.platform() != "win32") {
+    options = {
+      directory: "/home/pi/Desktop/old_version/",
+      filename: filename
+    }
+  } else {
+    options = {
+      directory: "./",
+      filename: filename
+    }
+  }
+  var download = require('download-file')
+  var fs = require('fs')
+
+  await download('http://10.11.0.156:9666/download/flavor/' + flavor + '/' + verison + '/linux_32/' + filename,
+    options, () => {
+      fs.chmodSync(options["directory"] + filename, '777')
+      const {
+        exec
+      } = require('child_process')
+      if (os.platform() != "win32") {
+        exec("ln -f -s " + options["directory"] + filename + " " + "/home/pi/Desktop/App.AppImage ")
+      }
+      // app.quit()
+      options = {
+        type: 'info',
+        title: '更新成功',
+        message: "程式將自動關閉，請重新執行程式",
+        buttons: ['關閉程式']
+      }
+      if (dialog.showMessageBoxSync(options) == 0) {
+        app.quit()
+      }
+    })
+
+}
+
+async function checkUpdate() {
+  let options = {
+    type: 'info',
+    title: '發現新的版本',
+    message: "是否進行更新?",
+    buttons: ['現在更新', '等等']
+  }
+  await axios.get('http://10.11.0.156:9666/api/version')
+    .then(response => {
+      let a = response.data.reverse()
+      for (let i = 0; i < a.length; i++) {
+        if (a[i]["flavor"]["name"]) {
+          if (app.getName() == a[i]["flavor"]["name"]) {
+            if (app.getVersion() != a[i]["name"]) {
+              if (dialog.showMessageBoxSync(options) == 0) {
+                DownLoad(a[i]["flavor"]["name"], a[i]["name"], a[i]["assets"][0]['name'])
+              }
+            } else {
+              console.log("軟體已是最新")
+            }
+            return
+          }
+        }
+      }
+    })
+    .catch(error => {
+      console.log(error)
+    })
+
+}
+
 
 function createWindow() {
   // Create the browser window.

@@ -68,11 +68,8 @@
                     <md-button  @click="spec_reload" icon="switch">更新參數規範</md-button>
                 </el-col>
                 <el-col :span="8">
-                    <md-button type="primary" @click="prod('auto')" icon="security" :inactive="isValid">確認投料</md-button>
+                    <md-button type="primary" @click="prod('ENG')" icon="security" :inactive="isValid">確認投料</md-button>
                 </el-col>
-                <!-- <el-col :span=8>
-                    <md-button type="default" @click="prod('auto')">參數</md-button>
-                </el-col> -->
             </el-row>
         </div>
         <md-dialog title="" v-model="editDialog.open">
@@ -332,7 +329,7 @@ export default {
         {
             this.$store.commit('update_isLoading', true)
             this.errMsg = ""
-            await fetch('http://10.11.20.108:9999/api/ENG/prod/'+ target,
+            await fetch('http://10.11.20.108:9999/api/prod/ENG'+ target,
             {
                 method: "POST",
                 body: JSON.stringify({
