@@ -68,7 +68,7 @@
                     <md-button  @click="spec_reload" icon="switch">更新參數規範</md-button>
                 </el-col>
                 <el-col :span="8">
-                    <md-button type="primary" @click="prod('auto')" icon="security" :inactive="isValid">確認投料</md-button>
+                    <md-button type="primary" @click="prod('SAND')" icon="security" :inactive="isValid">確認投料</md-button>
                 </el-col>
                 <!-- <el-col :span=8>
                     <md-button type="default" @click="prod('auto')">參數</md-button>
