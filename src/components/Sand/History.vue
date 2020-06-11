@@ -3,7 +3,7 @@
         <el-row>
             
                 <div v-for="(item, index) in history_list" :key="index">
-                    <el-col :span="6">
+                    <el-col :span="8">
                         <md-field>
                             <md-detail-item title="批號" :content="item.lotdata.no" bold />
                             <md-detail-item title="料號" :content="item.lotdata.itemno" />
