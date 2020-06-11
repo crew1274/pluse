@@ -42,7 +42,8 @@ if (process.platform != "browser")
 
 const axios = require('axios')
 
-async function DownLoad(flavor, verison, filename) {
+async function DownLoad(flavor, verison, filename) 
+{
   // console.log('http://10.11.0.156:9666/download/flavor/' + flavor + '/' + verison + '/linux_32/' + filename)
   var options
   var os = require('os')
@@ -83,24 +84,32 @@ async function DownLoad(flavor, verison, filename) {
 
 }
 
-async function checkUpdate() {
-  let options = {
+async function checkUpdate()
+{
+  let options =
+  {
     type: 'info',
     title: '發現新的版本',
     message: "是否進行更新?",
     buttons: ['現在更新', '等等']
   }
   await axios.get('http://10.11.0.156:9666/api/version')
-    .then(response => {
+    .then(response =>
+    {
       let a = response.data.reverse()
       for (let i = 0; i < a.length; i++) {
         if (a[i]["flavor"]["name"]) {
-          if (app.getName() == a[i]["flavor"]["name"]) {
-            if (app.getVersion() != a[i]["name"]) {
-              if (dialog.showMessageBoxSync(options) == 0) {
+          if (app.getName() == a[i]["flavor"]["name"])
+          {
+            if (app.getVersion() != a[i]["name"])
+            {
+              if (dialog.showMessageBoxSync(options) == 0)
+              {
                 DownLoad(a[i]["flavor"]["name"], a[i]["name"], a[i]["assets"][0]['name'])
               }
-            } else {
+            } 
+            else
+            {
               console.log("軟體已是最新")
             }
             return
@@ -180,6 +189,7 @@ app.on('ready', async () => {
 
   }
   createWindow()
+  checkUpdate()
 })
 
 // Exit cleanly on request from parent process in development mode.

@@ -3399,6 +3399,13 @@ dotenv@^8.0.0, dotenv@^8.2.0:
   resolved "https://r.cnpmjs.org/dotenv/download/dotenv-8.2.0.tgz#97e619259ada750eea3e4ea3e26bceea5424b16a"
   integrity sha1-l+YZJZradQ7qPk6j4mvO6lQksWo=
 
+download-file@^0.1.5:
+  version "0.1.5"
+  resolved "https://r.cnpmjs.org/download-file/download/download-file-0.1.5.tgz#ca50ba64d9094b0c8702ef9fff92d2189e141117"
+  integrity sha1-ylC6ZNkJSwyHAu+f/5LSGJ4UERc=
+  dependencies:
+    mkdirp "^0.5.0"
+
 duplexer3@^0.1.4:
   version "0.1.4"
   resolved "https://r.cnpmjs.org/duplexer3/download/duplexer3-0.1.4.tgz#ee01dd1cac0ed3cbc7fdbea37dc0a8f1ce002ce2"
@@ -6148,7 +6155,7 @@ mixin-deep@^1.2.0:
     for-in "^1.0.2"
     is-extendable "^1.0.1"
 
-mkdirp@^0.5.1, mkdirp@^0.5.3, mkdirp@^0.5.4, mkdirp@~0.5.1:
+mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@^0.5.3, mkdirp@^0.5.4, mkdirp@~0.5.1:
   version "0.5.5"
   resolved "https://r.cnpmjs.org/mkdirp/download/mkdirp-0.5.5.tgz#d91cefd62d1436ca0f41620e251288d420099def"
   integrity sha1-2Rzv1i0UNsoPQWIOJRKI1CAJne8=
