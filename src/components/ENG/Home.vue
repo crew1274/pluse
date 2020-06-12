@@ -20,7 +20,9 @@
                         <md-detail-item title="板高:" :content="recipe.recipe.Height" />
                         <md-detail-item title="板寬:" :content="recipe.recipe.Width" />
                         <md-detail-item title="片數:" :content="recipe.recipe.QTY" />
-                        <md-detail-item title="模式:" :content="recipe.recipe.Mode" />
+                        <md-detail-item title="化鎳時間(秒):" :content="recipe.recipe.ENiPlatedtime" />
+                        <md-detail-item title="化金時間(秒)" :content="recipe.recipe.EAuPlatedtime" />
+                        <md-detail-item title="厚金時間(秒)" :content="recipe.recipe.EHAuPlatedtime" />
                     </md-field>
                 </el-col>
             </el-card>

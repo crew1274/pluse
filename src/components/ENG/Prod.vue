@@ -41,15 +41,13 @@
                         clearable align="right" :error="isValidMsg.Width" />
                         <md-input-item title="片數:" :value="recipe.QTY" @click.native="openDialog('recipe.QTY')"
                         clearable align="right" :error="isValidMsg.QTY" />
-                        <md-detail-item title="噴砂模式:">
-                            <md-radio-group v-model="recipe.Mode">
-                                <md-radio-box name="1">模式1</md-radio-box>
-                                <md-radio-box name="2">模式2</md-radio-box>
-                                <md-radio-box name="3">模式3</md-radio-box>
-                                <md-radio-box name="4">模式4</md-radio-box>
-                                <md-radio-box name="5">模式5</md-radio-box>
-                            </md-radio-group>
-                        </md-detail-item>
+                        <md-input-item title="化鎳時間(秒):" :value="recipe.ENiPlatedtime" @click.native="openDialog('recipe.ENiPlatedtime')"
+                        clearable align="right"  />
+                        <md-input-item title="化金時間(秒):" :value="recipe.EAuPlatedtime" @click.native="openDialog('recipe.EAuPlatedtime')"
+                        clearable align="right"  />
+                        <md-input-item title="厚金時間(秒):" :value="recipe.EHAuPlatedtime" @click.native="openDialog('recipe.EHAuPlatedtime')"
+                        clearable align="right"  />
+
                     </md-field>
                 </el-col>
             </el-row>
@@ -168,8 +166,10 @@ export default {
         {
             Height: "", //板高
             Width: "", //版寬
-            QTY: "",
-            Mode: "3",
+            QTY: "", //片數
+            ENiPlatedtime: "", //化鎳
+            EAuPlatedtime: "", //化金
+            EHAuPlatedtime: "", //厚金
         },
         spec:
         {
@@ -180,7 +180,7 @@ export default {
                 WIDTH_MAX: 600.00,
                 WIDTH_MIN: 300.00,
                 QTY_MAX: 3,
-                QTY_MIN: 1
+                QTY_MIN: 1,
             },
             SAND:
             {
@@ -207,6 +207,9 @@ export default {
         isValidMsg()
         {
             let ob = this._.clone(this.recipe, true)
+            ob["ENiPlatedtime"] = ""
+            ob["EAuPlatedtime"] = ""
+            ob["EHAuPlatedtime"] = ""
             if(this.recipe["Height"] > this.spec.ENG.HEIGHT_MAX)
             {
                 ob["Height"] = "不可大於" + this.spec.ENG.HEIGHT_MAX.toString()
@@ -257,7 +260,6 @@ export default {
             {
                 ob["QTY"] = ""
             }
-            ob["Mode"] = ""
             return ob
         },
     },

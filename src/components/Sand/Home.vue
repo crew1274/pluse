@@ -20,7 +20,7 @@
                         <md-detail-item title="板高:" :content="recipe.recipe.Height" />
                         <md-detail-item title="板寬:" :content="recipe.recipe.Width" />
                         <md-detail-item title="片數:" :content="recipe.recipe.QTY" />
-                        <md-detail-item title="模式:" :content="recipe.recipe.Mode" />
+                        <md-detail-item title="噴砂模式:" :content="recipe.recipe.Mode" />
                     </md-field>
                 </el-col>
             </el-card>

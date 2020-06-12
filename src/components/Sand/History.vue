@@ -1,20 +1,19 @@
 <template>
     <div>
         <el-row>
-            
-                <div v-for="(item, index) in history_list" :key="index">
-                    <el-col :span="8">
-                        <md-field>
-                            <md-detail-item title="批號" :content="item.lotdata.no" bold />
-                            <md-detail-item title="料號" :content="item.lotdata.itemno" />
-                            <md-detail-item title="開始時間" :content="item.STARTDATETIME" />
-                            <md-detail-item title="結束時間" :content="item.ENDDATETIME" />
-                            <md-detail-item title="詳細">
-                                <md-button  icon="id-card" @click="check_detail(index)">查看詳細</md-button>
-                            </md-detail-item>
-                        </md-field>
-                    </el-col>
-                </div>
+            <div v-for="(item, index) in history_list" :key="index">
+                <el-col :span="8">
+                    <md-field>
+                        <md-detail-item title="批號" :content="item.lotdata.no" bold />
+                        <md-detail-item title="料號" :content="item.lotdata.itemno" />
+                        <md-detail-item title="開始時間" :content="item.STARTDATETIME" />
+                        <md-detail-item title="結束時間" :content="item.ENDDATETIME" />
+                        <md-detail-item title="詳細">
+                            <md-button  icon="id-card" @click="check_detail(index)">查看詳細</md-button>
+                        </md-detail-item>
+                    </md-field>
+                </el-col>
+            </div>
         </el-row>
         <md-dialog v-model="isPopupShow" :btns="btns">
             <div style="height:300px">
