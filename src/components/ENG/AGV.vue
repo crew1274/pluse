@@ -288,7 +288,7 @@ export default {
         CMD: "1",
         // CMD: "31",
         FLOOR: "2" ,
-        STOP: "11",
+        STOP: "13",
         EQPTID: "210",
         MSGTYPE: "API",
         MSG: "",
