@@ -52,7 +52,7 @@ export default {
   {
     return {
       tab_current: "Home",
-      tab_items: [{name: "Home", label: '噴砂主站'}, {name: "Prod", label: '投料操作'},
+      tab_items: [{name: "Home", label: '噴砂站'}, {name: "Prod", label: '投料操作'},
       {name: "AGV", label: 'AGV操作'}, {name: "History", label: '生產履歷'}],
 
       steps: [

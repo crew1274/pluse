@@ -1,5 +1,10 @@
 <template>
     <div>
+        <el-row>
+            <el-col :span="8">
+                <md-button type="primary" @click="ResetPLC">PLC重新連線</md-button>
+            </el-col>
+        </el-row>
         <el-row :gutter="10">
             <el-card class="normalText">
                 <div slot="header">
@@ -89,6 +94,31 @@ export default {
     },
     methods:
     {
+        async ResetPLC()
+        {
+            this.$store.commit('update_isLoading', true)
+            await fetch('http://10.11.20.108:9999/api/reset/plc',{ 
+                method: "GET"
+            })
+            .then( response => {return response.json()})
+            .then( response =>
+            {
+                if(response["Exception"])
+                {
+                    throw response["Exception"]
+                }
+                this.recipe = response["response"]
+                Toast.info("重新連線成功")
+            })
+            .catch( err =>
+            {
+                Toast.warning(err)
+            })
+            .finally( () =>
+            {
+                this.$store.commit('update_isLoading', false)
+            })
+        },
         async getPrevRecipe()
         {
             await fetch('http://10.11.20.108:9999/api/now/SAND_HISTORY', { method: "GET" })

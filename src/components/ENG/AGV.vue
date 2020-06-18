@@ -19,7 +19,7 @@
         <md-button type="primary" @click="askCassete" inactive>取得料框</md-button>
       </el-col>
       <el-col :span="8">
-        <md-button type="primary" @click="confirmDialog.open = true" inactive>送料(需先帶入參數)</md-button>
+        <md-button type="primary" @click="confirmDialog.open = true">送料(需先帶入參數)</md-button>
       </el-col>
       <el-col :span="8">
         <md-button type="primary" @click="getCasseteInfo" inactive>輸送料框</md-button>
@@ -108,7 +108,7 @@ export default {
             handler: this.confirmCancel,
           },
           {
-            text: 'AGV目的:噴砂上料區',
+            text: 'AGV目的:化金上下料區',
             warning : false,
             icon: "rectangle",
             handler: this.goCar,
