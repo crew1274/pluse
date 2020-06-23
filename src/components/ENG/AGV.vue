@@ -2,30 +2,22 @@
   <div class="hello">
       <!-- <p class="hello">料框定位:</p> -->
       <el-row>
-        <el-col :span="18">
           料框定位:
           <md-tag v-for="(stop, index) in cassette_info" :key="index" size="large" shape="circle" type="fill"
             :fill-color="stop.color" font-color="#fff">
             {{stop["name"]}}
           </md-tag>
-        </el-col>
-        <el-col :span="6">
-          <md-button type="primary" @click="getCasseteInfo(true)" >更新料框定位</md-button>
-        </el-col>
       </el-row>
-    <el-divider>自動操作類型</el-divider>
+    <el-divider>自動流程操作</el-divider>
     <el-row :gutter="20">
       <el-col :span="8">
         <md-button type="primary" @click="askCassete" inactive>取得料框</md-button>
       </el-col>
-      <el-col :span="8">
-        <md-button type="primary" @click="confirmDialog.open = true">送料(需先帶入參數)</md-button>
-      </el-col>
-      <el-col :span="8">
-        <md-button type="primary" @click="getCasseteInfo" inactive>輸送料框</md-button>
+      <el-col :span="12">
+        <md-button type="primary" @click="confirmDialog.open = true">送料到化金站</md-button>
       </el-col>
     </el-row>
-    <el-divider>手動操作類型</el-divider>
+    <el-divider>手動流程類型</el-divider>
     <el-row :gutter="20">
       <el-col :span="8">
         <md-button type="primary" @click="askCassete" inactive>強制回應</md-button>
@@ -133,7 +125,8 @@ export default {
       cassette_info: [ 
         {name: "調整站", stop: "210", status: "", color: "#FC7353", text:"調整站", value:"210", disabled:true},
         {name :"噴砂上料區", stop: "211", status: "", color: "#FC7353", text:"噴砂上料區", value:"211", disabled:true},
-        {name :"噴砂下料區", stop: "212", status: "", color: "#FC7353", text:"噴砂下料區", value:"212", disabled:true}
+        {name :"噴砂下料區", stop: "212", status: "", color: "#FC7353", text:"噴砂下料區", value:"212", disabled:true},
+        {name :"化金上下料區", stop: "213", status: "", color: "#FC7353", text:"化金上下料區", value:"212", disabled:true}
       ]
     }
   },

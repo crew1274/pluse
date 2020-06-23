@@ -21,7 +21,7 @@
                     <md-detail-item title="板高:" :content="recipe.recipe.Height" />
                     <md-detail-item title="板寬:" :content="recipe.recipe.Width" />
                     <md-detail-item title="片數:" :content="recipe.recipe.QTY" />
-                    <md-detail-item title="模式:" :content="recipe.recipe.Mode" />
+                    <md-detail-item title="噴砂模式:" :content="recipe.recipe.Mode" />
                 </md-field>
             </div>
         </md-dialog>
@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { DatePicker, Button, Field, FieldItem, DetailItem, Dialog} from "mand-mobile"
+import { DatePicker, Button, Field, FieldItem, DetailItem, Dialog, Toast} from "mand-mobile"
 import * as moment from "moment/moment"
 
 export default {
@@ -45,7 +45,7 @@ export default {
     },
     props:
     {
-        msg: String
+        isRefresh: Boolean,
     },
     data()
     {
@@ -67,7 +67,14 @@ export default {
     },
     watch:
     {
-
+        async isRefresh(val)
+        {
+            if(val)
+            {
+                await this.getHistory()
+                this.$emit('finishRefresh')
+            }
+        }
     },
     async beforeCreate()
     {
@@ -119,6 +126,7 @@ export default {
                     "count": true
                 }
             })
+            Toast.info("噴砂線生產履歷更新成功")
             this.history_list = response["result"]
         }
     }

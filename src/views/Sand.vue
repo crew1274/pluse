@@ -2,9 +2,8 @@
   <div>
     <md-tab-bar v-model="tab_current" :items="tab_items"/>
       <keep-alive>
-        <component :is="tab_current" />
+        <component :is="tab_current" :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" />
       </keep-alive>
-
     <!-- <md-swiper ref="swiper" :autoplay="0" :dragable="false" :is-loop="false" :has-dots="false"
       @before-change="onSwiperChange">
       <md-swiper-item>
@@ -34,6 +33,7 @@ import AGV from "@/components/Sand/AGV.vue"
 import Prod from "@/components/Sand/Prod.vue"
 import Home from "@/components/Sand/Home.vue"
 import History from "@/components/Sand/History.vue"
+import Setting from "@/components/Sand/Setting.vue"
 import {TabBar, Steps,  Swiper, SwiperItem } from "mand-mobile"
 
 export default {
@@ -42,33 +42,38 @@ export default {
     AGV,
     Prod,
     Home,
+    Setting,
     History,
     [TabBar.name]: TabBar,
     [Steps.name]: Steps,
     [Swiper.name]: Swiper,
     [SwiperItem.name]: SwiperItem,
   },
+  props: 
+  {
+      isRefresh: Boolean,
+  },
   data()
   {
     return {
       tab_current: "Home",
       tab_items: [{name: "Home", label: '噴砂站'}, {name: "Prod", label: '投料操作'},
-      {name: "AGV", label: 'AGV操作'}, {name: "History", label: '生產履歷'}],
+      {name: "AGV", label: 'AGV操作'}, {name: "Setting", label: '設定'}, {name: "History", label: '生產履歷'}],
 
-      steps: [
-        {
-          name: '取得料框',
-        },
-        {
-          name: '調整治具',
-        },
-        {
-          name: '投入參數',
-        },
-        {
-          name: '送出料框',
-        },
-      ],
+      // steps: [
+      //   {
+      //     name: '取得料框',
+      //   },
+      //   {
+      //     name: '調整治具',
+      //   },
+      //   {
+      //     name: '投入參數',
+      //   },
+      //   {
+      //     name: '送出料框',
+      //   },
+      // ],
     }
   },
   watch:
@@ -80,7 +85,10 @@ export default {
   },
   methods:
   {
-
+    finishRefresh()
+    {
+      this.$emit('finishRefresh')
+    }
   }
 };
 </script>

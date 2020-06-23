@@ -8,7 +8,14 @@
       </div>
     </div>
     <div v-show="!isLoading" class="fixed">
-      <md-scroll-view auto-reflow :scrolling-x="false">
+      <md-scroll-view auto-reflow :scrolling-x="false" @refreshing="refreshingEvent" ref="scrollView">
+        <md-scroll-view-refresh slot="refresh" slot-scope="{ scrollTop, isRefreshActive, isRefreshing }"
+            :scroll-top="scrollTop"
+            :is-refreshing="isRefreshing"
+            :is-refresh-active="isRefreshActive"
+            refresh-text="下拉刷新"
+            refreshing-text="更新資料中"
+            refresh-active-text="釋放可刷新" />
       <div id="c">
           {{version}}
       </div>
@@ -16,7 +23,7 @@
           <el-row>
             <el-col :span="6" :offset="6">
               <p>
-                <router-link to="/Sand">噴砂</router-link> || <router-link to="/ENG">化金</router-link>
+                <router-link to="/Sand">噴砂</router-link> || <router-link to="/ENG">化金</router-link> 
               </p>
             </el-col>
             <el-col :span="6" :offset="6">
@@ -24,7 +31,7 @@
             </el-col>
           </el-row>
         </div>
-        <router-view/>
+        <router-view :isRefresh="isRefresh"  v-on:finishRefresh="finishRefresh"/>
       </md-scroll-view>
     </div>
     <md-dialog title="到站通知" :closable="false" v-model="isDialogShow" :btns="DialogShowBtns" >
@@ -37,7 +44,8 @@
 </template>
 
 <script>
-import {ScrollView, ActivityIndicator, Dialog, Toast, FieldItem, Field, InputItem, Icon, Button} from 'mand-mobile'
+import {ScrollView, ActivityIndicator, Dialog, Toast, FieldItem, Field, InputItem,
+ Icon, Button, ScrollViewRefresh} from 'mand-mobile'
 
 export default {
   name: "App",
@@ -45,6 +53,7 @@ export default {
     [Icon.name]: Icon,
     [Button.name]: Button,
     [ScrollView.name]: ScrollView,
+    [ScrollViewRefresh.name]: ScrollViewRefresh,
     [ActivityIndicator.name]: ActivityIndicator,
     [Dialog.name]: Dialog,
     [FieldItem.name]: FieldItem,
@@ -69,6 +78,7 @@ export default {
         code: "",
         target: "",
       },
+      isRefresh: false,
     }
   },
   computed:
@@ -273,6 +283,17 @@ export default {
             Toast.failed("請輸入工號")
         }
     },
+    async refreshingEvent()
+    {
+      // console.log(this.$refs[`scrollView`])
+      this.isRefresh = true
+      // console.log(this.$refs[`scrollView`])
+    },
+    finishRefresh()
+    {
+      this.$refs[`scrollView`].finishRefresh()
+      this.isRefresh = false
+    }
   }
 }
 </script>

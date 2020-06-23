@@ -1,15 +1,11 @@
 <template>
     <div>
-        <el-row>
-            <el-col :span="8">
-                <md-button type="primary" @click="ResetPLC">PLC重新連線</md-button>
-            </el-col>
-        </el-row>
         <el-row :gutter="10">
+            <el-row />
             <el-card class="normalText">
                 <div slot="header">
-                    <span>上筆套用參數</span>
-                    <el-button style="float: right; padding: 3px 0" type="text" @click="getPrevRecipe">重新整理</el-button>
+                    <span>噴砂站當前套用參數</span>
+                    <!-- <el-button style="float: right; padding: 3px 0" type="text" @click="getPrevRecipe">重新整理</el-button> -->
                 </div>
                 <el-col :span="12">
                     <md-field title="批號資料">
@@ -53,7 +49,7 @@ export default {
         [FieldItem.name]: FieldItem,
     },
     props: {
-
+        isRefresh: Boolean,
     },
     data()
     {
@@ -67,7 +63,14 @@ export default {
     },
     watch:
     {
-
+        async isRefresh(val)
+        {
+            if(val)
+            {
+                await this.getPrevRecipe()
+                this.$emit('finishRefresh')
+            }
+        }
     },
     async beforeCreate()
     {
@@ -83,7 +86,7 @@ export default {
     },
     async mounted()
     { 
-            await this.getPrevRecipe()
+        await this.getPrevRecipe()
     },
     async beforeDestroy()
     {
@@ -92,33 +95,12 @@ export default {
     {
 
     },
+    activated() 
+    {},
+    deactivated() 
+    {},
     methods:
     {
-        async ResetPLC()
-        {
-            this.$store.commit('update_isLoading', true)
-            await fetch('http://10.11.20.108:9999/api/reset/plc',{ 
-                method: "GET"
-            })
-            .then( response => {return response.json()})
-            .then( response =>
-            {
-                if(response["Exception"])
-                {
-                    throw response["Exception"]
-                }
-                this.recipe = response["response"]
-                Toast.info("重新連線成功")
-            })
-            .catch( err =>
-            {
-                Toast.warning(err)
-            })
-            .finally( () =>
-            {
-                this.$store.commit('update_isLoading', false)
-            })
-        },
         async getPrevRecipe()
         {
             await fetch('http://10.11.20.108:9999/api/now/SAND_HISTORY', { method: "GET" })
@@ -130,7 +112,7 @@ export default {
                     throw response["Exception"]
                 }
                 this.recipe = response["response"]
-                Toast.info("更新成功")
+                Toast.succeed("噴砂線當前參數更新成功")
             })
             .catch( err =>
             {

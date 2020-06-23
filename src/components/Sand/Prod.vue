@@ -115,7 +115,7 @@ export default {
     [FieldItem.name]: FieldItem,
   },
   props: {
-
+        isRefresh: Boolean,
   },
   data() 
   {
@@ -283,6 +283,13 @@ export default {
         //     },
         //     deep: true
         // },
+        async isRefresh(val)
+        {
+            if(val)
+            {
+                this.$emit('finishRefresh')
+            }
+        },
         redis_msg(value)
         {
             let val = value['msg']
@@ -368,7 +375,7 @@ export default {
 
         editDialogEnter(val)
         {
-            Toast.info(val)
+            Toast({ content: val, position: 'top', duration: 1000})
             this.editDialog.overwrite += val
         },
 
@@ -383,7 +390,8 @@ export default {
 
         editDialogConfirm()
         {
-            Toast.info(this.editDialog.target + "->" + this.editDialog.overwrite)
+            Toast({ content: this.editDialog.target + "->" + this.editDialog.overwrite,
+                position: 'top', duration: 2000, icon: 'edit' })
             this.editDialog.open = false
             this._.set(this.$data, this.editDialog.target_key, this.editDialog.overwrite)
         },
@@ -408,10 +416,6 @@ export default {
             {
                 return this.keyBoardRender
             }
-        },
-        hint(val)
-        {
-            Toast.info(val)
         },
         async prepare()
         {

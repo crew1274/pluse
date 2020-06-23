@@ -2,7 +2,7 @@
   <div>
     <md-tab-bar v-model="tab_current" :items="tab_items"/>
       <keep-alive>
-        <component :is="tab_current" />
+        <component :is="tab_current" :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" />
       </keep-alive>
   </div>
 </template>
@@ -26,12 +26,21 @@ export default {
     [Swiper.name]: Swiper,
     [SwiperItem.name]: SwiperItem,
   },
+  props: 
+  {
+      isRefresh: Boolean,
+  },
   data()
   {
     return {
       tab_current: "Home",
-      tab_items: [{name: "Home", label: '噴砂主站'}, {name: "Prod", label: '投料操作'},
-      {name: "AGV", label: 'AGV操作'}, {name: "History", label: '生產履歷'}],    }
+      tab_items: [
+        {name: "Home", label: '化金站'},
+        {name: "Prod", label: '投料操作'},
+        {name: "AGV", label: 'AGV操作'},
+        {name: "History", label: '生產履歷'},
+      ],
+    }
   },
   watch:
   {
@@ -39,9 +48,12 @@ export default {
   },
   methods:
   {
-
+    finishRefresh()
+    {
+      this.$emit('finishRefresh')
+    }
   }
-};
+}
 </script>
 
 <style scoped>

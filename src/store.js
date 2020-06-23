@@ -151,12 +151,15 @@ export default new Vuex.Store({
             {
                 commit('update_AGV_CMD', command["CMD"])
             }) 
-
         },
         async update_admin_settings_action({commit}, settings)
         {
             commit('update_admin_settings', settings)
         },
+        async sleep(ms = 0)
+        {
+            return new Promise(r => setTimeout(r, ms))
+        }
     },
     modules: {},
 })
