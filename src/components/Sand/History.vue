@@ -126,7 +126,7 @@ export default {
                     "count": true
                 }
             })
-            Toast.info("噴砂線生產履歷更新成功")
+            Toast.succeed("噴砂線生產履歷更新成功")
             this.history_list = response["result"]
         }
     }

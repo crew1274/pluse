@@ -1,10 +1,12 @@
 <template>
     <div>
         <el-row :gutter="10">
+        </el-row>
+        <el-row :gutter="10">
             <el-card class="normalText">
                 <div slot="header">
-                    <span>上筆套用參數</span>
-                    <el-button style="float: right; padding: 3px 0" type="text" @click="getPrevRecipe">重新整理</el-button>
+                    <span>化金線套用參數</span>
+                    <!-- <el-button style="float: right; padding: 3px 0" type="text" @click="getPrevRecipe">重新整理</el-button> -->
                 </div>
                 <el-col :span="12">
                     <md-field title="批號資料">
@@ -19,7 +21,8 @@
                     <md-field title="詳細參數">
                         <md-detail-item title="板高:" :content="recipe.recipe.Height" />
                         <md-detail-item title="板寬:" :content="recipe.recipe.Width" />
-                        <md-detail-item title="片數:" :content="recipe.recipe.QTY" />
+                        <md-detail-item title="生產總片數:" :content="recipe.recipe.QTY" />
+                        <md-detail-item title="每框片數:" :content="recipe.recipe.eachQTY" />
                         <md-detail-item title="化鎳時間(秒):" :content="recipe.recipe.ENiPlatedtime" />
                         <md-detail-item title="化金時間(秒)" :content="recipe.recipe.EAuPlatedtime" />
                         <md-detail-item title="厚金時間(秒)" :content="recipe.recipe.EHAuPlatedtime" />
@@ -50,7 +53,7 @@ export default {
         [FieldItem.name]: FieldItem,
     },
     props: {
-
+        isRefresh: Boolean,
     },
     data()
     {
@@ -64,7 +67,14 @@ export default {
     },
     watch:
     {
-
+        async isRefresh(val)
+        {
+            if(val)
+            {
+                await this.getPrevRecipe()
+                this.$emit('finishRefresh')
+            }
+        }
     },
     async beforeCreate()
     {
@@ -102,7 +112,7 @@ export default {
                     throw response["Exception"]
                 }
                 this.recipe = response["response"]
-                Toast.info("更新成功")
+                Toast.succeed("化金線參數更新成功")
             })
             .catch( err =>
             {

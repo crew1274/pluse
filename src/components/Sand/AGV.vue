@@ -13,7 +13,7 @@
       <el-col :span="8">
         <md-button type="primary" @click="askCassete">取得料框</md-button>
       </el-col>
-      <el-col :span="12">
+      <el-col :span="16">
         <md-button type="primary" @click="confirmDialog.open = true" >送料到噴砂上料站(需先帶入參數)</md-button>
       </el-col>
     </el-row>
@@ -340,10 +340,6 @@ export default {
         return
       }
       this.isSelectorShow = true
-    },
-    greet()
-    {
-      Toast.info("I'm Batman!")
     },
     async timeoutCheck(delay)
     {

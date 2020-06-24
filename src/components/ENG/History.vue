@@ -21,8 +21,11 @@
                 <md-field title="詳細參數">
                     <md-detail-item title="板高:" :content="recipe.recipe.Height" />
                     <md-detail-item title="板寬:" :content="recipe.recipe.Width" />
-                    <md-detail-item title="片數:" :content="recipe.recipe.QTY" />
-                    <md-detail-item title="模式:" :content="recipe.recipe.Mode" />
+                    <md-detail-item title="生產總片數:" :content="recipe.recipe.QTY" />
+                    <md-detail-item title="每框片數:" :content="recipe.recipe.eachQTY" />
+                    <md-detail-item title="化鎳時間(秒):" :value="recipe.recipe.ENiPlatedtime" />
+                    <md-detail-item title="化金時間(秒):" :value="recipe.recipe.EAuPlatedtime" />
+                    <md-detail-item title="厚金時間(秒):" :value="recipe.recipe.EHAuPlatedtime" />
                 </md-field>
             </div>
         </md-dialog>
@@ -30,7 +33,7 @@
 </template>
 
 <script>
-import { DatePicker, Button, Field, FieldItem, DetailItem, Dialog} from "mand-mobile"
+import { DatePicker, Button, Field, FieldItem, DetailItem, Dialog, Toast} from "mand-mobile"
 import * as moment from "moment/moment"
 
 export default {
@@ -46,7 +49,7 @@ export default {
     },
     props:
     {
-        msg: String
+        isRefresh: Boolean,
     },
     data()
     {
@@ -68,7 +71,14 @@ export default {
     },
     watch:
     {
-
+        async isRefresh(val)
+        {
+            if(val)
+            {
+                await this.getHistory()
+                this.$emit('finishRefresh')
+            }
+        }
     },
     async beforeCreate()
     {
@@ -88,7 +98,7 @@ export default {
     },
     activated()
     {
-        this.getHistory()
+        // this.getHistory()
     },
     async beforeDestroy()
     {
@@ -120,6 +130,7 @@ export default {
                     "count": true
                 }
             })
+            Toast.succeed("化金線生產履歷更新成功")
             this.history_list = response["result"]
         }
     }

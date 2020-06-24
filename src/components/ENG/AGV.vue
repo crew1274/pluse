@@ -8,16 +8,16 @@
             {{stop["name"]}}
           </md-tag>
       </el-row>
-    <el-divider>自動流程操作</el-divider>
+    <el-divider>自動操作類型</el-divider>
     <el-row :gutter="20">
       <el-col :span="8">
-        <md-button type="primary" @click="askCassete" inactive>取得料框</md-button>
+        <md-button type="primary" @click="askCassete">取得料框</md-button>
       </el-col>
-      <el-col :span="12">
-        <md-button type="primary" @click="confirmDialog.open = true">送料到化金站</md-button>
+      <el-col :span="16">
+        <md-button type="primary" @click="confirmDialog.open = true" >送料到化金上下料區(需先帶入參數)</md-button>
       </el-col>
     </el-row>
-    <el-divider>手動流程類型</el-divider>
+    <el-divider>手動操作類型</el-divider>
     <el-row :gutter="20">
       <el-col :span="8">
         <md-button type="primary" @click="askCassete" inactive>強制回應</md-button>
@@ -34,7 +34,7 @@
     <div v-show="wait_time">
       到站等待時間: {{wait_time}}(秒)
     </div>
-    <md-dialog title="" v-model="confirmDialog.open" :btns="confirmDialog.btns">
+    <md-dialog title="" v-model="confirmDialog.open" :btns="confirmDialog.btns" :closable="false">
       <!-- <div style="height:600px"> -->
       <div>
           <md-field title="確認生產資訊" brief="RFID感應工單、識別證可自動帶入">
@@ -48,7 +48,7 @@
     </md-dialog>
     <div style="height:220px">
       <md-selector v-model="isSelectorShow" :data="cassette_info" 
-      title="選擇料框來源" describe="請先進行料框定位" okText="確認" cancel-text="取消"
+      title="選擇料框來源" describe="需先進行料框定位(下拉頁面取得)" okText="確認" cancel-text="取消"
       @confirm="onSelectorConfirm" large-radius />
     </div>
     <audio ref="audio" src="http://10.11.0.156/inflicted.mp3"></audio>
@@ -72,7 +72,7 @@ export default {
     [Dialog.name]: Dialog,
   },
   props: {
-    msg: String
+    isRefresh: Boolean,
   },
   data()
   {
@@ -100,7 +100,7 @@ export default {
             handler: this.confirmCancel,
           },
           {
-            text: 'AGV目的:化金上下料區',
+            text: 'AGV目的:噴砂上料區',
             warning : false,
             icon: "rectangle",
             handler: this.goCar,
@@ -143,6 +143,14 @@ export default {
   },
   watch:
   {
+    async isRefresh(val)
+    {
+        if(val)
+        {
+            await this.getCasseteInfo(false)
+            this.$emit('finishRefresh')
+        }
+    },
     agv_response(val)
     {
       if(this._.isArray(val) && val.length)
@@ -248,6 +256,10 @@ export default {
       })
       this.$store.commit('update_isLoading', false)
     },
+    resetDialog()
+    {
+      this.checked = false
+    },
     onChange()
     {
       this.confirmDialog["btns"][1]["disabled"] = !this.checked
@@ -261,6 +273,7 @@ export default {
         this.confirmDialog.lot = {
             code: "", target: ""
         }
+        this.checked = false
     },
     async goCar()
     {
@@ -328,10 +341,6 @@ export default {
       }
       this.isSelectorShow = true
     },
-    greet()
-    {
-      Toast.info("I'm Batman!")
-    },
     async timeoutCheck(delay)
     {
         return new Promise( reject =>
@@ -357,6 +366,10 @@ export default {
         },
         {
           "ID": "212",
+          "Status": "",
+        },
+        {
+          "ID": "213",
           "Status": "",
         },
       ]
@@ -393,11 +406,11 @@ export default {
             this.cassette_info[ind]["disabled"] = false
           }
         })
-        Toast.info("更新成功")
+        Toast.succeed("更新料框定位資料")
       })
       .catch( () =>
       {
-        Toast.failed("Timeout Error!")
+        Toast.failed("請求回應逾時!")
       })
       .finally( () =>
       {

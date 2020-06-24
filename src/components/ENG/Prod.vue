@@ -39,8 +39,10 @@
                         clearable align="right" :error="isValidMsg.Height" />
                         <md-input-item title="板寬:" :value="recipe.Width" @click.native="openDialog('recipe.Width')" 
                         clearable align="right" :error="isValidMsg.Width" />
-                        <md-input-item title="片數:" :value="recipe.QTY" @click.native="openDialog('recipe.QTY')"
+                        <md-input-item title="生產總片數:" :value="recipe.QTY" @click.native="openDialog('recipe.QTY')"
                         clearable align="right" :error="isValidMsg.QTY" />
+                        <md-input-item title="每框片數:" :value="recipe.eachQTY" @click.native="openDialog('recipe.eachQTY')"
+                        clearable align="right" :error="isValidMsg.eachQTY" />
                         <md-input-item title="化鎳時間(秒):" :value="recipe.ENiPlatedtime" @click.native="openDialog('recipe.ENiPlatedtime')"
                         clearable align="right"  />
                         <md-input-item title="化金時間(秒):" :value="recipe.EAuPlatedtime" @click.native="openDialog('recipe.EAuPlatedtime')"
@@ -167,6 +169,7 @@ export default {
             Height: "", //板高
             Width: "", //版寬
             QTY: "", //片數
+            eachQTY: 2, //片數
             ENiPlatedtime: "", //化鎳
             EAuPlatedtime: "", //化金
             EHAuPlatedtime: "", //厚金
@@ -179,8 +182,10 @@ export default {
                 HEIGHT_MIN: 300.00,
                 WIDTH_MAX: 600.00,
                 WIDTH_MIN: 300.00,
-                QTY_MAX: 3,
-                QTY_MIN: 1,
+                QTY_MAX: 9,
+                QTY_MIN: 0,
+                EACHQTY_MAX: 3,
+                EACHQTY_MIN: 1,
             },
             SAND:
             {
@@ -260,6 +265,27 @@ export default {
             {
                 ob["QTY"] = ""
             }
+
+            if(this.recipe["eachQTY"] > this.spec.ENG.EACHQTY_MAX)
+            {
+                ob["eachQTY"] = "不可大於" + this.spec.ENG.EACHQTY_MAX.toString()
+            }
+            else if(this.recipe["eachQTY"] < this.spec.ENG.EACHQTY_MIN)
+            {
+                ob["eachQTY"] = "不可小於" + + this.spec.ENG.EACHQTY_MIN.toString()
+            }
+            else if(isNaN(this.recipe["eachQTY"]))
+            {
+                ob["eachQTY"] = "不可為空值"
+            }
+            else if( Math.round(this.recipe["QTY"] % this.recipe["eachQTY"]) )
+            {
+                ob["eachQTY"] = "必須整除總片數"
+            }
+            else
+            {
+                ob["eachQTY"] = ""
+            }
             return ob
         },
     },
@@ -331,7 +357,7 @@ export default {
         {
             this.$store.commit('update_isLoading', true)
             this.errMsg = ""
-            await fetch('http://10.11.20.108:9999/api/prod/ENG'+ target,
+            await fetch('http://10.11.20.108:9999/api/prod/'+ target,
             {
                 method: "POST",
                 body: JSON.stringify({
@@ -347,7 +373,7 @@ export default {
                 {
                     throw response["Exception"]
                 }
-                Toast.info("投料成功")
+                Toast.succeed("投料成功")
                 this.clean()
             })
             .catch( err =>
@@ -363,7 +389,7 @@ export default {
 
         editDialogEnter(val)
         {
-            Toast.info(val)
+            Toast({ content: val, position: 'top', duration: 1000})
             this.editDialog.overwrite += val
         },
 
@@ -378,7 +404,8 @@ export default {
 
         editDialogConfirm()
         {
-            Toast.info(this.editDialog.target + "->" + this.editDialog.overwrite)
+            Toast({ content: this.editDialog.target + "->" + this.editDialog.overwrite,
+                position: 'top', duration: 2000, icon: 'edit' })
             this.editDialog.open = false
             this._.set(this.$data, this.editDialog.target_key, this.editDialog.overwrite)
         },
@@ -403,10 +430,6 @@ export default {
             {
                 return this.keyBoardRender
             }
-        },
-        hint(val)
-        {
-            Toast.info(val)
         },
         async prepare()
         {
@@ -476,7 +499,8 @@ export default {
                         this.recipe[item.procprammes] = +item.procvalue
                     }
                 }
-                Toast.info("成功取得製程參數")
+                this.recipe["eachQTY"] = 2
+                Toast.succeed("成功取得製程參數")
                 return true
             })
             .catch( err =>
