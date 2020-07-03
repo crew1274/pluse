@@ -100,7 +100,7 @@ export default {
             handler: this.confirmCancel,
           },
           {
-            text: 'AGV目的:噴砂上料區',
+            text: 'AGV目的:化金上下料區',
             warning : false,
             icon: "rectangle",
             handler: this.goCar,

@@ -52,7 +52,7 @@ export default {
             })
             .catch( err =>
             {
-                Toast.warning(err)
+                Toast.failed(err)
             })
             .finally( () =>
             {
