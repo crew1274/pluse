@@ -14,7 +14,7 @@
         <el-row :gutter="10">
             <el-card class="normalText">
                 <div slot="header">
-                    <span>化金線預備區參數</span>
+                    <span>化金線投料區參數</span>
                     <!-- <el-button style="float: right; padding: 3px 0" type="text" @click="getPrevRecipe">重新整理</el-button> -->
                 </div>
                 <el-col :span="12">
@@ -42,7 +42,7 @@
         <el-row :gutter="10">
             <el-card class="normalText">
                 <div slot="header">
-                    <span>化金線綁定區參數</span>
+                    <span>化金線預備綁定區參數</span>
                     <!-- <el-button style="float: right; padding: 3px 0" type="text" @click="getPrevRecipe">重新整理</el-button> -->
                 </div>
                 <el-col :span="12">
@@ -79,9 +79,9 @@
                     <md-detail-item title="板寬:" :content="recipe.recipe.Width" />
                     <md-detail-item title="生產總片數:" :content="recipe.recipe.QTY" />
                     <md-detail-item title="每框片數:" :content="recipe.recipe.eachQTY" />
-                    <md-detail-item title="化鎳時間(秒):" :value="recipe.recipe.ENiPlatedtime" />
-                    <md-detail-item title="化金時間(秒):" :value="recipe.recipe.EAuPlatedtime" />
-                    <md-detail-item title="厚金時間(秒):" :value="recipe.recipe.EHAuPlatedtime" />
+                    <md-detail-item title="化鎳時間(秒):" :content="recipe.recipe.ENiPlatedtime" />
+                    <md-detail-item title="化金時間(秒):" :content="recipe.recipe.EAuPlatedtime" />
+                    <md-detail-item title="厚金時間(秒):" :content="recipe.recipe.EHAuPlatedtime" />
                 </md-field>
             </div>
         </md-dialog>
@@ -160,7 +160,7 @@ export default {
     },
     async mounted()
     { 
-            await this.getPrevRecipe()
+        await this.getPrevRecipe()
     },
     async beforeDestroy()
     {
