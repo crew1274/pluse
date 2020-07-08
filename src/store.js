@@ -9,6 +9,9 @@ export default new Vuex.Store({
         isLogin: false,
         errorMessage: {},
         _RFID: "",
+        _ws: null,
+        _ws_back: null,
+        _ws_isLogin: false,
         token: "token",
         agv_response: {},
         admin_settings: {},
@@ -23,6 +26,14 @@ export default new Vuex.Store({
     },
     mutations: 
     {
+        _ws_message(state, e)
+        {
+            state._ws_back = JSON.parse(e.data)
+        },
+        login(state)
+        {
+            state._ws_isLogin = true
+        },
         store_prod_state(state, temp)
         {
             state.prod = temp
@@ -80,6 +91,33 @@ export default new Vuex.Store({
     },
     actions:
     {
+        _ws_onmessage( { commit }, message)
+        {
+            commit("_ws_message", message)
+        },
+        async _ws_login({ state, dispatch }, para) /*para為登入參數*/
+        {
+            state._ws = new WebSocket("ws://10.11.20.108:9999")
+            state._ws.onopen = async function ()
+            {
+                this.send(JSON.stringify(para))
+            }
+            state._ws.onmessage = async function (e)
+            {
+                await dispatch("_ws_onmessage", e)
+                /*回應*/
+                this.send("Pong")
+            }
+            state._ws.onerror = async function ()
+            {
+                this.close()
+            }
+            state._ws.onclose = async function ()
+            {
+                state._ws = null
+                state._ws_isLogin = false
+            }
+        },
         async _db({commit, state}, para)
         {
             if (para.method == "GET")

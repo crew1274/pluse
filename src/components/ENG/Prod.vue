@@ -460,6 +460,7 @@ export default {
         {
             this.$store.commit('update_recipe_spec', await this.$store.dispatch("_db", { url: "_db/ENG-10/_api/document/SETTINGS/RECIPE", method: "GET", payload: {}}))
             this.spec = this.$store.state.spec
+            Toast.succeed("更新成功")
         },
         async getRecipe()
         {

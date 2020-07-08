@@ -6,19 +6,32 @@ Vue.use(VueRouter)
 const routes = [
     {
         path: '/',
-        redirect: '/Sand'
+        component: () => import('@/views/Layout.vue'),
+        children: [
+            {
+                path: '/',
+                redirect: '/Sand'
+            },
+            {
+                path: '/Sand',
+                name: 'Sand',
+                meta: {
+                    title: "噴砂"
+                },
+                component: () => import('@/views/Sand.vue')
+            }, {
+                path: '/ENG',
+                name: 'ENG',
+                meta: {
+                    title: "化金"
+                },
+                component: () => import('@/views/ENG.vue')
+            },
+        ]
     },
     {
-        path: '/Sand',
-        name: 'Sand',
-        meta: { title: "噴砂" },
-        component: () => import('@/views/Sand.vue')
-    },
-    {
-        path: '/ENG',
-        name: 'ENG',
-        meta: { title: "化金" },
-        component: () => import('@/views/ENG.vue')
+        path: '/admin',
+        component: () => import('@/views/Admin.vue')
     }
 ]
 

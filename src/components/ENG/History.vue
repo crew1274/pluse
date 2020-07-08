@@ -17,16 +17,14 @@
                 </div>
         </el-row>
         <md-dialog v-model="isPopupShow" :btns="btns">
-            <div style="height:300px">
-                <md-field title="詳細參數">
-                    <md-detail-item title="板高:" :content="recipe.recipe.Height" />
-                    <md-detail-item title="板寬:" :content="recipe.recipe.Width" />
-                    <md-detail-item title="生產總片數:" :content="recipe.recipe.QTY" />
-                    <md-detail-item title="每框片數:" :content="recipe.recipe.eachQTY" />
-                    <md-detail-item title="化鎳時間(秒):" :value="recipe.recipe.ENiPlatedtime" />
-                    <md-detail-item title="化金時間(秒):" :value="recipe.recipe.EAuPlatedtime" />
-                    <md-detail-item title="厚金時間(秒):" :value="recipe.recipe.EHAuPlatedtime" />
-                </md-field>
+            <div>
+                <md-detail-item title="板高:" :content="recipe.recipe.Height" />
+                <md-detail-item title="板寬:" :content="recipe.recipe.Width" />
+                <md-detail-item title="生產總片數:" :content="recipe.recipe.QTY" />
+                <md-detail-item title="每框片數:" :content="recipe.recipe.eachQTY" />
+                <md-detail-item title="化鎳時間(秒):" :content="recipe.recipe.ENiPlatedtime" />
+                <md-detail-item title="化金時間(秒):" :content="recipe.recipe.EAuPlatedtime" />
+                <md-detail-item title="厚金時間(秒):" :content="recipe.recipe.EHAuPlatedtime" />
             </div>
         </md-dialog>
   </div>
