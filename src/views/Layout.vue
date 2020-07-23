@@ -7,35 +7,62 @@
         </md-activity-indicator>
       </div>
     </div>
-    <div v-show="!isLoading" class="fixed">
-      <md-scroll-view auto-reflow :scrolling-x="false" @refreshing="refreshingEvent" ref="scrollView">
-        <md-scroll-view-refresh slot="refresh" slot-scope="{ scrollTop, isRefreshActive, isRefreshing }"
-            :scroll-top="scrollTop"
-            :is-refreshing="isRefreshing"
-            :is-refresh-active="isRefreshActive"
-            refresh-text="下拉刷新"
-            refreshing-text="更新資料中"
-            refresh-active-text="釋放可刷新" />
-      <div id="c">
-          {{version}}
-      </div>
-      <div id="d">
-        <login />
-      </div>
-        <div id="nav">
-          <el-row>
-            <el-col :span="6" :offset="6">
-              <p>
-                <router-link to="/Sand">噴砂</router-link> || <router-link to="/ENG">化金</router-link> 
-              </p>
-            </el-col>
-            <el-col :span="6" :offset="6">
-              <md-button @click="close()" inline plain size="small" icon="wrong">結束程式</md-button>
-            </el-col>
-          </el-row>
+    <div v-show="!isLoading">
+      <div v-if="isMobile" class="fixed">
+        <md-scroll-view auto-reflow :scrolling-x="false" @refreshing="refreshingEvent" ref="scrollView" >
+          <md-scroll-view-refresh slot="refresh" slot-scope="{ scrollTop, isRefreshActive, isRefreshing }"
+              :scroll-top="scrollTop"
+              :is-refreshing="isRefreshing"
+              :is-refresh-active="isRefreshActive"
+              refresh-text="下拉刷新"
+              refreshing-text="更新資料中"
+              refresh-active-text="釋放可刷新" />
+        <div id="c">
+            {{version}}
         </div>
-        <router-view :isRefresh="isRefresh"  v-on:finishRefresh="finishRefresh"/>
-      </md-scroll-view>
+        <div id="d">
+          <login />
+        </div>
+          <div id="nav">
+            <el-row>
+              <el-col :span="10" :offset="6">
+                <p>
+                  <router-link to="/Sand">噴砂</router-link> 
+                  || <router-link to="/ENG">化金</router-link> 
+                  || <router-link to="/integrate">整合</router-link> 
+                </p>
+              </el-col>
+              <el-col :span="6" :offset="2">
+                <md-button @click="close()" inline plain size="small" icon="wrong">結束程式</md-button>
+              </el-col>
+            </el-row>
+          </div>
+          <router-view :isRefresh="isRefresh"  v-on:finishRefresh="finishRefresh"/>
+        </md-scroll-view>
+      </div>
+      <div v-else>
+        <div id="c">
+            {{version}}
+        </div>
+        <div id="d">
+          <login />
+        </div>
+          <div id="nav">
+            <el-row>
+              <el-col :span="10" :offset="6">
+                <p>
+                  <router-link to="/Sand">噴砂</router-link> 
+                  || <router-link to="/ENG">化金</router-link> 
+                  || <router-link to="/integrate">整合</router-link> 
+                </p>
+              </el-col>
+              <el-col :span="6" :offset="2">
+                <md-button @click="isRefresh = true" inline plain size="small" icon="refresh">手動刷新</md-button>
+              </el-col>
+            </el-row>
+          </div>
+          <router-view :isRefresh="isRefresh"  v-on:finishRefresh="finishRefresh"/>
+      </div>
     </div>
     <md-dialog title="到站通知" :closable="false" v-model="isDialogShow" :btns="DialogShowBtns" >
       <md-field title="需工號確認" brief="透過RFID讀取識別證">
@@ -68,6 +95,7 @@ export default {
   data()
   {
     return {
+      windowHeight: window.innerHeight,
       token_timer: undefined,
       agv_timer: undefined,
       CMD: "",
@@ -128,12 +156,16 @@ export default {
     {
         return this.$store.state.redis_msg
     },
+    isMobile()
+    {
+      return this.windowHeight < 800 ? true : false
+    },
   },
   watch:
   {
     '$route'(to)
     {
-      document.title = 'CHPT中華精測 ' + (to.meta.title || '' )
+        document.title = 'CHPT中華精測 ' + (to.meta.title || '' )
     },
     '$store.state.errorMessage':
     {
@@ -193,11 +225,16 @@ export default {
     this.$refs.inflicted.volume = 1
     this.token_timer = await setInterval( () => { this.get_token() }, 60000) //定期更新token
     this.agv_timer = await setInterval( () => { this.getMyTunnel() }, 2000) 
+    this.$nextTick( () =>
+    {
+      window.addEventListener('resize', this.onResize)
+    })
   },
   beforeDestroy()
   {
     clearInterval(this.token_timer)
     clearInterval(this.agv_timer)
+    window.removeEventListener('resize', this.onResize)
   },
   destroy()
   {
@@ -205,6 +242,10 @@ export default {
   },
   methods:
   {
+    onResize()
+    {
+      this.windowHeight = window.innerHeight
+    },
     close()
     {
         let w = require('electron').remote.getCurrentWindow()
@@ -296,7 +337,10 @@ export default {
     },
     finishRefresh()
     {
-      this.$refs[`scrollView`].finishRefresh()
+      if(this.isMobile)
+      {
+          this.$refs[`scrollView`].finishRefresh()
+      }
       this.isRefresh = false
     }
   }

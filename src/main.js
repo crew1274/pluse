@@ -7,7 +7,9 @@ import './plugins/element.js'
 import "normalize.css"
 import VueLodash from 'vue-lodash'
 import lodash from 'lodash'
+import VueKonva from 'vue-konva'
 
+Vue.use(VueKonva)
 Vue.use(VueLodash, {lodash: lodash})
 
 

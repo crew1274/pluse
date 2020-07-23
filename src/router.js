@@ -10,7 +10,7 @@ const routes = [
         children: [
             {
                 path: '/',
-                redirect: '/Sand'
+                redirect: '/ENG'
             },
             {
                 path: '/Sand',
@@ -19,13 +19,22 @@ const routes = [
                     title: "噴砂"
                 },
                 component: () => import('@/views/Sand.vue')
-            }, {
+            },
+            {
                 path: '/ENG',
                 name: 'ENG',
                 meta: {
                     title: "化金"
                 },
                 component: () => import('@/views/ENG.vue')
+            },
+            {
+                path: '/integrate',
+                name: 'integrate',
+                meta: {
+                    title: "integrate"
+                },
+                component: () => import('@/views/Integrate.vue')
             },
         ]
     },
