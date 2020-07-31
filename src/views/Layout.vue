@@ -29,7 +29,7 @@
                 <p>
                   <router-link to="/Sand">噴砂</router-link> 
                   || <router-link to="/ENG">化金</router-link> 
-                  || <router-link to="/integrate">整合</router-link> 
+                  || <router-link to="/graphical">整合</router-link> 
                 </p>
               </el-col>
               <el-col :span="6" :offset="2">
@@ -53,7 +53,7 @@
                 <p>
                   <router-link to="/Sand">噴砂</router-link> 
                   || <router-link to="/ENG">化金</router-link> 
-                  || <router-link to="/integrate">整合</router-link> 
+                  || <router-link to="/graphical">整合</router-link> 
                 </p>
               </el-col>
               <el-col :span="6" :offset="2">

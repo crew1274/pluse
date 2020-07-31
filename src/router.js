@@ -29,12 +29,12 @@ const routes = [
                 component: () => import('@/views/ENG.vue')
             },
             {
-                path: '/integrate',
-                name: 'integrate',
+                path: '/graphical',
+                name: 'graphical',
                 meta: {
-                    title: "integrate"
+                    title: "整合"
                 },
-                component: () => import('@/views/Integrate.vue')
+                component: () => import('@/views/Graphical.vue')
             },
         ]
     },

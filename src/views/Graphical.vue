@@ -14,7 +14,7 @@
 <script>
 import Map from "@/components/Map.vue"
 export default {
-    name: "Edge",
+    name: "Graphical",
     components:
     {
         Map,
@@ -37,7 +37,7 @@ export default {
     {
         // await this.get_token()
         // let a = await this.$store.dispatch("_db", { url: "_db/ENG-10/_api/gharial/ENG_TO_SAND", method: "GET", payload: {}})
-        // console.log(a)
+        console.log(this.$store.state._ws_back)
     },
     beforeDestroy()
     {
@@ -53,6 +53,14 @@ export default {
             },
             deep: true
         },
+        '$store.state._ws_back':
+        {
+            handler(newValue)
+            {
+                console.log(newValue)
+            },
+            deep: true
+        }
     },
     methods:
     {

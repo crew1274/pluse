@@ -107,6 +107,7 @@ export default new Vuex.Store({
                 await dispatch("_ws_onmessage", e)
                 /*回應*/
                 this.send("Pong")
+                console.log(e.data)
             }
             state._ws.onerror = async function ()
             {
