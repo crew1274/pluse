@@ -67,6 +67,10 @@ export default {
             }
         }
     },
+    mounted()
+    {
+        this.Connection()
+    },
     methods:
     {
         Connection()

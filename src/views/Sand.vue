@@ -83,6 +83,13 @@ export default {
       this.$store.commit('update_sand_tab_current', value)
     }
   },
+  created()
+  {
+    if(this.$route.params.components )
+    {
+        this.tab_current = this.$route.params.components
+    }
+  },
   methods:
   {
     finishRefresh()

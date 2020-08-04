@@ -46,6 +46,13 @@ export default {
   {
       
   },
+  created()
+  {
+    if(this.$route.params.components )
+    {
+        this.tab_current = this.$route.params.components
+    }
+  },
   methods:
   {
     finishRefresh()

@@ -14,5 +14,10 @@ export default {
 </script>
 
 <style>
-
+  .row-bg {
+    padding: 10px 0;
+  }
+  .hello {
+    font-size: 20px;
+  }
 </style>

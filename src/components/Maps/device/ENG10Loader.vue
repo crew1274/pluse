@@ -3,7 +3,7 @@
     <v-rect :config="ImageConfig" @click="showup"/>
     <v-text :config="TextConfig" />
     <md-dialog v-model="isPopupShow" :btns="btns">
-      <div >
+      <div>
           <md-tabs>
               <md-tab-pane name="1" label="詳細資料">
                   <md-detail-item title="批號:" :content="recipe.lotdata.no" bold />
@@ -13,7 +13,12 @@
                   <md-detail-item title="生產總片數:" :content="recipe.recipe.QTY" />
               </md-tab-pane>
               <md-tab-pane name="2" label="操作動作">
-                修正
+                <el-row class="row-bg">
+                  <md-button icon="edit" @click="redrict('Prod')">投料</md-button>
+                </el-row>
+                <el-row class="row-bg">
+                  <md-button icon="refresh">復歸</md-button>
+                </el-row>
               </md-tab-pane>
           </md-tabs>
       </div>
@@ -22,12 +27,13 @@
 </template>
 
 <script>
-import { Dialog, Tabs, TabPane, DetailItem } from "mand-mobile"
+import { Dialog, Tabs, TabPane, DetailItem, Button } from "mand-mobile"
 export default {
   name: "ENG10Loader",
   components:
   {
     [Dialog.name]: Dialog,
+    [Button.name]: Button,
     [TabPane.name]: TabPane,
     [Tabs.name]: Tabs,
     [DetailItem.name]: DetailItem,
@@ -94,6 +100,10 @@ export default {
   },
   methods:
   {
+    redrict(comp)
+    {
+      this.$router.push({ name: 'ENG', params: { components: comp }})
+    },
     onCancel()
     {
         this.isPopupShow = false

@@ -1,15 +1,15 @@
 <template>
     <v-stage :config="configKonva">
-    <v-layer>
-        <ENG10Loader :x="150" :y="100" :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" />
-        <ENG10 :x="325" :y="100" :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" />
-        <Fix :x="150" :y="500" :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" />
-        <Sand :x="325" :y="250" :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" />
-        <SandLoader :x="625" :y="250" :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" />
-        <SandUnloader :x="250" :y="250" :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" />
-        <Tray :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" />
-    </v-layer>
-</v-stage>
+        <v-layer>
+            <ENG10Loader :x="150" :y="100" :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" />
+            <ENG10 :x="325" :y="100" :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" />
+            <Fix :x="150" :y="500" :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" />
+            <Sand :x="325" :y="250" :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" />
+            <SandLoader :x="625" :y="250" :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" :realtimeData="realtimeData.SandIn"/>
+            <SandUnloader :x="250" :y="250" :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" />
+            <Tray :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" />
+        </v-layer>
+    </v-stage>
 </template>
 
 <script>
@@ -36,11 +36,11 @@ export default {
     props: 
     {
         isRefresh: Boolean,
+        realtimeData: Object,
     },
     data()
     {
         return {
-            activeIndex: '1',
             configKonva:
             {
                 x: 24,

@@ -2,22 +2,29 @@
     <div>
         <el-menu
             :default-active="activeIndex"
+            @select="handleSelect"
             mode="horizontal"
             background-color="#545c64"
             text-color="#fff" active-text-color="#ffd04b">
-            <el-menu-item index="1">物料狀況</el-menu-item>
+            <el-menu-item index="Map">物料狀況</el-menu-item>
+            <el-menu-item index="Error">異常履歷</el-menu-item>
         </el-menu>
-        <Map :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" />
+        <!-- <keep-alive> -->
+            <component :is="activeIndex" :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" :realtimeData="realtimeData" />
+        <!-- </keep-alive> -->
     </div>
 </template>
 
 <script>
 import Map from "@/components/Map.vue"
+import Error from "@/components/Error.vue"
+
 export default {
     name: "Graphical",
     components:
     {
         Map,
+        Error,
     },
     props: 
     {
@@ -26,7 +33,8 @@ export default {
     data()
     {
       return {
-        activeIndex: '1',
+        activeIndex: 'Map',
+        realtimeData: {},
       }
     },
     async created()
@@ -37,7 +45,7 @@ export default {
     {
         // await this.get_token()
         // let a = await this.$store.dispatch("_db", { url: "_db/ENG-10/_api/gharial/ENG_TO_SAND", method: "GET", payload: {}})
-        console.log(this.$store.state._ws_back)
+        // console.log(this.$store.state._ws_back)
     },
     beforeDestroy()
     {
@@ -57,13 +65,17 @@ export default {
         {
             handler(newValue)
             {
-                console.log(newValue)
+                this.realtimeData = newValue
             },
             deep: true
         }
     },
     methods:
     {
+        handleSelect(key)
+        {
+            this.activeIndex = key
+        },
         async get_token()
         {
             let response = await this.$store.dispatch("_db", { 
