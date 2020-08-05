@@ -193,9 +193,8 @@ export default {
   {
       realtimeData:
       {
-          handler(newValue)
+          handler()
           {
-              console.log(newValue)
               this.updateStatus()
           },
           deep: true

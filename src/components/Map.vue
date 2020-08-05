@@ -3,7 +3,7 @@
         <v-layer>
             <ENG10Loader :x="150" :y="100" :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" />
             <ENG10 :x="325" :y="100" :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" />
-            <Fix :x="150" :y="500" :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" />
+            <Fix :x="150" :y="500" :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" :realtimeData="realtimeData.SandFix" />
             <Sand :x="325" :y="250" :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" />
             <SandLoader :x="625" :y="250" :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" :realtimeData="realtimeData.SandIn"/>
             <SandUnloader :x="250" :y="250" :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" :realtimeData="realtimeData.SandOut" />

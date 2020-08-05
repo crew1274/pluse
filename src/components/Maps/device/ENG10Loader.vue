@@ -16,9 +16,6 @@
                 <el-row class="row-bg">
                   <md-button icon="edit" @click="redrict('Prod')">投料</md-button>
                 </el-row>
-                <el-row class="row-bg">
-                  <md-button icon="refresh">復歸</md-button>
-                </el-row>
               </md-tab-pane>
           </md-tabs>
       </div>
