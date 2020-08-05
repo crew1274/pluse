@@ -6,14 +6,14 @@
             <Fix :x="150" :y="500" :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" />
             <Sand :x="325" :y="250" :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" />
             <SandLoader :x="625" :y="250" :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" :realtimeData="realtimeData.SandIn"/>
-            <SandUnloader :x="250" :y="250" :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" />
-            <Tray :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" />
+            <SandUnloader :x="250" :y="250" :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" :realtimeData="realtimeData.SandOut" />
+            <!-- <Tray :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" /> -->
         </v-layer>
     </v-stage>
 </template>
 
 <script>
-import Tray from "@/components/Maps/device/Tray.vue"
+// import Tray from "@/components/Maps/device/Tray.vue"
 import Sand from "@/components/Maps/device/Sand.vue"
 import SandLoader from "@/components/Maps/device/SandLoader.vue"
 import SandUnloader from "@/components/Maps/device/SandUnloader.vue"
@@ -25,7 +25,7 @@ export default {
     name: "Map",
     components:
     {
-        Tray,
+        // Tray,
         Sand,
         SandLoader,
         SandUnloader,

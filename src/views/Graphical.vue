@@ -39,13 +39,11 @@ export default {
     },
     async created()
     {
-        // await this.get_token()
+
     },
-    async mounted()
+    mounted()
     {
-        // await this.get_token()
-        // let a = await this.$store.dispatch("_db", { url: "_db/ENG-10/_api/gharial/ENG_TO_SAND", method: "GET", payload: {}})
-        // console.log(this.$store.state._ws_back)
+
     },
     beforeDestroy()
     {

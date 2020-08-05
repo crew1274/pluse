@@ -21,7 +21,15 @@
                   <md-detail-item title="生產總片數:" :content="recipe.recipe.QTY" />
               </md-tab-pane>
               <md-tab-pane name="2" label="操作動作">
-                修正
+                <el-row class="row-bg">
+                  <md-button icon="edit" @click="redirect('Sand', 'Prod')">投料</md-button>
+                </el-row>
+                <el-row class="row-bg">
+                  <md-button icon="search" @click="redirect('Sand', 'History')">查看生產履歷</md-button>
+                </el-row>
+                <el-row class="row-bg">
+                  <md-button icon="setting" @click="redirect('Sand', 'Setting')">PLC重新連線</md-button>
+                </el-row>
               </md-tab-pane>
           </md-tabs>
       </div>
@@ -30,12 +38,13 @@
 </template>
 
 <script>
-import { Dialog, Tabs, TabPane, DetailItem } from "mand-mobile"
+import { Dialog, Tabs, TabPane, DetailItem, Button} from "mand-mobile"
 export default {
-  name: "SandUnLoader",
+  name: "SandLoader",
   components:
   {
     [Dialog.name]: Dialog,
+    [Button.name]: Button,
     [TabPane.name]: TabPane,
     [Tabs.name]: Tabs,
     [DetailItem.name]: DetailItem,
@@ -115,7 +124,7 @@ export default {
       },
       StatusTextConfig:
       {
-          x: x - 30,
+          x: x - 175,
           y: y,
           text: '',
           fontSize: 20,
@@ -126,8 +135,8 @@ export default {
       },
       AGVTextConfig:
       {
-          x: x - 30,
-          y: y + 50,
+          x: x - 175,
+          y: y + 100,
           text: '',
           fontSize: 20,
           height: 50,
@@ -137,8 +146,8 @@ export default {
       },
       CVTextConfig:
       {
-          x: x - 30,
-          y: y + 100,
+          x: x - 175,
+          y: y + 150,
           text: '',
           fontSize: 20,
           height: 50,
@@ -148,8 +157,8 @@ export default {
       },
       FilpTextConfig:
       {
-          x: x - 30,
-          y: y + 150,
+          x: x - 175,
+          y: y + 50,
           text: '',
           fontSize: 20,
           height: 50,
@@ -194,9 +203,14 @@ export default {
   },
   methods:
   {
+    redirect(path, comp)
+    {
+      this.isPopupShow = false
+      this.$router.push({ name: path, params: { components: comp }}).catch(() => {})
+    },
     onCancel()
     {
-        this.isPopupShow = false
+      this.isPopupShow = false
     },
     showup()
     {
