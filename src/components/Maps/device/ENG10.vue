@@ -2,6 +2,8 @@
   <div>
     <v-rect :config="ImageConfig" @click="showup"/>
     <v-text :config="TextConfig" />
+    <v-text :config="StatusTextConfig" />
+    <v-rect :config="StatusConfig" />
     <md-dialog v-model="isPopupShow" :btns="btns">
       <div >
           <md-tabs>
@@ -13,7 +15,7 @@
                   <md-detail-item title="生產總片數:" :content="recipe.recipe.QTY" />
               </md-tab-pane>
               <md-tab-pane name="2" label="操作動作">
-                修正
+                
               </md-tab-pane>
           </md-tabs>
       </div>
@@ -22,13 +24,14 @@
 </template>
 
 <script>
-import { Dialog, Tabs, TabPane, DetailItem } from "mand-mobile"
+import { Dialog, Tabs, TabPane, DetailItem, Button} from "mand-mobile"
 export default {
   name: "ENG10",
   components:
   {
     [Dialog.name]: Dialog,
     [TabPane.name]: TabPane,
+    [Button.name]: Button,
     [Tabs.name]: Tabs,
     [DetailItem.name]: DetailItem,
   },
@@ -36,6 +39,7 @@ export default {
   {
     x: Number,
     y: Number,
+    realtimeData: Object,
   },
   data()
   {
@@ -60,6 +64,17 @@ export default {
         stroke: "#538bfc",
         strokeWidth: 4,
       },
+      StatusConfig:
+      { 
+        x: x + 500,
+        y: y + 5,
+        width: 15,
+        height: 15,
+        stroke: "green",
+        strokeWidth: 1.5,
+        fill: "white",
+        shadowBlur: 10,
+      },
       TextConfig:
       {
           x: x,
@@ -70,7 +85,18 @@ export default {
           width: 100,
           fontFamily: 'Microsoft JhengHei',
           fill: '#538bfc',
-      }
+      },
+       StatusTextConfig:
+      {
+          x: x + 410,
+          y: y,
+          text: '啟動允用:',
+          fontSize: 20,
+          height: 50,
+          width: 100,
+          fontFamily: 'Microsoft JhengHei',
+          fill: '#423c39',
+      },
     }
   },
   async created()
@@ -91,9 +117,21 @@ export default {
   },
   watch:
   {
+      realtimeData:
+      {
+          handler()
+          {
+              this.updateStatus()
+          },
+          deep: true
+      }
   },
   methods:
   {
+    updateStatus()
+    {
+        this.realtimeData["啟動允用"] ? this.StatusConfig["fill"] = "green" : this.StatusConfig["fill"] = "white"
+    },
     onCancel()
     {
         this.isPopupShow = false
