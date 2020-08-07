@@ -11,6 +11,7 @@
                   <md-detail-item title="板高:" :content="recipe.recipe.Height" />
                   <md-detail-item title="板寬:" :content="recipe.recipe.Width" />
                   <md-detail-item title="生產總片數:" :content="recipe.recipe.QTY" />
+                  <md-detail-item title="每框片數:" :content="recipe.recipe.eachQTY" />
               </md-tab-pane>
               <md-tab-pane name="2" label="操作動作">
                 <el-row class="row-bg">
@@ -113,7 +114,7 @@ export default {
     {
         this.recipe = await this.$store.dispatch("_db", 
         {
-            url: "_db/ENG-10/_api/document/DEVICES/Tray",
+            url: "_db/ENG-10/_api/document/DEVICES/EngLoader",
             method: "GET",
             payload: {}
         })

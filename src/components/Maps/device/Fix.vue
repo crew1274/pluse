@@ -278,7 +278,7 @@ export default {
     {
         this.recipe = await this.$store.dispatch("_db", 
         {
-            url: "_db/ENG-10/_api/document/DEVICES/Tray",
+            url: "_db/ENG-10/_api/document/DEVICES/Fix",
             method: "GET",
             payload: {}
         })

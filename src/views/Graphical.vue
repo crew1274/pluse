@@ -64,7 +64,7 @@ export default {
             handler(newValue)
             {
                 this.realtimeData = newValue
-                console.log(newValue)
+                // console.log(newValue)
             },
             deep: true
         }

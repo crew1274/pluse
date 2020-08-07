@@ -6,14 +6,12 @@
       <div >
           <md-tabs>
               <md-tab-pane name="1" label="詳細資料">
-                  <md-detail-item title="批號:" :content="recipe.lotdata.no" bold />
-                  <md-detail-item title="料號:" :content="recipe.lotdata.itemno"  />
-                  <md-detail-item title="板高:" :content="recipe.recipe.Height" />
-                  <md-detail-item title="板寬:" :content="recipe.recipe.Width" />
-                  <md-detail-item title="生產總片數:" :content="recipe.recipe.QTY" />
+                  <md-detail-item title="噴砂模式:" :content="recipe.recipe.Mode" bold />
               </md-tab-pane>
               <md-tab-pane name="2" label="操作動作">
-                修正
+                <el-row class="row-bg">
+                  <md-button icon="edit" @click="redirect('Sand', 'History')">生產履歷</md-button>
+                </el-row>
               </md-tab-pane>
           </md-tabs>
       </div>
@@ -22,7 +20,7 @@
 </template>
 
 <script>
-import { Dialog, Tabs, TabPane, DetailItem } from "mand-mobile"
+import { Dialog, Tabs, TabPane, DetailItem, Button } from "mand-mobile"
 export default {
   name: "Sand",
   components:
@@ -31,6 +29,7 @@ export default {
     [TabPane.name]: TabPane,
     [Tabs.name]: Tabs,
     [DetailItem.name]: DetailItem,
+    [Button.name]: Button,
   },
   props:
   {
@@ -99,6 +98,11 @@ export default {
   },
   methods:
   {
+    redirect(path, comp)
+    {
+      this.isPopupShow = false
+      this.$router.push({ name: path, params: { components: comp }}).catch(() => {})
+    },
     onCancel()
     {
         this.isPopupShow = false
