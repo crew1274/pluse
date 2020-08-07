@@ -110,7 +110,7 @@ export default {
       {
           x: x,
           y: y,
-          text: '噴砂上料站',
+          text: '治具調整站',
           fontSize: 20,
           height: 50,
           width: 100,
