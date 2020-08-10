@@ -2,7 +2,7 @@
     <div>
         <el-row>
         </el-row>
-            <md-button type="primary" @click="ResetPLC">PLC重新連線</md-button>
+            <md-button type="primary" @click="ResetPLC" icon="switch">PLC重新連線</md-button>
         <el-row>
         </el-row>
     </div>

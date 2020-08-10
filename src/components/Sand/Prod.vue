@@ -1,79 +1,90 @@
 <template>
     <div>
-        <div v-if="stage == 1">
-            <el-row :gutter="10">
-                <el-col :span="16" :offset="4">
-                    <md-field title="輸入生產資訊" brief="RFID感應工單、識別證可自動帶入">
-                        <md-input-item title="批號" placeholder="支援手動輸入" is-highlight v-model="lot"
-                        clearable @click.native="openDialog('lot')"/>
-                        <md-input-item title="工號" placeholder="支援手動輸入" is-highlight maxlength=6 v-model="operator"
-                        clearable @click.native="openDialog('operator')"/>
-                        <md-input-item title="製程序" placeholder="如未輸入即會查詢當站參數" is-highlight v-model="procseq"
-                        clearable @click.native="openDialog('procseq')"/>
-                    </md-field>
-                </el-col>
-            </el-row>
-            <el-row :gutter="10">
-                <el-col :span="8" :offset="4">
-                    <md-button type="warning" @click="clean" icon="delete">清空/取消</md-button>
-                </el-col>
-                <el-col :span="8">
-                    <md-button type="primary" @click="prepare" icon="right">取得參數</md-button>
-                </el-col>
-            </el-row>
+        <div v-if="isLock" class="hello">
+            <md-skeleton />
+            化金預備出料中...
         </div>
-        <div v-else-if="stage == 2">
-            <el-row :gutter="10">
-                <el-col :span="12">
-                    <md-field title="批號資訊">
-                        <md-detail-item title="批號:" :content="lotdata.no" bold />
-                        <md-detail-item title="料號:" :content="lotdata.itemno"  />
-                        <md-detail-item title="製程序:" :content="lotdata.procseq"  />
-                        <md-detail-item title="料號版次:" :content="lotdata.itemno"  />
-                        <md-detail-item title="製造版次:" :content="lotdata.mfver"  />
-                    </md-field>
-                </el-col>
-                <el-col :span="12">
-                    <md-field title="詳細參數">
-                        <md-input-item title="板高:" :value="recipe.Height" @click.native="openDialog('recipe.Height')" 
-                        clearable align="right" :error="isValidMsg.Height" />
-                        <md-input-item title="板寬:" :value="recipe.Width" @click.native="openDialog('recipe.Width')" 
-                        clearable align="right" :error="isValidMsg.Width" />
-                        <md-input-item title="片數:" :value="recipe.QTY" @click.native="openDialog('recipe.QTY')"
-                        clearable align="right" :error="isValidMsg.QTY" />
-                        <md-detail-item title="噴砂模式:">
-                            <md-radio-group v-model="recipe.Mode">
-                                <md-radio-box name="1">模式1</md-radio-box>
-                                <md-radio-box name="2">模式2</md-radio-box>
-                                <md-radio-box name="3">模式3</md-radio-box>
-                                <md-radio-box name="4">模式4</md-radio-box>
-                                <md-radio-box name="5">模式5</md-radio-box>
-                            </md-radio-group>
-                        </md-detail-item>
-                    </md-field>
-                </el-col>
-            </el-row>
-            <el-row :gutter="10">
-                <center>
-                    <div v-show="errMsg" class="errMsg">
-                        {{errMsg}}
-                    </div>
-                </center>
-            </el-row>
-            <el-row :gutter="10">
-                <el-col :span="8">
-                    <md-button type="warning" @click="clean" icon="delete">清空/取消</md-button>
-                </el-col>
-                <el-col :span="8">
-                    <md-button  @click="spec_reload" icon="switch">更新參數規範</md-button>
-                </el-col>
-                <el-col :span="8">
-                    <md-button type="primary" @click="prod('SAND')" icon="security" :inactive="isValid">確認投料</md-button>
-                </el-col>
-                <!-- <el-col :span=8>
-                    <md-button type="default" @click="prod('auto')">參數</md-button>
-                </el-col> -->
-            </el-row>
+        <div v-else>
+            <div v-if="stage == 1">
+                <el-row :gutter="10">
+                    <el-col :span="16" :offset="4">
+                        <md-field title="輸入生產資訊" brief="RFID感應工單、識別證可自動帶入">
+                            <md-input-item title="批號" placeholder="支援手動輸入" is-highlight v-model="lot"
+                            clearable @click.native="openDialog('lot')"/>
+                            <md-input-item title="工號" placeholder="支援手動輸入" is-highlight maxlength=6 v-model="operator"
+                            clearable @click.native="openDialog('operator')"/>
+                            <md-input-item title="製程序" placeholder="如未輸入即會查詢當站參數" is-highlight v-model="procseq"
+                            clearable @click.native="openDialog('procseq')"/>
+                        </md-field>
+                    </el-col>
+                </el-row>
+                <el-row :gutter="10">
+                    <el-col :span="8" :offset="4">
+                        <md-button type="warning" @click="clean" icon="delete">清空/取消</md-button>
+                    </el-col>
+                    <el-col :span="8">
+                        <md-button type="primary" @click="prepare" icon="right">取得參數</md-button>
+                    </el-col>
+                </el-row>
+            </div>
+            <div v-else-if="stage == 2">
+                <el-row :gutter="10">
+                    <el-col :span="12">
+                        <md-field title="批號資訊">
+                            <md-detail-item title="批號:" :content="lotdata.no" bold />
+                            <md-detail-item title="料號:" :content="lotdata.itemno"  />
+                            <md-detail-item title="製程序:" :content="lotdata.procseq"  />
+                            <md-detail-item title="料號版次:" :content="lotdata.itemno"  />
+                            <md-detail-item title="製造版次:" :content="lotdata.mfver"  />
+                        </md-field>
+                    </el-col>
+                    <el-col :span="12">
+                        <md-field title="詳細參數">
+                            <md-input-item title="板高:" :value="recipe.Height" @click.native="openDialog('recipe.Height')" 
+                            clearable align="right" :error="isValidMsg.Height" />
+                            <md-input-item title="板寬:" :value="recipe.Width" @click.native="openDialog('recipe.Width')" 
+                            clearable align="right" :error="isValidMsg.Width" />
+                            <md-input-item title="片數:" :value="recipe.QTY" @click.native="openDialog('recipe.QTY')"
+                            clearable align="right" :error="isValidMsg.QTY" />
+                            <md-detail-item title="噴砂模式:">
+                                <md-radio-group v-model="recipe.Mode">
+                                    <md-radio-box name="1">模式1</md-radio-box>
+                                    <md-radio-box name="2">模式2</md-radio-box>
+                                    <md-radio-box name="3">模式3</md-radio-box>
+                                    <md-radio-box name="4">模式4</md-radio-box>
+                                    <md-radio-box name="5">模式5</md-radio-box>
+                                </md-radio-group>
+                            </md-detail-item>
+                        </md-field>
+                    </el-col>
+                </el-row>
+                <el-row :gutter="10">
+                    <center>
+                        <div v-show="errMsg" class="errMsg">
+                            {{errMsg}}
+                        </div>
+                    </center>
+                </el-row>
+                <el-row :gutter="10" class="errMsg">
+                    <p>1.治具站上 需要有料框</p>
+                    <p>2.治具站 無執行「調整循環」和「出料循環」，若在此循環下還需下參數，請按下立即停止，在重新啟動機台後套用參數</p>
+                    <p>3.噴砂上下料有治具板，無法套用參數</p>
+                </el-row>
+                <el-row :gutter="10">
+                    <el-col :span="8">
+                        <md-button type="warning" @click="clean" icon="delete">清空/取消</md-button>
+                    </el-col>
+                    <el-col :span="8">
+                        <md-button  @click="spec_reload" icon="switch">更新參數規範</md-button>
+                    </el-col>
+                    <el-col :span="8">
+                        <md-button type="primary" @click="prod('SAND')" icon="security" :inactive="isValid">確認投料</md-button>
+                    </el-col>
+                    <!-- <el-col :span=8>
+                        <md-button type="default" @click="prod('auto')">參數</md-button>
+                    </el-col> -->
+                </el-row>
+            </div>
         </div>
         <md-dialog title="" v-model="editDialog.open">
             <div style="height:600px">
@@ -95,13 +106,14 @@
 
 <script>
 import { Button, Toast, NumberKeyboard, Field, FieldItem, InputItem, Dialog, Switch, DetailItem
-        ,RadioBox, RadioGroup, Radio, ScrollView} from "mand-mobile"
+        ,RadioBox, RadioGroup, Radio, ScrollView, Skeleton} from "mand-mobile"
 import X2JS from 'x2js'
 
 export default {
   name: "Prod",
   components: {
     [Button.name]: Button,
+    [Skeleton.name]: Skeleton,
     [ScrollView.name]: ScrollView,
     [Switch.name]: Switch,
     [Field.name]: Field,
@@ -114,12 +126,14 @@ export default {
     [RadioGroup.name]: RadioGroup,
     [FieldItem.name]: FieldItem,
   },
-  props: {
+  props:
+  {
         isRefresh: Boolean,
   },
   data() 
   {
     return {
+        isLock: false,
         keyBoardRender: ".",
         stage: 1,
         errMsg: "",
@@ -287,6 +301,7 @@ export default {
         {
             if(val)
             {
+                await this.getLockStatus()
                 this.$emit('finishRefresh')
             }
         },
@@ -324,6 +339,10 @@ export default {
     { 
         this.spec = this.$store.state.spec
     },
+    activated()
+    {
+        this.getLockStatus()
+    },
     async beforeDestroy()
     {
         // let tmep = {}
@@ -339,6 +358,32 @@ export default {
     },
     methods:
     {
+        async getLockStatus()
+        {
+            this.$store.commit('update_isLoading', true)
+            await fetch('http://10.11.20.108:9999/api/isLock',
+            {
+                method: "GET",
+            })
+            .then( response => {return response.json()})
+            .then( response =>
+            {
+                if(response["Exception"])
+                {
+                    throw response["Exception"]
+                }
+                Toast.succeed("成功取得資料")
+                this.isLock = response["response"]
+            })
+            .catch( err =>
+            {
+                this.$notify.warning({ title: '投料失敗', message: err})
+            })
+            .finally( () =>
+            {
+                this.$store.commit('update_isLoading', false)
+            })
+        },
         async prod(target)
         {
             this.$store.commit('update_isLoading', true)
