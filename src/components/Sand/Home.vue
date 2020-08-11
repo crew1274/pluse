@@ -9,7 +9,7 @@
                 </div>
                 <el-col :span="12">
                     <md-field title="批號資料">
-                        <md-detail-item title="批號:" :content="recipe.lotdata.no" bold />
+                        <md-detail-item title="批號:" :content="recipe.lotdata.no" bold @click.native="doCopy(recipe.lotdata.no)"/>
                         <md-detail-item title="料號:" :content="recipe.lotdata.itemno"  />
                         <md-detail-item title="製程序:" :content="recipe.lotdata.procseq"  />
                         <md-detail-item title="料號版次:" :content="recipe.lotdata.itemno"  />
@@ -117,6 +117,16 @@ export default {
             .catch( err =>
             {
                 Toast.failed(err)
+            })
+        },
+        doCopy (value)
+        {
+            this.$copyText(value).then( () =>
+            {
+                Toast.succeed("複製:" + value)
+            }, e =>
+            {
+                Toast.failed(e)
             })
         }
     }

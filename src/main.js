@@ -8,9 +8,11 @@ import "normalize.css"
 import VueLodash from 'vue-lodash'
 import lodash from 'lodash'
 import VueKonva from 'vue-konva'
+import VueClipboard from 'vue-clipboard2'
 
 Vue.use(VueKonva)
 Vue.use(VueLodash, {lodash: lodash})
+Vue.use(VueClipboard)
 
 
 Vue.config.productionTip = false
