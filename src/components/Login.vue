@@ -40,6 +40,7 @@ export default {
                     handler: this.Connection,
                 },
             ],
+            check_timer: undefined
         }
     },
     computed:
@@ -67,9 +68,17 @@ export default {
             }
         }
     },
-    mounted()
+    beforeMount()
     {
         this.Connection()
+    },
+    mounted()
+    {
+        this.check_timer = setInterval( () => { this.check() }, 30000) //定期檢查
+    },
+    beforeDestroy()
+    {
+        clearInterval(this.check_timer)
     },
     methods:
     {
@@ -77,6 +86,13 @@ export default {
         {
             this.$store.dispatch('_ws_login', {"User": "遠端帳號", "Password": "171104"})
             this.isPopupShow = false
+        },
+        check()
+        {
+            if(! this.LoginState)
+            {
+                this.Connection()
+            }
         }
     }
 }

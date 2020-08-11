@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-rect :config="ImageConfig" @click="showup"/>
+    <v-rect :config="ImageConfig"/>
     <v-text :config="TextConfig" />
     <v-text :config="StatusTextConfig" />
     <v-rect :config="StatusConfig" />
@@ -144,7 +144,7 @@ export default {
     {
         this.recipe = await this.$store.dispatch("_db", 
         {
-            url: "_db/ENG-10/_api/document/DEVICES/Tray",
+            url: "_db/ENG-10/_api/document/DEVICES/ENG",
             method: "GET",
             payload: {}
         })

@@ -8,6 +8,7 @@
                 <Sand :x="325" :y="250" :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" />
                 <SandLoader :x="625" :y="250" :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" :realtimeData="realtimeData.SandIn"/>
                 <SandUnloader :x="250" :y="250" :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" :realtimeData="realtimeData.SandOut" />
+                <AGV :x="0" :y="50" :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" :realtimeData="realtimeData.AGV" />
                 <!-- <Tray :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" /> -->
             </v-layer>
         </v-stage>
@@ -34,6 +35,7 @@ import SandUnloader from "@/components/Maps/device/SandUnloader.vue"
 import ENG10Loader from "@/components/Maps/device/ENG10Loader.vue"
 import ENG10 from "@/components/Maps/device/ENG10.vue"
 import Fix from "@/components/Maps/device/Fix.vue"
+import AGV from "@/components/Maps/device/AGV.vue"
 import { Steps} from "mand-mobile"
 
 
@@ -48,6 +50,7 @@ export default {
         ENG10Loader,
         ENG10,
         Fix,
+        AGV,
         [Steps.name]: Steps,
     },
     props: 
