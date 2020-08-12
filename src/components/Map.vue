@@ -12,17 +12,16 @@
                 <!-- <Tray :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" /> -->
             </v-layer>
         </v-stage>
-        <div>
+        <div v-for="(task, index) in Tasks" :key="index">
             <el-row class="hello">
-                噴砂流程
+                <el-col :span="20">
+                    {{task.lotdata.itemno}} / {{task.lotdata.no}}
+                </el-col>
+                <el-col :span="4">
+                        <el-button @click="Delete(index)" icon="el-icon-delete" type="danger">刪除</el-button>
+                </el-col>
             </el-row>
-            <md-steps :steps="Sandsteps" />
-        </div>
-        <div>
-            <el-row class="hello">
-                化金流程
-            </el-row>
-            <md-steps :steps="ENGsteps" />
+            <md-steps :steps="task.steps" :current="task.current" />
         </div>
     </div>
 </template>
@@ -36,8 +35,7 @@ import ENG10Loader from "@/components/Maps/device/ENG10Loader.vue"
 import ENG10 from "@/components/Maps/device/ENG10.vue"
 import Fix from "@/components/Maps/device/Fix.vue"
 import AGV from "@/components/Maps/device/AGV.vue"
-import { Steps} from "mand-mobile"
-
+import { Steps, Toast, Button} from "mand-mobile"
 
 export default {
     name: "Map",
@@ -52,6 +50,7 @@ export default {
         Fix,
         AGV,
         [Steps.name]: Steps,
+        [Button.name]: Button,
     },
     props: 
     {
@@ -65,6 +64,7 @@ export default {
             {
                 name: '調整站',
             },
+            
             {
                 name: '噴砂上料站',
             },
@@ -210,13 +210,64 @@ export default {
                 fontFamily: 'Microsoft JhengHei',
                 fill: '#538bfc',
             },
+            Tasks:[],
         }
+    },
+    watch:
+    {
+        async isRefresh(val)
+        {
+            if(val)
+            {
+                await this.GetTasks()
+            }
+        }
+    },
+    async created()
+    {
+        await this.GetTasks()
+    },
+    async activated()
+    {
+        await this.GetTasks()
     },
     methods:
     {
         finishRefresh()
         {
             this.$emit('finishRefresh')
+        },
+        async Delete(index)
+        {
+            this.$confirm('此操作將永久刪除任務, 是否繼續?', '提示', {
+                confirmButtonText: '確定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then( async () =>
+            {
+                await this.$store.dispatch("_db", { 
+                    url: "_db/ENG-10/_api/document/Tasks/" + this.Tasks[index]['_key'],
+                    method: "DELETE",
+                })
+                await this.GetTasks()
+                Toast.succeed("任務刪除成功")
+            }).catch( () =>
+            {
+                Toast.succeed("取消操作")
+            })
+        },
+        async GetTasks()
+        {
+            let response = await this.$store.dispatch("_db", { 
+                url: "_db/ENG-10/_api/cursor",
+                method: "POST",
+                payload: {
+                    "query": "FOR doc IN Tasks RETURN doc",
+                    "count": true
+                }
+            })
+            this.Tasks = response['result']
+            Toast.succeed("任務列表更新成功")
         }
     }
 }

@@ -58,18 +58,18 @@
                         </md-field>
                     </el-col>
                 </el-row>
-                <el-row :gutter="10">
-                    <center>
-                        <div v-show="errMsg" class="errMsg">
+                <div v-show="errMsg" class="errMsg">
+                    <el-row :gutter="10">
+                        <center>
                             {{errMsg}}
-                        </div>
-                    </center>
-                </el-row>
-                <el-row :gutter="10" class="errMsg">
-                    <p>1.治具站上 需要有料框</p>
-                    <p>2.治具站 無執行「調整循環」和「出料循環」，若在此循環下還需下參數，請按下立即停止，在重新啟動機台後套用參數</p>
-                    <p>3.噴砂上下料有治具板，無法套用參數</p>
-                </el-row>
+                        </center>
+                    </el-row>
+                    <el-row :gutter="10">
+                        <p>1.治具站上 需要有料框</p>
+                        <p>2.治具站 無執行「調整循環」和「出料循環」，若在此循環下還需下參數，請按下立即停止，在重新啟動機台後套用參數</p>
+                        <p>3.噴砂上下料有治具板，無法套用參數</p>
+                    </el-row>
+                </div>
                 <el-row :gutter="10">
                     <el-col :span="8">
                         <md-button type="warning" @click="clean" icon="delete">清空/取消</md-button>
@@ -108,6 +108,7 @@
 import { Button, Toast, NumberKeyboard, Field, FieldItem, InputItem, Dialog, Switch, DetailItem
         ,RadioBox, RadioGroup, Radio, ScrollView, Skeleton} from "mand-mobile"
 import X2JS from 'x2js'
+import * as moment from "moment/moment"
 
 export default {
   name: "Prod",
@@ -384,10 +385,44 @@ export default {
                 this.$store.commit('update_isLoading', false)
             })
         },
+
+        async CreateTask()
+        {
+            this.$store.dispatch("_db",
+            { 
+                url: "_db/ENG-10/_api/document/Tasks",
+                method: "POST",
+                payload: {
+                    lotdata: this.lotdata, 
+                    procdata: this.procdata,
+                    recipe: this.recipe,
+                    current: 0,
+                    steps: [
+                            {
+                                name: '調整站',
+                                text: moment().format('YYYY-MM-DD hh:mm:ss'),
+                            },
+                            {
+                                name: '噴砂上料站',
+                            },
+                            {
+                                name: '噴砂主站',
+                            },
+                            {
+                                name: '噴砂下料站',
+                            },
+                            {
+                                name: '調整站',
+                            },
+                    ],
+                }
+            })
+        },
         async prod(target)
         {
             this.$store.commit('update_isLoading', true)
             this.errMsg = ""
+            // 投料
             await fetch('http://10.11.20.108:9999/api/prod/'+ target,
             {
                 method: "POST",
@@ -403,8 +438,10 @@ export default {
                 if(response["Exception"])
                 {
                     throw response["Exception"]
-                }
+                } 
                 Toast.succeed("投料成功")
+                //建立新任務
+                this.CreateTask()
                 this.clean()
             })
             .catch( err =>

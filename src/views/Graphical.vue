@@ -9,9 +9,9 @@
             <el-menu-item index="Map">物料狀況</el-menu-item>
             <el-menu-item index="Error">異常履歷</el-menu-item>
         </el-menu>
-        <!-- <keep-alive> -->
+        <keep-alive>
             <component :is="activeIndex" :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" :realtimeData="realtimeData" />
-        <!-- </keep-alive> -->
+        </keep-alive>
     </div>
 </template>
 

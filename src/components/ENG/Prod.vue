@@ -100,6 +100,7 @@
 import { Button, Toast, NumberKeyboard, Field, FieldItem, InputItem, Dialog, Switch, DetailItem
         ,RadioBox, RadioGroup, Radio, ScrollView, Skeleton} from "mand-mobile"
 import X2JS from 'x2js'
+import * as moment from "moment/moment"
 
 export default {
   name: "Prod",
@@ -401,6 +402,48 @@ export default {
                 this.$store.commit('update_isLoading', false)
             })
         },
+
+        async CreateTask()
+        {
+            this.$store.dispatch("_db",
+            { 
+                url: "_db/ENG-10/_api/document/Tasks",
+                method: "POST",
+                payload: {
+                    lotdata: this.lotdata, 
+                    procdata: this.procdata,
+                    recipe: this.recipe,
+                    current: 0,
+                    steps: [
+                        {
+                            name: '調整站',
+                            text: moment().format('YYYY-MM-DD hh:mm:ss'),
+                        },
+                        {
+                            name: '化金上下料站',
+                        },
+                        {
+                            name: '化金主站',
+                        },
+                        {
+                            name: '化金上下料站',
+                        },
+                        {
+                            name: '噴砂上料站',
+                        },
+                        {
+                            name: '噴砂主站',
+                        },
+                        {
+                            name: '噴砂下料站',
+                        },
+                        {
+                            name: '調整站',
+                        },
+                    ],
+                }
+            })
+        },
         async prod(target)
         {
             this.$store.commit('update_isLoading', true)
@@ -422,6 +465,7 @@ export default {
                     throw response["Exception"]
                 }
                 Toast.succeed("投料成功")
+                this.CreateTask()
                 this.clean()
             })
             .catch( err =>

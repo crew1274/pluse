@@ -19,7 +19,7 @@
                 </div>
                 <el-col :span="12">
                     <md-field title="批號資料">
-                        <md-detail-item title="批號:" :content="recipe_READY.lotdata.no" bold />
+                        <md-detail-item title="批號:" :content="recipe_READY.lotdata.no" bold @click.native="doCopy(recipe_READY.lotdata.no)"/>
                         <md-detail-item title="料號:" :content="recipe_READY.lotdata.itemno"  />
                         <md-detail-item title="製程序:" :content="recipe_READY.lotdata.procseq"  />
                         <md-detail-item title="料號版次:" :content="recipe_READY.lotdata.itemno"  />
@@ -47,7 +47,7 @@
                 </div>
                 <el-col :span="12">
                     <md-field title="批號資料">
-                        <md-detail-item title="批號:" :content="recipe_BUFFER.lotdata.no" bold />
+                        <md-detail-item title="批號:" :content="recipe_BUFFER.lotdata.no" bold @click.native="doCopy(recipe_BUFFER.lotdata.no)"/>
                         <md-detail-item title="料號:" :content="recipe_BUFFER.lotdata.itemno"  />
                         <md-detail-item title="製程序:" :content="recipe_BUFFER.lotdata.procseq"  />
                         <md-detail-item title="料號版次:" :content="recipe_BUFFER.lotdata.itemno"  />
@@ -71,7 +71,7 @@
             <div >
                 <md-tabs>
                     <md-tab-pane name="1" label="批號資料">
-                        <md-detail-item title="批號:" :content="recipe.lotdata.no" bold />
+                        <md-detail-item title="批號:" :content="recipe.lotdata.no" bold @click.native="doCopy(recipe.lotdata.no)"/>
                         <md-detail-item title="料號:" :content="recipe.lotdata.itemno"  />
                         <md-detail-item title="製程序:" :content="recipe.lotdata.procseq"  />
                         <md-detail-item title="料號版次:" :content="recipe.lotdata.itemno"  />
@@ -224,6 +224,16 @@ export default {
             })
             Toast.succeed("化金線資料更新成功")
 
+        },
+        doCopy (value)
+        {
+            this.$copyText(value).then( () =>
+            {
+                Toast.succeed("複製:" + value)
+            }, e =>
+            {
+                Toast.failed(e)
+            })
         }
     }
 }

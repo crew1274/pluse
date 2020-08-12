@@ -38,7 +38,7 @@
       <!-- <div style="height:600px"> -->
       <div>
           <md-field title="確認生產資訊" brief="RFID感應工單、識別證可自動帶入">
-            <md-input-item title="批號:" v-model="confirmDialog.lot.target" :solid="false" @click.native="doPaste"/>
+            <md-input-item title="批號:" v-model="confirmDialog.lot.target" :solid="false" @click.native="doPaste()"/>
             <md-input-item title="工號:" v-model="confirmDialog.op.target" :solid="false" />
             <md-agree v-model="checked" @change="onChange">
               已確認先投料完成
@@ -426,6 +426,7 @@ export default {
       .then( text => {
         this.confirmDialog.lot.target = text
         this.confirmDialog.lot.code = text
+        Toast.succeed("貼上:" + text)
       })
     },
     async waitFor(conditionLogic) 
