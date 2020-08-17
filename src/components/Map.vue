@@ -245,12 +245,33 @@ export default {
                 type: 'warning'
             }).then( async () =>
             {
-                await this.$store.dispatch("_db", { 
-                    url: "_db/ENG-10/_api/document/Tasks/" + this.Tasks[index]['_key'],
+                // await this.$store.dispatch("_db", { 
+                //     url: "_db/ENG-10/_api/document/Tasks/" + this.Tasks[index]['_key'],
+                //     method: "DELETE",
+                // })
+                await fetch("http://10.11.20.108:9999/api/tc/",
+                {
                     method: "DELETE",
+                    body: JSON.stringify({
+                        id: this.Tasks[index]['id']
+                    })
                 })
+                .then( response => { return response.json() })
+                .then( response =>
+                {
+                    if(response["Exception"])
+                    {
+                        throw response["Exception"]
+                    }
+                })
+                .catch( err =>
+                {
+                    Toast.failed(err)
+                })
+                .finally( () => {} )
                 await this.GetTasks()
                 Toast.succeed("任務刪除成功")
+
             }).catch( () =>
             {
                 Toast.succeed("取消操作")
@@ -258,16 +279,39 @@ export default {
         },
         async GetTasks()
         {
-            let response = await this.$store.dispatch("_db", { 
-                url: "_db/ENG-10/_api/cursor",
-                method: "POST",
-                payload: {
-                    "query": "FOR doc IN Tasks RETURN doc",
-                    "count": true
-                }
+            // let response = await this.$store.dispatch("_db", { 
+            //     url: "_db/ENG-10/_api/cursor",
+            //     method: "POST",
+            //     payload: {
+            //         "query": "FOR doc IN Tasks RETURN doc",
+            //         "count": true
+            //     }
+            // })
+            // this.Tasks = response['result']
+
+            await fetch("http://10.11.20.108:9999/api/tc/",
+            {
+                method: "GET",
             })
-            this.Tasks = response['result']
-            Toast.succeed("任務列表更新成功")
+            .then( response => { return response.json() })
+            .then( response =>
+            {
+                if(response["Exception"])
+                {
+                    throw response["Exception"]
+                }
+                Toast.succeed("任務列表更新成功")
+                this.Tasks = []
+                this._.forOwn( response["response"], (value) =>
+                {
+                    this.Tasks.push(value)
+                })
+            })
+            .catch( err =>
+            {
+                Toast.failed(err)
+            })
+            .finally( () => {} )
         }
     }
 }

@@ -29,7 +29,7 @@
                 <p>
                   <router-link to="/Sand">噴砂</router-link> 
                   || <router-link to="/ENG">化金</router-link> 
-                  || <router-link to="/graphical">整合</router-link> 
+                  || <router-link to="/graphical">圖像化</router-link> 
                 </p>
               </el-col>
               <el-col :span="6" :offset="2">
@@ -42,7 +42,7 @@
       </div>
       <div v-else>
         <div id="c">
-            {{version}}
+          {{version}}
         </div>
         <div id="d">
           <login />
@@ -53,7 +53,7 @@
                 <p>
                   <router-link to="/Sand">噴砂</router-link> 
                   || <router-link to="/ENG">化金</router-link> 
-                  || <router-link to="/graphical">整合</router-link> 
+                  || <router-link to="/graphical">圖像化</router-link> 
                 </p>
               </el-col>
               <el-col :span="6" :offset="2">
@@ -290,7 +290,7 @@ export default {
                 this.prepare_payload = command
                 this.$refs.inflicted.play()
 
-                /*不刷卡*/
+                /*耍狗不刷卡*/
                 this.isDialogShow = false
                 this.$refs.inflicted.pause()
                 let payload_e = this.prepare_payload
@@ -299,6 +299,14 @@ export default {
                 this.activeResponseAGV(payload_e)
                 this.operator.code = ""
                 this.operator.target = ""
+                this.$store.dispatch("_db",
+                { 
+                    url: "_db/ENG-10/_api/cursor",
+                    method: "POST",
+                    payload: {
+                        query : "FOR doc IN Tasks SORT doc.STARTDATETIME DESC LIMIT 1 UPDATE doc  WITH { current: doc.current + 0.5 } IN Tasks"
+                    }
+                })
             }
         }) 
     },
@@ -334,6 +342,13 @@ export default {
       // console.log(this.$refs[`scrollView`])
       this.isRefresh = true
       // console.log(this.$refs[`scrollView`])
+    },
+    EasterEgg()
+    {
+      console.log("a")
+      Toast({
+        content: '( ° ͜ʖ͡°)╭∩╮',
+      })
     },
     finishRefresh()
     {

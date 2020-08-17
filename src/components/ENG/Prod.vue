@@ -405,15 +405,57 @@ export default {
 
         async CreateTask()
         {
-            this.$store.dispatch("_db",
-            { 
-                url: "_db/ENG-10/_api/document/Tasks",
+            // this.$store.dispatch("_db",
+            // { 
+            //     url: "_db/ENG-10/_api/document/Tasks",
+            //     method: "POST",
+            //     payload: {
+            //         lotdata: this.lotdata, 
+            //         procdata: this.procdata,
+            //         recipe: this.recipe,
+            //         current: 0,
+            //         prod: "化金製程",
+            //         STAETDATETIME: moment().format('YYYY-MM-DD hh:mm:ss'),
+            //         steps: [
+            //             {
+            //                 name: '調整站',
+            //                 text: moment().format('YYYY-MM-DD hh:mm:ss'),
+            //             },
+            //             {
+            //                 name: '化金上下料站',
+            //             },
+            //             {
+            //                 name: '化金主站',
+            //             },
+            //             {
+            //                 name: '化金上下料站',
+            //             },
+            //             {
+            //                 name: '噴砂上料站',
+            //             },
+            //             {
+            //                 name: '噴砂主站',
+            //             },
+            //             {
+            //                 name: '噴砂下料站',
+            //             },
+            //             {
+            //                 name: '調整站',
+            //             },
+            //         ],
+            //     }
+            // })
+            await fetch('http://10.11.20.108:9999/api/tc/',
+            {
                 method: "POST",
-                payload: {
+                body: JSON.stringify({
+                    id: this.lotdata.no + "/" + moment().format('YYYY-MM-DD hh:mm:ss'),
                     lotdata: this.lotdata, 
                     procdata: this.procdata,
                     recipe: this.recipe,
                     current: 0,
+                    prod: "化金製程",
+                    STAETDATETIME: moment().format('YYYY-MM-DD hh:mm:ss'),
                     steps: [
                         {
                             name: '調整站',
@@ -441,8 +483,22 @@ export default {
                             name: '調整站',
                         },
                     ],
-                }
+                    })
             })
+            .then( response => { return response.json() })
+            .then( response =>
+            {
+                if(response["Exception"])
+                {
+                    throw response["Exception"]
+                } 
+            })
+            .catch( err =>
+            {
+                this.$notify.warning({ title: '建立任務失敗', message: err})
+                this.errMsg = err
+            })
+            .finally( () => {} )
         },
         async prod(target)
         {

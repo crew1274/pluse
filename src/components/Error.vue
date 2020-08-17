@@ -1,5 +1,13 @@
 <template>
     <div>
+        <el-row :gutter="10">
+            <el-col :span="12">
+                <el-date-picker v-model="date_range" type="daterange" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd"
+                    start-placeholder="開始日期" range-separator="至" end-placeholder="結束日期" 
+                    :picker-options="pickerOptions"  @change="CheckData"
+                    size="large"/>
+            </el-col>
+        </el-row>
         <el-row>
             <el-table :data="show_list" style="width: 100%" :row-class-name="tableRowClassName" calss="hello">
                 <el-table-column label="開始時間" prop="start_time" />
@@ -12,7 +20,8 @@
 </template>
 
 <script>
-
+import * as moment from "moment/moment"
+ 
 export default {
     name: "Error",
     components:
@@ -27,11 +36,54 @@ export default {
     {
         return {
             list: [],
-            loading: false
+            loading: false,
+            date_range: [],
+            pickerOptions:
+            {
+                shortcuts: [ {
+                text: '昨天',
+                onClick(picker) {
+                    const end = new Date()
+                    const start = new Date()
+                    start.setTime(start.getTime() - 3600 * 1000 * 24)
+                    picker.$emit('pick', [start, end]) }
+                }, {
+                text: '一周前',
+                onClick(picker) {
+                    const end = new Date()
+                    const start = new Date()
+                    start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+                    picker.$emit('pick', [start, end]) }
+                }, {
+                text: '二周前',
+                onClick(picker) {
+                    const end = new Date()
+                    const start = new Date()
+                    start.setTime(start.getTime() - 3600 * 1000 * 24 * 14)
+                    picker.$emit('pick', [start, end]) }
+                }, {
+                text: '三周前',
+                onClick(picker) {
+                    const end = new Date()
+                    const start = new Date()
+                    start.setTime(start.getTime() - 3600 * 1000 * 24 * 21)
+                    picker.$emit('pick', [start, end]) }
+                }, {
+                text: '四周前',
+                onClick(picker) {
+                    const end = new Date()
+                    const start = new Date()
+                    start.setTime(start.getTime() - 3600 * 1000 * 24 * 28)
+                    picker.$emit('pick', [start, end]) }
+                }]
+            },
         }
     },
     async created()
     {
+        moment.locale("zh-tw")
+        this.date_range.push(moment().subtract(1,'d').format('YYYY-MM-DD'))
+        this.date_range.push(moment().add(1,'d').format('YYYY-MM-DD'))
         await this.CheckData()
     },
     computed:
@@ -72,7 +124,7 @@ export default {
         async CheckData()
         {
             this.loading = true
-            await fetch("http://10.11.20.108:9999/api/ErrorHandle",
+            await fetch("http://10.11.20.108:9999/api/ErrorHandle?start=" + this.date_range[0] + "&end=" + this.date_range[1],
             {
                 method: "GET",
             })

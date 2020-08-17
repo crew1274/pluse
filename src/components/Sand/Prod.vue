@@ -388,16 +388,19 @@ export default {
 
         async CreateTask()
         {
-            this.$store.dispatch("_db",
-            { 
-                url: "_db/ENG-10/_api/document/Tasks",
+            await fetch('http://10.11.20.108:9999/api/tc/',
+            {
                 method: "POST",
-                payload: {
+                body: JSON.stringify({
+                    id: this.lotdata.no + "/" + moment().format('YYYY-MM-DD hh:mm:ss'),
                     lotdata: this.lotdata, 
                     procdata: this.procdata,
                     recipe: this.recipe,
                     current: 0,
-                    steps: [
+                    prod: "噴砂製程",
+                    STAETDATETIME: moment().format('YYYY-MM-DD hh:mm:ss'),
+                    steps:
+                        [
                             {
                                 name: '調整站',
                                 text: moment().format('YYYY-MM-DD hh:mm:ss'),
@@ -414,9 +417,24 @@ export default {
                             {
                                 name: '調整站',
                             },
-                    ],
-                }
+                        ],
+                    })
             })
+            .then( response => { return response.json() })
+            .then( response =>
+            {
+                if(response["Exception"])
+                {
+                    throw response["Exception"]
+                } 
+            })
+            .catch( err =>
+            {
+                this.$notify.warning({ title: '建立任務失敗', message: err})
+                this.errMsg = err
+            })
+            .finally( () => {} )
+            
         },
         async prod(target)
         {
