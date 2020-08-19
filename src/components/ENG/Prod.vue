@@ -403,7 +403,7 @@ export default {
             })
         },
 
-        async CreateTask()
+        async CreateTask(uid)
         {
             // this.$store.dispatch("_db",
             // { 
@@ -449,7 +449,7 @@ export default {
             {
                 method: "POST",
                 body: JSON.stringify({
-                    id: this.lotdata.no + "/" + moment().format('YYYY-MM-DD hh:mm:ss'),
+                    uid: uid,
                     lotdata: this.lotdata, 
                     procdata: this.procdata,
                     recipe: this.recipe,
@@ -504,10 +504,13 @@ export default {
         {
             this.$store.commit('update_isLoading', true)
             this.errMsg = ""
+            // 生成uid
+            let uid =  Math.floor(Math.random() * 1024) + 1
             await fetch('http://10.11.20.108:9999/api/prod/'+ target,
             {
                 method: "POST",
                 body: JSON.stringify({
+                        uid : uid,
                         lotdata: this.lotdata, 
                         procdata: this.procdata,
                         recipe: this.recipe,
@@ -521,7 +524,7 @@ export default {
                     throw response["Exception"]
                 }
                 Toast.succeed("投料成功")
-                this.CreateTask()
+                this.CreateTask(uid)
                 this.clean()
             })
             .catch( err =>

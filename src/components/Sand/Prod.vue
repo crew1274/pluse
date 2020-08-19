@@ -86,6 +86,14 @@
                 </el-row>
             </div>
         </div>
+        <md-landscape v-model="isDone">
+            <img :src="celebrate">
+            <span class="">成功投料</span>
+        </md-landscape>
+        <md-landscape v-model="isFail">
+            <img :src="celebrate">
+            <span class="">投料失敗</span>
+        </md-landscape>
         <md-dialog title="" v-model="editDialog.open">
             <div style="height:600px">
                 <md-scroll-view auto-reflow :scrolling-x="false">
@@ -106,7 +114,7 @@
 
 <script>
 import { Button, Toast, NumberKeyboard, Field, FieldItem, InputItem, Dialog, Switch, DetailItem
-        ,RadioBox, RadioGroup, Radio, ScrollView, Skeleton} from "mand-mobile"
+        , RadioBox, RadioGroup, Radio, ScrollView, Skeleton, Landscape} from "mand-mobile"
 import X2JS from 'x2js'
 import * as moment from "moment/moment"
 
@@ -114,6 +122,7 @@ export default {
   name: "Prod",
   components: {
     [Button.name]: Button,
+    [Landscape.name]: Landscape,
     [Skeleton.name]: Skeleton,
     [ScrollView.name]: ScrollView,
     [Switch.name]: Switch,
@@ -134,6 +143,9 @@ export default {
   data() 
   {
     return {
+        celebrate: require("@/assets/celebrate.png"),
+        isDone: false,
+        isFailed: false,
         isLock: false,
         keyBoardRender: ".",
         stage: 1,
@@ -386,13 +398,13 @@ export default {
             })
         },
 
-        async CreateTask()
+        async CreateTask(uid)
         {
             await fetch('http://10.11.20.108:9999/api/tc/',
             {
                 method: "POST",
                 body: JSON.stringify({
-                    id: this.lotdata.no + "/" + moment().format('YYYY-MM-DD hh:mm:ss'),
+                    uid: uid,
                     lotdata: this.lotdata, 
                     procdata: this.procdata,
                     recipe: this.recipe,
@@ -441,10 +453,13 @@ export default {
             this.$store.commit('update_isLoading', true)
             this.errMsg = ""
             // 投料
+            // 生成uid
+            let uid =  Math.floor(Math.random() * 1024) + 1
             await fetch('http://10.11.20.108:9999/api/prod/'+ target,
             {
                 method: "POST",
                 body: JSON.stringify({
+                        uid: uid,
                         lotdata: this.lotdata, 
                         procdata: this.procdata,
                         recipe: this.recipe,
@@ -459,7 +474,7 @@ export default {
                 } 
                 Toast.succeed("投料成功")
                 //建立新任務
-                this.CreateTask()
+                this.CreateTask(uid)
                 this.clean()
             })
             .catch( err =>
