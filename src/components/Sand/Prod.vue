@@ -88,18 +88,23 @@
         </div>
         <md-landscape v-model="isDone">
             <img :src="celebrate">
-            <span class="">成功投料</span>
+            <span id="d">操作完成，點選跳回上一頁</span>
         </md-landscape>
-        <md-landscape v-model="isFail">
-            <img :src="celebrate">
-            <span class="">投料失敗</span>
+        <md-landscape v-model="isFailed">
+            <img :src="failed">
+            <span id="d">投料失敗，請查看詳細原因</span>
         </md-landscape>
+        <!-- <md-button type="primary" @click="startCheck = true"> test</md-button> -->
+        <doCheck :startCheck="startCheck" v-on:clean="clean" />
         <md-dialog title="" v-model="editDialog.open">
             <div style="height:600px">
                 <md-scroll-view auto-reflow :scrolling-x="false">
                     <md-input-item title="修改值:" v-model="editDialog.target" :solid="false" />
-                    <md-input-item title="覆寫值:" v-model="editDialog.overwrite" :solid="false" />
-                    <md-number-keyboard v-model="editDialog.isNumberShow" ok-text="確認" :text-render="keyFormatter"
+                    <md-input-item title="覆寫值:" v-model="editDialog.overwrite" :solid="false" >
+                        <div slot="right">
+                            <span @click="doPaste()">貼上</span>
+                        </div>
+                    </md-input-item>                    <md-number-keyboard v-model="editDialog.isNumberShow" ok-text="確認" :text-render="keyFormatter"
                     @enter="editDialogEnter" @delete="editDialogDelete" @confirm="editDialogConfirm" is-view />
                     <md-field-item title="特殊字元">
                         <md-radio name="." v-model="keyBoardRender" label="." inline />
@@ -117,6 +122,7 @@ import { Button, Toast, NumberKeyboard, Field, FieldItem, InputItem, Dialog, Swi
         , RadioBox, RadioGroup, Radio, ScrollView, Skeleton, Landscape} from "mand-mobile"
 import X2JS from 'x2js'
 import * as moment from "moment/moment"
+import doCheck from "@/components/doCheck.vue"
 
 export default {
   name: "Prod",
@@ -135,6 +141,7 @@ export default {
     [Radio.name]: Radio,
     [RadioGroup.name]: RadioGroup,
     [FieldItem.name]: FieldItem,
+    doCheck,
   },
   props:
   {
@@ -143,7 +150,9 @@ export default {
   data() 
   {
     return {
+        startCheck: false,
         celebrate: require("@/assets/celebrate.png"),
+        failed: require("@/assets/failed.png"),
         isDone: false,
         isFailed: false,
         isLock: false,
@@ -371,6 +380,15 @@ export default {
     },
     methods:
     {
+        doPaste()
+        {
+            navigator.clipboard.readText()
+            .then( text =>
+            {
+                this.editDialog.overwrite = text
+                Toast.succeed("貼上:" + text)
+            })
+        },
         async getLockStatus()
         {
             this.$store.commit('update_isLoading', true)
@@ -475,12 +493,15 @@ export default {
                 Toast.succeed("投料成功")
                 //建立新任務
                 this.CreateTask(uid)
+                // this.startCheck = true
                 this.clean()
+                this.isDone = true
             })
             .catch( err =>
             {
                 this.$notify.warning({ title: '投料失敗', message: err})
                 this.errMsg = err
+                this.isFailed = true
             })
             .finally( () =>
             {
@@ -546,6 +567,7 @@ export default {
         },
         clean()
         {
+            this.startCheck = false
             if(this.stage == 2)
             {
                 this.stage = 1
@@ -636,4 +658,11 @@ export default {
 {
     height: 650px;
 }
+
+#d {
+  background: #fcdcdc;
+  font-size: 30px;
+  color: #676d75;
+}
+
 </style>
