@@ -104,7 +104,8 @@
                         <div slot="right">
                             <span @click="doPaste()">貼上</span>
                         </div>
-                    </md-input-item>                    <md-number-keyboard v-model="editDialog.isNumberShow" ok-text="確認" :text-render="keyFormatter"
+                    </md-input-item>                    
+                    <md-number-keyboard v-model="editDialog.isNumberShow" ok-text="確認" :text-render="keyFormatter"
                     @enter="editDialogEnter" @delete="editDialogDelete" @confirm="editDialogConfirm" is-view />
                     <md-field-item title="特殊字元">
                         <md-radio name="." v-model="keyBoardRender" label="." inline />

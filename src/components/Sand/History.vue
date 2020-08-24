@@ -16,20 +16,36 @@
             </div>
         </el-row>
         <md-dialog v-model="isPopupShow" :btns="btns">
-            <div style="height:300px">
-                <md-field title="詳細參數">
+            <!-- <div style="height:300px"> -->
+            <div>
+                <!-- <md-field title="詳細參數">
                     <md-detail-item title="板高:" :content="recipe.recipe.Height" />
                     <md-detail-item title="板寬:" :content="recipe.recipe.Width" />
                     <md-detail-item title="片數:" :content="recipe.recipe.QTY" />
                     <md-detail-item title="噴砂模式:" :content="recipe.recipe.Mode" />
-                </md-field>
+                </md-field> -->
+                <md-tabs>
+                    <md-tab-pane name="1" label="批號資料">
+                        <md-detail-item title="批號:" :content="recipe.lotdata.no" bold @click.native="doCopy(recipe.lotdata.no)"/>
+                        <md-detail-item title="料號:" :content="recipe.lotdata.itemno"  />
+                        <md-detail-item title="製程序:" :content="recipe.lotdata.procseq"  />
+                        <md-detail-item title="料號版次:" :content="recipe.lotdata.itemno"  />
+                        <md-detail-item title="製造版次:" :content="recipe.lotdata.mfver"  />
+                    </md-tab-pane>
+                    <md-tab-pane name="2" label="詳細參數">
+                        <md-detail-item title="板高:" :content="recipe.recipe.Height" />
+                        <md-detail-item title="板寬:" :content="recipe.recipe.Width" />
+                        <md-detail-item title="片數:" :content="recipe.recipe.QTY" />
+                        <md-detail-item title="噴砂模式:" :content="recipe.recipe.Mode" />
+                    </md-tab-pane>
+                </md-tabs>
             </div>
         </md-dialog>
   </div>
 </template>
 
 <script>
-import { DatePicker, Button, Field, FieldItem, DetailItem, Dialog, Toast} from "mand-mobile"
+import { DatePicker, Button, Field, FieldItem, DetailItem, Dialog, Toast, Tabs, TabPane} from "mand-mobile"
 import * as moment from "moment/moment"
 
 export default {
@@ -37,6 +53,8 @@ export default {
     components:
     {
         [DatePicker.name]: DatePicker,
+        [TabPane.name]: TabPane,
+        [Tabs.name]: Tabs,
         [Button.name]: Button,
         [Field.name]: Field,
         [FieldItem.name]: FieldItem,
@@ -106,6 +124,16 @@ export default {
     },
     methods:
     {
+        doCopy (value)
+        {
+            this.$copyText(value).then( () =>
+            {
+                Toast.succeed("複製:" + value)
+            }, e =>
+            {
+                Toast.failed(e)
+            })
+        },
         onBasicCancel()
         {
             this.isPopupShow = false
@@ -117,12 +145,12 @@ export default {
         },
         async getHistory()
         {
-            let now =  moment().subtract(12,'h').format('YYYY-MM-DD hh:mm:ss')
+            let now =  moment().subtract(168,'h').format('YYYY-MM-DD hh:mm:ss')
             let response = await this.$store.dispatch("_db", { 
                 url: "_db/ENG-10/_api/cursor",
                 method: "POST",
                 payload: {
-                    "query": "FOR doc IN SAND_HISTORY FILTER doc.`STARTDATETIME` > '" + now +"' SORT doc.STARTDATETIME RETURN doc",
+                    "query": "FOR doc IN SAND_HISTORY FILTER doc.`STARTDATETIME` > '" + now +"' SORT doc.STARTDATETIME DESC RETURN doc",
                     "count": true
                 }
             })
@@ -134,5 +162,4 @@ export default {
 </script>
 
 <style>
-
 </style>
