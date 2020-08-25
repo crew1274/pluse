@@ -556,7 +556,7 @@ export default {
         },
         async prepare()
         {
-            if(this.lot == "" || this.procseq == "" || this.operator == "" )
+            if(this.lot == "" || this.operator == "" )
             {
                 Toast.failed('請輸入批號/工號/製程序')
                 return

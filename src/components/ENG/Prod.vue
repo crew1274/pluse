@@ -48,13 +48,42 @@
                             clearable align="right" :error="isValidMsg.QTY" />
                             <md-input-item title="每框片數:" :value="recipe.eachQTY" @click.native="openDialog('recipe.eachQTY')"
                             clearable align="right" :error="isValidMsg.eachQTY" />
-                            <md-input-item title="化鎳時間(秒):" :value="recipe.ENiPlatedtime" @click.native="openDialog('recipe.ENiPlatedtime')"
-                            clearable align="right"  />
-                            <md-input-item title="化金時間(秒):" :value="recipe.EAuPlatedtime" @click.native="openDialog('recipe.EAuPlatedtime')"
-                            clearable align="right"  />
+                            <md-radio-group v-model="use_mode">
+                                <md-radio-box name="系統時間">系統設定</md-radio-box>
+                                <md-radio-box name="虛擬量測">虛擬量測</md-radio-box>
+                            </md-radio-group>
+                            <div v-if="use_mode == '虛擬量測'">
+                                <md-input-item title="化鎳時間(秒):" :value="recipe.ENiPlatedtime" 
+                                    align="right" disabled>
+                                    <div slot="left">
+                                        <span>虛擬量測</span>
+                                    </div>
+                                </md-input-item>
+                                <md-input-item title="化金時間(秒):" :value="recipe.EAuPlatedtime" 
+                                    align="right" disabled>
+                                    <div slot="left">
+                                        <span>虛擬量測</span>
+                                    </div>
+                                </md-input-item>
+                            </div>
+                            <div v-else>
+                                <md-input-item title="化鎳時間(秒):" :value="recipe.ENiPlatedtime" 
+                                    @click.native="openDialog('recipe.ENiPlatedtime')"
+                                    clearable align="right">
+                                    <div slot="left">
+                                        <span>系統設定</span>
+                                    </div>
+                                </md-input-item>
+                                <md-input-item title="化金時間(秒):" :value="recipe.EAuPlatedtime" 
+                                    @click.native="openDialog('recipe.EAuPlatedtime')"
+                                    clearable align="right">
+                                    <div slot="left">
+                                        <span>系統設定</span>
+                                    </div>
+                                </md-input-item>
+                            </div>
                             <md-input-item title="厚金時間(秒):" :value="recipe.EHAuPlatedtime" @click.native="openDialog('recipe.EHAuPlatedtime')"
                             clearable align="right"  />
-
                         </md-field>
                     </el-col>
                 </el-row>
@@ -140,6 +169,7 @@ export default {
   data() 
   {
     return {
+        use_mode: "虛擬量測",
         celebrate: require("@/assets/celebrate.png"),
         failed: require("@/assets/failed.png"),
         isDone: false,
@@ -612,9 +642,9 @@ export default {
         },
         async prepare()
         {
-            if(this.lot == "" || this.procseq == "" || this.operator == "" )
+            if(this.lot == "" || this.operator == "" )
             {
-                Toast.failed('請輸入批號/工號/製程序')
+                Toast.failed('請輸入批號/工號')
                 return
             }
             if(await this.getRecipe())
