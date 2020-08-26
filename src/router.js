@@ -32,7 +32,7 @@ const routes = [
                 path: '/graphical',
                 name: 'graphical',
                 meta: {
-                    title: "整合"
+                    title: "整合圖控"
                 },
                 component: () => import('@/views/Graphical.vue')
             },

@@ -7,9 +7,19 @@
                     :picker-options="pickerOptions"  @change="CheckData"
                     size="large"/>
             </el-col>
+            <el-col :span="12">
+                <el-select v-model="station" placeholder="">
+                    <el-option
+                    v-for="item in stations"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                    </el-option>
+                </el-select>
+            </el-col>
         </el-row>
         <el-row>
-            <el-table :data="show_list" style="width: 100%" :row-class-name="tableRowClassName" calss="hello">
+            <el-table :data="show_list.filter( data => station.includes(data.device))" style="width: 100%" :row-class-name="tableRowClassName" calss="hello">
                 <el-table-column label="開始時間" prop="start_time" />
                 <el-table-column label="結束時間" prop="end_time" />
                 <el-table-column label="詳細訊息" prop="message" />
@@ -36,6 +46,29 @@ export default {
     {
         return {
             list: [],
+            stations: [
+                {
+                    value: '噴砂線下料區||噴砂線調整區||噴砂線上料區||噴砂主站',
+                    label: '全部'
+                }, 
+                {
+                    value: '噴砂線下料區',
+                    label: '噴砂線下料區'
+                }, 
+                {
+                    value: '噴砂線調整區',
+                    label: '噴砂線調整區'
+                }, 
+                {
+                    value: '噴砂線上料區',
+                    label: '噴砂線上料區'
+                },
+                {
+                    value: '噴砂主站',
+                    label: '噴砂主站'
+                },
+            ],
+            station: "噴砂線下料區||噴砂線調整區||噴砂線上料區||噴砂主站",
             loading: false,
             date_range: [],
             pickerOptions:
