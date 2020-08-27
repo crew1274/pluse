@@ -12,7 +12,7 @@ import AGV from "@/components/ENG/AGV.vue"
 import Prod from "@/components/ENG/Prod.vue"
 import Home from "@/components/ENG/Home.vue"
 import History from "@/components/ENG/History.vue"
-import Setting from "@/components/Sand/Setting.vue"
+import Setting from "@/components/ENG/Setting.vue"
 import {TabBar, Steps,  Swiper, SwiperItem } from "mand-mobile"
 
 export default {
@@ -38,7 +38,7 @@ export default {
       tab_current: "Home",
       tab_items: [
         {name: "Home", label: '化金站'},
-        {name: "Prod", label: '投料操作'},
+        {name: "Prod", label: '上料操作'},
         {name: "AGV", label: 'AGV操作'},
         {name: "Setting", label: '設定'},
         {name: "History", label: '生產履歷'},

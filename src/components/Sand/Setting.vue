@@ -1,7 +1,10 @@
 <template>
     <div>
-        <el-row>
-            <el-col :span="8">
+        <el-row :gutter="10">
+            <el-col :span="6">
+                <PLC />
+            </el-col>
+            <el-col :span="6">
                 <PLC />
             </el-col>
         </el-row>
@@ -11,7 +14,7 @@
 <script>
 import { DatePicker, Button, Field, FieldItem, DetailItem, Dialog} from "mand-mobile"
 import * as moment from "moment/moment"
-import PLC from "@/components/Sand/PLC.vue"
+import PLC from "@/components/Units/PLC.vue"
 
 export default {
     name: "Settings",

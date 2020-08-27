@@ -175,6 +175,14 @@ export default {
     {
 
     },
+    activated() 
+    {
+        this.getPrevRecipe()
+    },
+    deactivated() 
+    {
+
+    },
     methods:
     {
         onBasicCancel()

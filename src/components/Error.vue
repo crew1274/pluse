@@ -48,7 +48,7 @@ export default {
             list: [],
             stations: [
                 {
-                    value: '噴砂線下料區||噴砂線調整區||噴砂線上料區||噴砂主站',
+                    value: '',
                     label: '全部'
                 }, 
                 {
@@ -67,8 +67,12 @@ export default {
                     value: '噴砂主站',
                     label: '噴砂主站'
                 },
+                {
+                    value: '噴砂主站',
+                    label: '噴砂主站'
+                },
             ],
-            station: "噴砂線下料區||噴砂線調整區||噴砂線上料區||噴砂主站",
+            station: "噴砂線下料區",
             loading: false,
             date_range: [],
             pickerOptions:
@@ -157,6 +161,7 @@ export default {
         async CheckData()
         {
             this.loading = true
+            let notes = []
             await fetch("http://10.11.20.108:9999/api/ErrorHandle?start=" + this.date_range[0] + "&end=" + this.date_range[1],
             {
                 method: "GET",
@@ -169,6 +174,32 @@ export default {
                     throw response["Exception"]
                 }
                 this.list = response["result"].reverse()
+                this._(this.list).forEach( ele =>
+                {
+                    if(! notes.includes(ele["device"]) )
+                    {
+                        notes.push(ele["device"])
+                    }
+                })
+                this.stations = []
+                let combine = ''
+                this._(notes).forEach( ele =>
+                {
+                    this.stations.push(
+                        {
+                            value: ele,
+                            label: ele
+                        }, 
+                    )
+                    combine = combine + ele + "||"
+                })
+                this.stations.push(
+                    {
+                        value: combine,
+                        label: "全部"
+                    }, 
+                ) 
+                this.station = combine
             })
             .catch( err =>
             {

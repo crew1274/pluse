@@ -123,7 +123,7 @@ import { Button, Toast, NumberKeyboard, Field, FieldItem, InputItem, Dialog, Swi
         , RadioBox, RadioGroup, Radio, ScrollView, Skeleton, Landscape} from "mand-mobile"
 import X2JS from 'x2js'
 import * as moment from "moment/moment"
-import doCheck from "@/components/doCheck.vue"
+import doCheck from "@/components/Units/doCheck.vue"
 
 export default {
   name: "Prod",
@@ -404,12 +404,12 @@ export default {
                 {
                     throw response["Exception"]
                 }
-                Toast.succeed("成功取得資料")
+                // Toast.succeed("成功取得資料")
                 this.isLock = response["response"]
             })
             .catch( err =>
             {
-                this.$notify.warning({ title: '投料失敗', message: err})
+                Toast.failed(err)
             })
             .finally( () =>
             {

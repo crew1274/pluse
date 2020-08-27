@@ -446,12 +446,11 @@ export default {
                 {
                     throw response["Exception"]
                 }
-                Toast.succeed("成功取得資料")
                 this.isLock = response["response"]
             })
             .catch( err =>
             {
-                this.$notify.warning({ title: '投料失敗', message: err})
+                Toast.failed(err)
             })
             .finally( () =>
             {

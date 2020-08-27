@@ -96,9 +96,13 @@ export default {
 
     },
     activated() 
-    {},
+    {
+        this.getPrevRecipe()
+    },
     deactivated() 
-    {},
+    {
+
+    },
     methods:
     {
         async getPrevRecipe()
