@@ -46,33 +46,8 @@ export default {
     {
         return {
             list: [],
-            stations: [
-                {
-                    value: '',
-                    label: '全部'
-                }, 
-                {
-                    value: '噴砂線下料區',
-                    label: '噴砂線下料區'
-                }, 
-                {
-                    value: '噴砂線調整區',
-                    label: '噴砂線調整區'
-                }, 
-                {
-                    value: '噴砂線上料區',
-                    label: '噴砂線上料區'
-                },
-                {
-                    value: '噴砂主站',
-                    label: '噴砂主站'
-                },
-                {
-                    value: '噴砂主站',
-                    label: '噴砂主站'
-                },
-            ],
-            station: "噴砂線下料區",
+            stations: [],
+            station: "",
             loading: false,
             date_range: [],
             pickerOptions:

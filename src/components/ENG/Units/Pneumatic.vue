@@ -1,13 +1,13 @@
 <template>
     <div>
         <el-row>
-            <md-button type="primary" @click="isPopupShow=true" icon="time">週期設定</md-button>
+            <md-button type="primary" @click="isPopupShow=true" icon="balance">氣動設定</md-button>
         </el-row>
         <md-popup v-model="isPopupShow" position="bottom">
             <md-popup-title-bar
-                title="週期設定"
+                title="氣動設定"
                 describe="確認料盤無板->自動調整治具寬度->確認放入板材"
-                cancel-text="跳回上一步"
+                cancel-text="跳回"
                 ok-text="確認"
                 @cancel="cancel()"
                 @confirm="confirm()">
@@ -22,7 +22,7 @@
 <script>
 import { Button, Popup, PopupTitleBar} from "mand-mobile"
 export default {
-    name: "Period",
+    name: "Pneumatic",
     components: {
         [Button.name]: Button,
         [PopupTitleBar.name]: PopupTitleBar,

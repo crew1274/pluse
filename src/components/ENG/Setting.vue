@@ -5,7 +5,18 @@
                 <PLC />
             </el-col>
             <el-col :span="6">
+                <Out />
+            </el-col>
+            <el-col :span="6">
                 <TankSwitch />
+            </el-col>
+            <el-col :span="6">
+                <Period />
+            </el-col>
+        </el-row>
+        <el-row :gutter="10">
+            <el-col :span="6">
+                <Pneumatic />
             </el-col>
         </el-row>
   </div>
@@ -16,6 +27,9 @@ import { DatePicker, Button, Field, FieldItem, DetailItem, Dialog} from "mand-mo
 import * as moment from "moment/moment"
 import PLC from "@/components/Units/PLC.vue"
 import TankSwitch from "@/components/ENG/Units/TankSwitch.vue"
+import Period from "@/components/ENG/Units/Period.vue"
+import Pneumatic from "@/components/ENG/Units/Pneumatic.vue"
+import Out from "@/components/ENG/Units/Out.vue"
 
 export default {
     name: "Settings",
@@ -23,6 +37,9 @@ export default {
     {
         PLC,
         TankSwitch,
+        Period,
+        Pneumatic,
+        Out,
         [DatePicker.name]: DatePicker,
         [Button.name]: Button,
         [Field.name]: Field,
@@ -104,6 +121,9 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+.el-row
+{
+    margin-bottom: 20px;
+}
 </style>
