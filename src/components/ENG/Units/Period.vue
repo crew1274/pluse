@@ -6,27 +6,40 @@
         <md-popup v-model="isPopupShow" position="bottom">
             <md-popup-title-bar
                 title="週期設定"
-                describe="確認料盤無板->自動調整治具寬度->確認放入板材"
-                cancel-text="跳回上一步"
+                describe="確認後才會更新"
+                cancel-text="返回"
                 ok-text="確認"
                 @cancel="cancel()"
                 @confirm="confirm()">
             </md-popup-title-bar>
             <div class="e">
-                
+                <el-row>
+                    <el-col :span="12" :offset="6">
+                        <md-field>
+                            <md-field-item title="週期時間">
+                                <md-stepper slot="right" v-model="value"/>
+                            </md-field-item>
+                        </md-field>
+                    </el-col>
+
+                </el-row>
             </div>
         </md-popup>
     </div>
 </template>
 
 <script>
-import { Button, Popup, PopupTitleBar} from "mand-mobile"
+import { Button, Popup, PopupTitleBar, Stepper, Field, FieldItem, Icon} from "mand-mobile"
 export default {
     name: "Period",
     components: {
         [Button.name]: Button,
         [PopupTitleBar.name]: PopupTitleBar,
         [Popup.name]: Popup,
+        [Field.name]: Field,
+        [FieldItem.name]: FieldItem,
+        [Stepper.name]: Stepper,
+        [Icon.name]: Icon,
     },
     props: {
 
@@ -34,6 +47,7 @@ export default {
     data()
     {
         return {
+            value: 600,
             isPopupShow: false,
         }
     },

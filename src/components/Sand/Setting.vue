@@ -4,9 +4,6 @@
             <el-col :span="6">
                 <PLC />
             </el-col>
-            <el-col :span="6">
-                <PLC />
-            </el-col>
         </el-row>
   </div>
 </template>

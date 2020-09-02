@@ -6,8 +6,8 @@
         <md-popup v-model="isPopupShow" position="bottom">
             <md-popup-title-bar
                 title="氣動設定"
-                describe="確認料盤無板->自動調整治具寬度->確認放入板材"
-                cancel-text="跳回"
+                describe=""
+                cancel-text="返回"
                 ok-text="確認"
                 @cancel="cancel()"
                 @confirm="confirm()">

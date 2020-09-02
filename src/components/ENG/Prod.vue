@@ -60,7 +60,11 @@
                                     </div>
                                 </md-input-item>
                                 <md-input-item title="化金時間(秒):" :value="recipe.EAuPlatedtime" 
-                                    align="right" disabled>
+                                    align="right">
+                                </md-input-item>
+                                <md-input-item title="厚金時間(秒):" :value="recipe.EHAuPlatedtime" 
+                                    @click.native="openDialog('recipe.EHAuPlatedtime')"
+                                    clearable align="right" disabled>
                                     <div slot="left">
                                         <span>虛擬量測</span>
                                     </div>
@@ -77,13 +81,15 @@
                                 <md-input-item title="化金時間(秒):" :value="recipe.EAuPlatedtime" 
                                     @click.native="openDialog('recipe.EAuPlatedtime')"
                                     clearable align="right">
+                                </md-input-item>
+                                <md-input-item title="厚金時間(秒):" :value="recipe.EHAuPlatedtime" 
+                                    @click.native="openDialog('recipe.EHAuPlatedtime')"
+                                    clearable align="right">
                                     <div slot="left">
                                         <span>系統設定</span>
                                     </div>
                                 </md-input-item>
                             </div>
-                            <md-input-item title="厚金時間(秒):" :value="recipe.EHAuPlatedtime" @click.native="openDialog('recipe.EHAuPlatedtime')"
-                            clearable align="right"  />
                         </md-field>
                     </el-col>
                 </el-row>
@@ -169,7 +175,7 @@ export default {
   data() 
   {
     return {
-        use_mode: "虛擬量測",
+        use_mode: "系統設定",
         celebrate: require("@/assets/celebrate.png"),
         failed: require("@/assets/failed.png"),
         isDone: false,

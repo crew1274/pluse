@@ -31,7 +31,6 @@ export default {
             [Button.name]: Button,
             [Steps.name]: Steps,
             [Popup.name]: Popup,
-            [Steps.name]: Steps,
             [PopupTitleBar.name]: PopupTitleBar,
     },
     props:

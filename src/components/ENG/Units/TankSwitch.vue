@@ -7,7 +7,7 @@
             <md-popup-title-bar
                 title="浸泡槽設定"
                 describe="更換槽須由此更新"
-                cancel-text="跳回"
+                cancel-text="返回"
                 ok-text="確認"
                 @cancel="cancel()"
                 @confirm="confirm()">
@@ -30,9 +30,9 @@
                         <md-check-box name="#27化學金">#27化學金</md-check-box>
                     </el-row>
                     <el-row>
-                        <md-check-box name="#31厚金槽">#22厚金槽</md-check-box>
+                        <md-check-box name="#31厚金槽">#31厚金槽</md-check-box>
                         <el-divider direction="vertical" />
-                        <md-check-box name="#32厚金槽">#22厚金槽</md-check-box>
+                        <md-check-box name="#32厚金槽">#32厚金槽</md-check-box>
                     </el-row>
                 </md-check-group>
             </div>
@@ -58,7 +58,7 @@ export default {
     {
         return {
             isPopupShow: false,
-            tanks: ["#21化學鎳", "#22化學鎳"],
+            tanks: ["#12活化槽", "#22化學鎳", "#27化學金", "#31厚金槽"],
         }
     },
     computed:
