@@ -21,6 +21,17 @@
                             </el-row>
                         </el-card> 
                     </el-col>
+                    <el-col :span="8">
+                        <el-card shadow="always" header="化金提早出料時間">
+                            <el-row>
+                                <md-field>
+                                    <md-field-item title="厚金結束前(秒)">
+                                        <md-stepper slot="right" v-model="time" step="10"/>
+                                    </md-field-item>
+                                </md-field>
+                            </el-row>
+                        </el-card> 
+                    </el-col>
                 </el-row>
             </div>
         </md-popup>
@@ -28,7 +39,7 @@
 </template>
 
 <script>
-import { Button, Popup, PopupTitleBar, CheckBox, CheckGroup, Toast} from "mand-mobile"
+import { Button, Popup, PopupTitleBar, CheckBox, CheckGroup, Toast, Stepper, Field, FieldItem, Icon} from "mand-mobile"
 export default {
     name: "Out",
     components: {
@@ -37,6 +48,10 @@ export default {
         [Popup.name]: Popup,
         [CheckBox.name]: CheckBox,
         [CheckGroup.name]: CheckGroup,
+        [Stepper.name]: Stepper,
+        [Field.name]: Field,
+        [FieldItem.name]: FieldItem,
+        [Icon.name]: Icon,
     },
     props: {
 
@@ -46,6 +61,7 @@ export default {
         return {
             isLock: false,
             isPopupShow: false,
+            time: 180,
         }
     },
     computed:
@@ -59,6 +75,7 @@ export default {
     async created()
     {
         await this.getLockStatus()
+        await this.getTime()
     },
     methods:
     {
@@ -70,9 +87,9 @@ export default {
         async confirm()
         {
             this.isPopupShow = false
-            await this.PutLockStatus()
+            await this.Update()
         },
-        async PutLockStatus()
+        async Update()
         {
             this.$store.commit('update_isLoading', true)
             await fetch('http://10.11.20.108:9999/api/isLock',
@@ -89,6 +106,55 @@ export default {
                 {
                     throw response["Exception"]
                 }
+            })
+            .catch( err =>
+            {
+                Toast.failed(err)
+            })
+            .finally( () =>
+            {
+                this.$store.commit('update_isLoading', false)
+            })
+            await fetch('http://10.11.20.108:9999/api/time',
+            {
+                method: "POST",
+                body: JSON.stringify({
+                    time: this.time
+                })
+            })
+            .then( response => {return response.json()})
+            .then( response =>
+            {
+                if(response["Exception"])
+                {
+                    throw response["Exception"]
+                }
+            })
+            .catch( err =>
+            {
+                Toast.failed(err)
+            })
+            .finally( () =>
+            {
+                this.$store.commit('update_isLoading', false)
+            })
+            Toast.succeed("更新")
+        },
+        async getTime()
+        {
+            this.$store.commit('update_isLoading', true)
+            await fetch('http://10.11.20.108:9999/api/time',
+            {
+                method: "GET",
+            })
+            .then( response => {return response.json()})
+            .then( response =>
+            {
+                if(response["Exception"])
+                {
+                    throw response["Exception"]
+                }
+                this.time = response["response"]
             })
             .catch( err =>
             {

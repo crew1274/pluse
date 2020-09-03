@@ -49,7 +49,7 @@
                             <md-input-item title="每框片數:" :value="recipe.eachQTY" @click.native="openDialog('recipe.eachQTY')"
                             clearable align="right" :error="isValidMsg.eachQTY" />
                             <md-radio-group v-model="use_mode">
-                                <md-radio-box name="系統時間">系統設定</md-radio-box>
+                                <md-radio-box name="系統設定">系統設定</md-radio-box>
                                 <md-radio-box name="虛擬量測">虛擬量測</md-radio-box>
                             </md-radio-group>
                             <div v-if="use_mode == '虛擬量測'">
@@ -60,10 +60,10 @@
                                     </div>
                                 </md-input-item>
                                 <md-input-item title="化金時間(秒):" :value="recipe.EAuPlatedtime" 
+                                    @click.native="openDialog('recipe.EHAuPlatedtime')" 
                                     align="right">
                                 </md-input-item>
                                 <md-input-item title="厚金時間(秒):" :value="recipe.EHAuPlatedtime" 
-                                    @click.native="openDialog('recipe.EHAuPlatedtime')"
                                     clearable align="right" disabled>
                                     <div slot="left">
                                         <span>虛擬量測</span>
