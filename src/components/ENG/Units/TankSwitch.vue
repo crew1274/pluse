@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { Button, Popup, PopupTitleBar, CheckBox, CheckGroup} from "mand-mobile"
+import { Button, Popup, PopupTitleBar, CheckBox, CheckGroup, Toast} from "mand-mobile"
 export default {
     name: "TankSwitch",
     components: {
@@ -58,7 +58,8 @@ export default {
     {
         return {
             isPopupShow: false,
-            tanks: ["#12活化槽", "#22化學鎳", "#27化學金", "#31厚金槽"],
+            all_tanks: ["#12活化槽", "#13活化槽", "#21化學鎳", "#22化學鎳", "#26化學金", "#27化學金", "#31厚金槽", "#32厚金槽"],
+            tanks: [],
         }
     },
     computed:
@@ -67,7 +68,17 @@ export default {
     },
     watch:
     {
-
+        async isPopupShow(val)
+        {
+            if(val)
+            {
+                await this.getInfo()
+            }
+        }
+    },
+    async created()
+    {
+        await this.getInfo()
     },
     methods:
     {
@@ -75,10 +86,90 @@ export default {
         {
             this.isPopupShow = false
         },
-        confirm()
+        async confirm()
         {
             this.isPopupShow = false
-        }
+            await this.updateInfo()
+            await this.getInfo()
+        },
+        async getInfo()
+        {
+            this.$store.commit('update_isLoading', true)
+            await fetch('http://10.11.20.108:9999/api/use_tanks',
+            {
+                method: "GET",
+            })
+            .then( response => {return response.json()})
+            .then( response =>
+            {
+                if(response["Exception"])
+                {
+                    throw response["Exception"]
+                }
+                if(this._.isArray(response["response"]))
+                {   
+                    this.tanks = []
+                    for(let i=0; i<response["response"].length; i++)
+                    {
+                        if(response["response"][i])
+                        {
+                            this.tanks.push(this.all_tanks[i])
+                        }
+                    }
+                }
+            })
+            .catch( err =>
+            {
+                Toast.failed(err)
+            })
+            .finally( () =>
+            {
+                this.$store.commit('update_isLoading', false)
+            })
+        },
+        async updateInfo()
+        {
+            this.$store.commit('update_isLoading', true)
+            let p = []
+            this.tanks.includes("Mango")
+            for(let i=0; i<8; i++)
+            {
+                this.tanks.includes(this.all_tanks[i]) ? p.push(1): p.push(0)
+            }
+            await fetch('http://10.11.20.108:9999/api/use_tanks',
+            {
+                method: "post",
+                body: JSON.stringify({
+                    tanks: p
+                })
+            })
+            .then( response => {return response.json()})
+            .then( response =>
+            {
+                if(response["Exception"])
+                {
+                    throw response["Exception"]
+                }
+                if(this._.isArray(response["response"]))
+                {   
+                    for(let i=0; i<response["response"].length; i++)
+                    {
+                        if(response["response"][i])
+                        {
+                            this.tanks.push(this.all_tanks[i])
+                        }
+                    }
+                }
+            })
+            .catch( err =>
+            {
+                Toast.failed(err)
+            })
+            .finally( () =>
+            {
+                this.$store.commit('update_isLoading', false)
+            })
+        },
     }
 }
 </script>

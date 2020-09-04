@@ -14,19 +14,19 @@
             </md-popup-title-bar>
             <div class="e">
                 <el-row>
-                    <el-col :span="8">
+                    <el-col :span="12">
                         <el-card shadow="always" header="化金出料鎖定">
                             <el-row>
                                 <el-switch v-model="isLock" active-text="鎖定" inactive-text="解鎖" />
                             </el-row>
                         </el-card> 
                     </el-col>
-                    <el-col :span="8">
+                    <el-col :span="12">
                         <el-card shadow="always" header="化金提早出料時間">
                             <el-row>
                                 <md-field>
                                     <md-field-item title="厚金結束前(秒)">
-                                        <md-stepper slot="right" v-model="time" step="10"/>
+                                        <md-stepper v-model="time" step="10"/>
                                     </md-field-item>
                                 </md-field>
                             </el-row>
@@ -195,15 +195,8 @@ export default {
 </script>
 
 <style scoped>
-.e {
+.e { 
   background: #ffffff;
-  font-size: 30px;
   color: #27282a;
 }
-
-.el-switch  >>> .el-switch__label
-{
-  font-size: 20px;
-}
-
 </style>
