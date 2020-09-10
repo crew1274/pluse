@@ -18,6 +18,9 @@
             <el-col :span="6">
                 <Pneumatic />
             </el-col>
+            <el-col :span="6">
+                <Target />
+            </el-col>
         </el-row>
   </div>
 </template>
@@ -30,6 +33,7 @@ import TankSwitch from "@/components/ENG/Units/TankSwitch.vue"
 import Period from "@/components/ENG/Units/Period.vue"
 import Pneumatic from "@/components/ENG/Units/Pneumatic.vue"
 import Out from "@/components/ENG/Units/Out.vue"
+import Target from "@/components/ENG/Units/Target.vue"
 
 export default {
     name: "Settings",
@@ -40,6 +44,7 @@ export default {
         Period,
         Pneumatic,
         Out,
+        Target,
         [DatePicker.name]: DatePicker,
         [Button.name]: Button,
         [Field.name]: Field,

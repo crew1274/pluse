@@ -108,7 +108,7 @@ export default {
             {
                 x: 24,
                 y: 0,
-                width: 1000,
+                width: 1200,
                 height: 750,
             },
             configFIX:

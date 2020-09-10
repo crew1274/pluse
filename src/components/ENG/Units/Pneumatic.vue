@@ -6,7 +6,7 @@
         <md-popup v-model="isPopupShow" position="bottom">
             <md-popup-title-bar
                 title="氣動設定"
-                describe=""
+                describe="確認後才會覆寫到設備"
                 cancel-text="返回"
                 ok-text="確認"
                 @cancel="cancel()"

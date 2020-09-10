@@ -6,7 +6,7 @@
         <md-popup v-model="isPopupShow" position="bottom">
             <md-popup-title-bar
                 title="浸泡槽設定"
-                describe="更換槽須由此更新"
+                describe="確認後才會覆寫到設備"
                 cancel-text="返回"
                 ok-text="確認"
                 @cancel="cancel()"
@@ -90,7 +90,6 @@ export default {
         {
             this.isPopupShow = false
             await this.updateInfo()
-            await this.getInfo()
         },
         async getInfo()
         {
@@ -131,7 +130,6 @@ export default {
         {
             this.$store.commit('update_isLoading', true)
             let p = []
-            this.tanks.includes("Mango")
             for(let i=0; i<8; i++)
             {
                 this.tanks.includes(this.all_tanks[i]) ? p.push(1): p.push(0)

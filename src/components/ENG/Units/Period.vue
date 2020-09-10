@@ -6,7 +6,7 @@
         <md-popup v-model="isPopupShow" position="bottom">
             <md-popup-title-bar
                 title="週期設定"
-                describe="確認後才會更新"
+                describe="確認後才會覆寫到設備"
                 cancel-text="返回"
                 ok-text="確認"
                 @cancel="cancel()"
@@ -21,7 +21,6 @@
                             </md-field-item>
                         </md-field>
                     </el-col>
-
                 </el-row>
             </div>
         </md-popup>
@@ -29,7 +28,7 @@
 </template>
 
 <script>
-import { Button, Popup, PopupTitleBar, Stepper, Field, FieldItem, Icon} from "mand-mobile"
+import { Button, Popup, PopupTitleBar, Stepper, Field, FieldItem, Icon, Toast} from "mand-mobile"
 export default {
     name: "Period",
     components: {
@@ -47,7 +46,7 @@ export default {
     data()
     {
         return {
-            value: 600,
+            value: 0,
             isPopupShow: false,
         }
     },
@@ -57,7 +56,13 @@ export default {
     },
     watch:
     {
-
+        async isPopupShow(val)
+        {
+            if(val)
+            {
+                await this.getInfo()
+            }
+        }
     },
     methods:
     {
@@ -65,10 +70,64 @@ export default {
         {
             this.isPopupShow = false
         },
-        confirm()
+        async confirm()
         {
             this.isPopupShow = false
-        }
+            await this.updateInfo()
+        },
+        async getInfo()
+        {
+            this.$store.commit('update_isLoading', true)
+            await fetch('http://10.11.20.108:9999/api/period',
+            {
+                method: "GET",
+            })
+            .then( response => {return response.json()})
+            .then( response =>
+            {
+                if(response["Exception"])
+                {
+                    throw response["Exception"]
+                }
+                this.value = response["response"]
+            })
+            .catch( err =>
+            {
+                Toast.failed(err)
+            })
+            .finally( () =>
+            {
+                this.$store.commit('update_isLoading', false)
+            })
+        },
+        async updateInfo()
+        {
+            this.$store.commit('update_isLoading', true)
+            await fetch('http://10.11.20.108:9999/api/period',
+            {
+                method: "post",
+                body: JSON.stringify({
+                    period: this.value
+                })
+            })
+            .then( response => {return response.json()})
+            .then( response =>
+            {
+                if(response["Exception"])
+                {
+                    throw response["Exception"]
+                }
+                Toast.succeed("覆寫成功")
+            })
+            .catch( err =>
+            {
+                Toast.failed(err)
+            })
+            .finally( () =>
+            {
+                this.$store.commit('update_isLoading', false)
+            })
+        },
     }
 }
 </script>

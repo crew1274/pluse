@@ -128,7 +128,6 @@ export default {
                 },
             ],
             isPopupShow: false,
-
             recipe_BUFFER: {},
             recipe_READY: {},
             recipe : {

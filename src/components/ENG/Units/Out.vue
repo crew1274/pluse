@@ -6,9 +6,9 @@
         <md-popup v-model="isPopupShow" position="bottom">
             <md-popup-title-bar
                 title="化金狀態設定"
-                describe="需確認覆寫後才會更新狀態"
-                cancel-text="跳回"
-                ok-text="確認覆寫"
+                describe="確認後才會覆寫到PLC"
+                cancel-text="返回"
+                ok-text="確認"
                 @cancel="cancel()"
                 @confirm="confirm()">
             </md-popup-title-bar>
