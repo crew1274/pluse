@@ -23,6 +23,7 @@ export default new Vuex.Store({
         home: {},
         AGV_CMD: "",
         spec: {},
+        isMobile: false,
     },
     mutations: 
     {
@@ -59,6 +60,10 @@ export default new Vuex.Store({
                 datetime: new Date().getMilliseconds(),
                 msg: redis_msg,
             }
+        },
+        update_isMobile(state, status)
+        {
+            state.isMobile = status
         },
         update_isLoading(state, status)
         {

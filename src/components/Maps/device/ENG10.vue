@@ -6,6 +6,7 @@
     <v-rect :config="StatusConfig" />
     <div v-for="(item, index) in bays" :key="index">
       <v-rect :config="item.config" @click="showup(index)"/>
+      <v-text :config="item.TextConfig" />
     </div>
   
     <md-dialog v-model="isPopupShow" :btns="btns" class="info">
@@ -38,7 +39,7 @@
 </template>
 
 <script>
-import { Dialog, Tabs, TabPane, DetailItem, Button, Icon} from "mand-mobile"
+import { Dialog, Tabs, TabPane, DetailItem, Button, Icon, Toast} from "mand-mobile"
 export default {
   name: "ENG10",
   components:
@@ -61,6 +62,7 @@ export default {
     let x = this.x
     let y = this.y
     return {
+      target_note: [],
       btns: [
           {
               text: "確認",
@@ -256,13 +258,67 @@ export default {
   methods:
   {
     edit()
+    { 
+      Toast.info("功能尚未開放")
+    },
+    updateTransformer()
     {
+    
+      this.$refs.transformer.getNode().getLayer().batchDraw()
+    },
+    async move()
+    {
+      // 清空當前顯示
+      this.bays.forEach(bay =>
+      {
+          bay["config"]["visible"] = false
+      })
+      for(let i=0; i<this.target_note.length; i++)
+      {
+        for(let k=0; k<this.bays.length; k++)
+        {
+          if(this.bays[k]["target_number"] == this.target_note[i]["number"])
+          {
+            this.bays[k]["config"]["x"] = this.ImageConfig.x + 20 * (36 - ( + this.target_note[i]["pos"]))
+            this.bays[k]["config"]["visible"] = true
 
+            this.bays[k]["TextConfig"]["x"] = this.ImageConfig.x + 20 * (36 - ( + this.target_note[i]["pos"])) - 25
+            this.bays[k]["TextConfig"]["text"] = "#" + this.target_note[i]["pos"] + ":" + this.target_note[i]["number"]
+            this.bays[k]["TextConfig"]["visible"] = true
+          }
+        }
+      }
     },
     updateStatus()
     {
-        // PLC 資料 rende
+        // PLC 資料 render
         this.realtimeData["啟動允用"] ? this.StatusConfig["fill"] = "green" : this.StatusConfig["fill"] = "white"
+
+        let keys = Object.keys(this.realtimeData)
+        let now_targets = []
+        this._(keys).forEach( key =>
+        {
+          if( key.includes("料框編號"))
+          {
+            if(this.realtimeData[key])
+            {
+              // 有料框編號值
+              now_targets.push(
+                {
+                  pos: key.match(/\d+/)[0],
+                  number: this.realtimeData[key]
+                }
+              )
+            }
+          }        
+        })
+        //比對
+        if(! this._.isEqual(this.target_note, now_targets))
+        {
+          //不一樣代表狀態有變更
+          this.target_note = now_targets
+          this.move()
+        }
     },
     onCancel()
     {
@@ -288,14 +344,29 @@ export default {
           {
             a["config"] = 
             {
-                x: this.ImageConfig.x + 50 * i,
+                x: this.ImageConfig.x,
                 y: this.ImageConfig.y,
-                width: 45,
+                width: 15,
                 height: 75,
                 opacity: 1,
                 stroke: "#fc5386",
-                strokeWidth: 2,
+                strokeWidth: 3,
+                visible: false,
             }
+            a["TextConfig"] = 
+            {
+                x: this.ImageConfig.x,
+                y: this.ImageConfig.y + 75,
+                text: '#',
+                fontSize: 20,
+                width: 75,
+                height: 75,
+                fill: "#fc5386",
+                fontFamily: 'Microsoft JhengHei',
+                visible: false,
+            }
+            // 給定靶號
+            a["target_number"] = i
             this.bays.push(a)
           }
         }

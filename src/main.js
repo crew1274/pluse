@@ -24,6 +24,7 @@ if (process.platform != "browser")
     {
       store.commit('update_redis_msg', msg)
     })
+    store.commit('update_isMobile', true)
 }
 
 new Vue({

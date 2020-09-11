@@ -158,7 +158,7 @@ export default {
     },
     isMobile()
     {
-      return this.windowHeight < 800 ? true : false
+      return this.$store.state.isMobile
     },
   },
   watch:
