@@ -146,6 +146,8 @@ function createWindow() {
     // Load the index.html when not in development
     win.loadURL('app://./index.html')
     webFrame.getZoomFactor(0.9)
+    webFrame.getZoomFactor(0.9)
+    webFrame.getZoomFactor(0.9)
   }
 
   win.on('closed', () => {

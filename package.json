@@ -13,6 +13,8 @@
   },
   "main": "background.js",
   "dependencies": {
+    "@sentry/browser": "^5.23.0",
+    "@sentry/integrations": "^5.23.0",
     "core-js": "^3.6.4",
     "download-file": "^0.1.5",
     "element-ui": "^2.4.5",

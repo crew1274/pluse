@@ -272,6 +272,7 @@ export default {
       this.bays.forEach(bay =>
       {
           bay["config"]["visible"] = false
+          bay["TextConfig"]["visible"] = false
       })
       for(let i=0; i<this.target_note.length; i++)
       {
