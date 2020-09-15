@@ -9,7 +9,31 @@
 
 <script>
 export default {
+  created()
+  {
+    // this.resize()
+  },
+  methods:
+  {
+      resize()
+      {
+        console.log("vue resize")
+        var ww = window.innerWidth
+        if (ww > window.screen.width)
+        {
+          window.requestAnimationFrame(this.resize())
+        } 
+        else 
+        {
+          if (ww > 750) 
+          {
+            ww = 750
+          }
+          document.documentElement.style.fontSize = ww * 100 / 750 + 'px'
+        }
+      }
 
+  }
 }
 </script>
 
