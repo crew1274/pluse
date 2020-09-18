@@ -23,9 +23,9 @@
               </md-tab-pane>
               <md-tab-pane name="2" label="生產資訊">
                   <md-detail-item title="入料時間:" :content="recipe.STARTDATETIME" />
-                  <md-detail-item title="預估出料時間:"  />
-                  <md-detail-item title="當前槽位:"  />
-                  <md-detail-item title="當前浸泡時間:" />
+                  <md-detail-item title="預估出料時間:" :content="recipe.Expected_ENDDATETIME" />
+                  <md-detail-item title="當前槽位:" :content="recipe.Tank" />
+                  <md-detail-item title="剩餘浸泡時間:" />
                   <md-detail-item title="前往目標槽:" />
               </md-tab-pane>
               <md-tab-pane name="3" label="操作動作">
@@ -260,11 +260,7 @@ export default {
     edit()
     { 
       Toast.info("功能尚未開放")
-    },
-    updateTransformer()
-    {
-    
-      this.$refs.transformer.getNode().getLayer().batchDraw()
+      
     },
     async move()
     {
@@ -280,12 +276,25 @@ export default {
         {
           if(this.bays[k]["target_number"] == this.target_note[i]["number"])
           {
-            this.bays[k]["config"]["x"] = this.ImageConfig.x + 20 * (36 - ( + this.target_note[i]["pos"]))
-            this.bays[k]["config"]["visible"] = true
+            if(this.target_note[i]["pos"] == "天車")
+            {
+                this.bays[k]["config"]["y"] = this.ImageConfig.y - 20
+                this.bays[k]["TextConfig"]["y"] = this.ImageConfig.y + 55
+                this.bays[k]["config"]["visible"] = true
+                this.bays[k]["TextConfig"]["visible"] = true
+            }
+            else
+            {
+                this.bays[k]["config"]["x"] = this.ImageConfig.x + 20 * (36 - ( + this.target_note[i]["pos"]))
+                this.bays[k]["config"]["y"] = this.ImageConfig.y
+                this.bays[k]["config"]["visible"] = true
 
-            this.bays[k]["TextConfig"]["x"] = this.ImageConfig.x + 20 * (36 - ( + this.target_note[i]["pos"])) - 25
-            this.bays[k]["TextConfig"]["text"] = "#" + this.target_note[i]["pos"] + ":" + this.target_note[i]["number"]
-            this.bays[k]["TextConfig"]["visible"] = true
+                this.bays[k]["TextConfig"]["x"] = this.ImageConfig.x + 20 * (36 - ( + this.target_note[i]["pos"])) - 25
+                this.bays[k]["TextConfig"]["y"] = this.ImageConfig.y + 75
+                this.bays[k]["TextConfig"]["text"] = "#" + this.target_note[i]["pos"] + ":" + this.target_note[i]["number"]
+                this.bays[k]["TextConfig"]["visible"] = true
+                this.bays[k]["Tank"] = "#" + this.target_note[i]["pos"]
+            }
           }
         }
       }
@@ -301,15 +310,26 @@ export default {
         {
           if( key.includes("料框編號"))
           {
-            if(this.realtimeData[key])
+            if(this.realtimeData[key]) // 有料框編號值
             {
-              // 有料框編號值
-              now_targets.push(
-                {
-                  pos: key.match(/\d+/)[0],
-                  number: this.realtimeData[key]
-                }
-              )
+              if(key.includes("天車"))
+              {
+                  now_targets.push(
+                    {
+                      pos: "天車",
+                      number: this.realtimeData[key]
+                    }
+                  )
+              } 
+              else
+              {
+                  now_targets.push(
+                    {
+                      pos: key.match(/\d+/)[0],
+                      number: this.realtimeData[key]
+                    }
+                  )
+              }
             }
           }        
         })

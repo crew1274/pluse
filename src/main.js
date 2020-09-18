@@ -16,6 +16,7 @@ import { Vue as VueIntegration } from "@sentry/integrations"
 Sentry.init({
   dsn: "http://961a9b430b7e4d04bbacf749e9a0aff2@10.11.0.156:9000/2",
   integrations: [new VueIntegration({ Vue, attachProps: true })],
+  release: process.env.PACKAGE_VERSION
 })
 
 Vue.use(VueKonva)
