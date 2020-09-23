@@ -175,6 +175,7 @@ export default {
   data() 
   {
     return {
+        number_jig: 0,
         use_mode: "系統設定",
         celebrate: require("@/assets/celebrate.png"),
         failed: require("@/assets/failed.png"),
@@ -346,6 +347,10 @@ export default {
             {
                 ob["eachQTY"] = "必須整除總片數"
             }
+            else if( this.recipe["QTY"] / this.recipe["eachQTY"] > this.number_jig )
+            {
+                ob["eachQTY"] = "所需框數:" + this.recipe["QTY"] / this.recipe["eachQTY"] + "大於目前可用框數:" + this.number_jig 
+            }
             else
             {
                 ob["eachQTY"] = ""
@@ -453,6 +458,29 @@ export default {
                     throw response["Exception"]
                 }
                 this.isLock = response["response"]
+            })
+            .catch( err =>
+            {
+                Toast.failed(err)
+            })
+            .finally( () =>
+            {
+                this.$store.commit('update_isLoading', false)
+            })
+
+            this.$store.commit('update_isLoading', true)
+            await fetch('http://10.11.20.108:9999/api/remaining_jig',
+            {
+                method: "GET",
+            })
+            .then( response => {return response.json()})
+            .then( response =>
+            {
+                if(response["Exception"])
+                {
+                    throw response["Exception"]
+                }
+                this.number_jig = + response["result"]
             })
             .catch( err =>
             {
