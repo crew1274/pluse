@@ -253,7 +253,7 @@ export default {
                 {
                     method: "DELETE",
                     body: JSON.stringify({
-                        id: this.Tasks[index]['id']
+                        uid: this.Tasks[index]['uid']
                     })
                 })
                 .then( response => { return response.json() })

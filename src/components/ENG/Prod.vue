@@ -235,6 +235,8 @@ export default {
             Width: "", //版寬
             QTY: "", //片數
             eachQTY: 2, //片數
+            ENiThick: "",
+            EAuThick: "",
             ENiPlatedtime: "", //化鎳
             EAuPlatedtime: "", //化金
             EHAuPlatedtime: "", //厚金
@@ -272,7 +274,7 @@ export default {
         },
         isValid()
         {
-            return  ! Object.values(this.isValidMsg).every(x => (x === ""))
+            return  ! Object.values(this.isValidMsg).every( x => (x === ""))
         },
         isValidMsg()
         {
@@ -280,6 +282,8 @@ export default {
             ob["ENiPlatedtime"] = ""
             ob["EAuPlatedtime"] = ""
             ob["EHAuPlatedtime"] = ""
+            ob["ENiThick"] = ""
+            ob["EAuThick"] = ""
             if(this.recipe["Height"] > this.spec.ENG.HEIGHT_MAX)
             {
                 ob["Height"] = "不可大於" + this.spec.ENG.HEIGHT_MAX.toString()
@@ -551,13 +555,13 @@ export default {
                             text: moment().format('YYYY-MM-DD hh:mm:ss'),
                         },
                         {
-                            name: '化金上下料站',
+                            name: '化金上下料站(上料)',
                         },
                         {
                             name: '化金主站',
                         },
                         {
-                            name: '化金上下料站',
+                            name: '化金上下料站(下料)',
                         },
                         {
                             name: '噴砂上料站',

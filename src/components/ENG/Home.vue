@@ -76,6 +76,7 @@
                         <md-detail-item title="製程序:" :content="recipe.lotdata.procseq"  />
                         <md-detail-item title="料號版次:" :content="recipe.lotdata.itemno"  />
                         <md-detail-item title="製造版次:" :content="recipe.lotdata.mfver"  />
+                        <md-detail-item title="綁定時間:" :content="recipe.STARTDATETIME" />
                     </md-tab-pane>
                     <md-tab-pane name="2" label="詳細參數">
                         <md-detail-item title="板高:" :content="recipe.recipe.Height" />

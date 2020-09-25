@@ -57,7 +57,7 @@
                 </p>
               </el-col>
               <el-col :span="6" :offset="2">
-                <md-button @click="isRefresh = true" inline plain size="small" icon="refresh">手動刷新</md-button>
+                <md-button @click="isRefresh = true" inline plain size="small" icon="refresh">刷新資料</md-button>
               </el-col>
             </el-row>
           </div>

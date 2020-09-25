@@ -9,8 +9,9 @@
       <v-text :config="item.TextConfig" />
     </div>
   
-    <md-dialog v-model="isPopupShow" :btns="btns" class="info">
+    <md-dialog v-model="isPopupShow" class="info">
       <div >
+        <center>料框編號:{{recipe["target_number"]}}</center>
           <md-tabs>
               <md-tab-pane name="1" label="批號參數">
                   <md-detail-item title="批號:" :content="recipe.lotdata.no" bold />
@@ -29,8 +30,25 @@
                   <md-detail-item title="前往目標槽:" />
               </md-tab-pane>
               <md-tab-pane name="3" label="操作動作">
-                <md-button icon="edit" @click="edit('NI')">更新化鎳時間</md-button>
-                <md-button icon="edit" @click="edit('AU')">更新厚金時間</md-button>
+                <md-button @click="edit_show=!edit_show" class="small">更新化鎳(NI)/厚金(AU)時間</md-button>
+                  <div v-show="edit_show">
+                    <md-input-item title="化鎳時間(秒):" type="digit" v-model="recipe.recipe.ENiPlatedtime" align="right"
+                    is-highlight>
+                    <div slot="right">
+                      <el-button type="warning" @click="edit">
+                        確認覆寫
+                      </el-button>
+                    </div>
+                    </md-input-item>
+                    <md-input-item title="厚金時間(秒):" type="digit" v-model="recipe.recipe.EHAuPlatedtime" align="right"
+                    is-highlight>
+                    <div slot="right">
+                      <el-button type="warning" @click="edit">
+                        確認覆寫
+                      </el-button>
+                    </div>
+                    </md-input-item>
+                  </div>
               </md-tab-pane>
           </md-tabs>
       </div>
@@ -39,7 +57,7 @@
 </template>
 
 <script>
-import { Dialog, Tabs, TabPane, DetailItem, Button, Icon, Toast} from "mand-mobile"
+import { Dialog, Tabs, TabPane, DetailItem, Button, Icon, Toast, InputItem, Field} from "mand-mobile"
 export default {
   name: "ENG10",
   components:
@@ -50,6 +68,8 @@ export default {
     [Tabs.name]: Tabs,
     [Icon.name]: Icon,
     [DetailItem.name]: DetailItem,
+    [InputItem.name]: InputItem,
+    [Field.name]: Field,
   },
   props:
   {
@@ -62,6 +82,8 @@ export default {
     let x = this.x
     let y = this.y
     return {
+      arrow: "arrow-down",
+      edit_show: false,
       target_note: [],
       btns: [
           {
@@ -71,6 +93,7 @@ export default {
       ],
       recipe: 
       {
+        "target_number": 1,
         "STARTDATETIME": "2020-09-03 11:20:28",
         "lotdata": {
           "itemno": "RD-2018100412",
@@ -181,7 +204,7 @@ export default {
           "eachQTY": "2"
         },
       },
-      isPopupShow: false,
+      isPopupShow: true,
       ImageConfig:
       { 
         x: x,
@@ -257,10 +280,48 @@ export default {
   },
   methods:
   {
-    edit()
+    async edit()
     { 
-      Toast.info("功能尚未開放")
-      
+        this.$store.commit('update_isLoading', true)
+        await fetch('http://10.11.20.108:9999/api/target_tanks',
+        {
+            method: "POST",
+            body: JSON.stringify({ 
+                    target_tanks: this.recipe["target_number"],
+                    recipe: this.recipe.recipe,
+                })
+        })
+        .then( response => {return response.json()})
+        .then( response =>
+        {
+            if(response["Exception"])
+            {
+                throw response["Exception"]
+            }
+            response["response"]? 
+            Toast.succeed("更新成功") :
+            Toast.failed("更新失敗")
+        })
+        .catch( err =>
+        {
+            this.$notify.warning({ title: '投料失敗', message: err})
+        })
+        .finally( () =>
+        {
+            this.$store.commit('update_isLoading', false)
+        })
+
+        this.$store.commit('update_isLoading', true)
+        await this.$store.dispatch("_db", 
+        {
+            url: "_db/ENG-10/_api/document/TARGETS/" + this.recipe["target_number"],
+            method: "PUT",
+            payload: this.recipe
+        })
+
+        this.$store.commit('update_isLoading', false)
+        this.edit_show = false
+        this.isPopupShow = false
     },
     async move()
     {
@@ -400,5 +461,9 @@ export default {
 .info
 {
   width: 80%
+}
+.small
+{
+  font-size: 14px
 }
 </style>
