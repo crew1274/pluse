@@ -204,7 +204,7 @@ export default {
           "eachQTY": "2"
         },
       },
-      isPopupShow: true,
+      isPopupShow: false,
       ImageConfig:
       { 
         x: x,
