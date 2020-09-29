@@ -283,6 +283,8 @@ export default {
     async edit()
     { 
         this.$store.commit('update_isLoading', true)
+        this.edit_show = false
+        this.isPopupShow = false
         await fetch('http://10.11.20.108:9999/api/target_tanks',
         {
             method: "POST",
@@ -320,8 +322,6 @@ export default {
         })
 
         this.$store.commit('update_isLoading', false)
-        this.edit_show = false
-        this.isPopupShow = false
     },
     async move()
     {

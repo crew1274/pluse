@@ -1,11 +1,11 @@
 <template>
     <div>
         <el-row>
-            <md-button type="primary" @click="isPopupShow=true" icon="check">狀態設定</md-button>
+            <md-button type="primary" @click="isPopupShow=true" icon="setting">狀態設定</md-button>
         </el-row>
         <md-popup v-model="isPopupShow" position="bottom">
             <md-popup-title-bar
-                title="化金狀態設定"
+                title="化金相關設定"
                 describe="確認後才會覆寫到設備"
                 cancel-text="返回"
                 ok-text="確認"
@@ -15,14 +15,19 @@
             <div class="e">
                 <el-row>
                     <el-col :span="12">
+                        <el-card shadow="always" header="化金上下料系統與設備主站連線">
+                            <el-row>
+                                <el-switch v-model="isConnect" active-text="連線" inactive-text="斷線" />
+                            </el-row>
+                        </el-card>  
                         <el-card shadow="always" header="化金出料鎖定">
                             <el-row>
-                                <el-switch v-model="isLock" active-text="鎖定" inactive-text="解鎖" />
+                                <el-switch v-model="isLock" active-text="上鎖" inactive-text="解鎖" />
                             </el-row>
                         </el-card> 
                     </el-col>
                     <el-col :span="12">
-                        <el-card shadow="always" header="化金提早出料時間">
+                        <el-card shadow="always" header="化金提早出料時間設定">
                             <el-row>
                                 <md-field>
                                     <md-field-item title="厚金結束前(秒)">
@@ -60,6 +65,7 @@ export default {
     {
         return {
             isLock: false,
+            isConnect: false,
             isPopupShow: false,
             time: 180,
         }
@@ -76,6 +82,7 @@ export default {
     {
         await this.getLockStatus()
         await this.getTime()
+        await this.getConnect()
     },
     methods:
     {
@@ -83,6 +90,7 @@ export default {
         {
             this.isPopupShow = false
             this.getLockStatus()
+            this.getConnect()
         },
         async confirm()
         {
@@ -92,6 +100,31 @@ export default {
         async Update()
         {
             this.$store.commit('update_isLoading', true)
+
+            await fetch('http://10.11.20.108:9999/api/isConnect',
+            {
+                method: "POST",
+                body: JSON.stringify({
+                    isConnect: this.isConnect
+                })
+            })
+            .then( response => {return response.json()})
+            .then( response =>
+            {
+                if(response["Exception"])
+                {
+                    throw response["Exception"]
+                }
+            })
+            .catch( err =>
+            {
+                Toast.failed(err)
+            })
+            .finally( () =>
+            {
+                this.$store.commit('update_isLoading', false)
+            })
+
             await fetch('http://10.11.20.108:9999/api/isLock',
             {
                 method: "POST",
@@ -155,6 +188,31 @@ export default {
                     throw response["Exception"]
                 }
                 this.time = response["response"]
+            })
+            .catch( err =>
+            {
+                Toast.failed(err)
+            })
+            .finally( () =>
+            {
+                this.$store.commit('update_isLoading', false)
+            })
+        },
+        async getConnect()
+        {
+            this.$store.commit('update_isLoading', true)
+            await fetch('http://10.11.20.108:9999/api/isConnect',
+            {
+                method: "GET",
+            })
+            .then( response => {return response.json()})
+            .then( response =>
+            {
+                if(response["Exception"])
+                {
+                    throw response["Exception"]
+                }
+                this.isConnect = !!response["response"]
             })
             .catch( err =>
             {
