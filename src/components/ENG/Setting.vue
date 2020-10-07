@@ -21,6 +21,12 @@
             <el-col :span="6">
                 <Target />
             </el-col>
+            <el-col :span="6">
+                <GoldSalt />
+            </el-col>
+            <el-col :span="6">
+                <DownTank />
+            </el-col>
         </el-row>
   </div>
 </template>
@@ -34,6 +40,8 @@ import Period from "@/components/ENG/Units/Period.vue"
 import Pneumatic from "@/components/ENG/Units/Pneumatic.vue"
 import Out from "@/components/ENG/Units/Out.vue"
 import Target from "@/components/ENG/Units/Target.vue"
+import GoldSalt from "@/components/ENG/Units/GoldSalt.vue"
+import DownTank from "@/components/ENG/Units/DownTank.vue"
 
 export default {
     name: "Settings",
@@ -45,6 +53,8 @@ export default {
         Pneumatic,
         Out,
         Target,
+        GoldSalt,
+        DownTank,
         [DatePicker.name]: DatePicker,
         [Button.name]: Button,
         [Field.name]: Field,

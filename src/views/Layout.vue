@@ -345,7 +345,6 @@ export default {
     },
     EasterEgg()
     {
-      console.log("a")
       Toast({
         content: '( ° ͜ʖ͡°)╭∩╮',
       })
