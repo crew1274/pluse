@@ -15,7 +15,7 @@
                     <el-col :span="24">
                         <el-card shadow="always" header="化金主站金鹽添加紀錄">
                             <el-row>
-                                <el-col :span="17">
+                                <el-col :span="11">
                                     <el-table :data="data" border style="width: 100%" height="350">
                                         <el-table-column label="添加日期" prop="datetime" />
                                         <el-table-column label="槽位" prop="tank" />
@@ -24,10 +24,26 @@
                                 <el-col :span="1">
                                     <el-divider direction="vertical" />
                                 </el-col>
-                                <el-col :span="6">
-                                    <md-button type="primary" icon="back" @click="pre_add('#31厚金槽')" >#31添加金鹽</md-button>
-                                <el-divider />
-                                    <md-button type="primary" icon="back" @click="pre_add('#32厚金槽')" >#32添加金鹽</md-button>
+                                <el-col :span="12">
+                                    <el-row>
+                                        <el-col :span="12">
+                                            <md-stepper :step="0.5" :min="0.5" />
+                                        </el-col>
+                                        <el-col :span="12">
+                                            <md-button type="primary" icon="back" @click="pre_add('#31厚金槽')" >#31添加金鹽</md-button>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row>
+                                        <el-divider />
+                                    </el-row>
+                                    <el-row>
+                                        <el-col :span="12">
+                                            <md-stepper :step="0.5" :min="0.5" />
+                                        </el-col>
+                                        <el-col :span="12">
+                                            <md-button type="primary" icon="back" @click="pre_add('#32厚金槽')" >#32添加金鹽</md-button>
+                                        </el-col>
+                                    </el-row>
                                 </el-col>
                             </el-row>
                         </el-card>
@@ -45,6 +61,7 @@ export default {
     name: "GoldSalt",
     components: {
         [Button.name]: Button,
+        [Stepper.name]: Stepper,
         [PopupTitleBar.name]: PopupTitleBar,
         [Popup.name]: Popup,
         [CheckBox.name]: CheckBox,

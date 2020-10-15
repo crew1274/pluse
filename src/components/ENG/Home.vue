@@ -32,9 +32,20 @@
                         <md-detail-item title="板寬:" :content="recipe_READY.recipe.Width" />
                         <md-detail-item title="生產總片數:" :content="recipe_READY.recipe.QTY" />
                         <md-detail-item title="每框片數:" :content="recipe_READY.recipe.eachQTY" />
-                        <md-detail-item title="化鎳時間(秒):" :content="recipe_READY.recipe.ENiPlatedtime" />
-                        <md-detail-item title="化金時間(秒)" :content="recipe_READY.recipe.EAuPlatedtime" />
-                        <md-detail-item title="厚金時間(秒)" :content="recipe_READY.recipe.EHAuPlatedtime" />
+                        <div v-if="recipe_READY.use_mode == '虛擬量測'">
+                            <md-detail-item title="化鎳時間-虛擬量測(秒):" :content="recipe_READY.predict_result.NI" >
+                                <md-tag fill-color="#FC9153" type="fill" font-color="#fff">{{recipe_READY.predict_result.NI}}</md-tag>
+                            </md-detail-item>
+                            <md-detail-item title="化金時間(秒):" :content="recipe_READY.recipe.EAuPlatedtime" />
+                            <md-detail-item title="厚金時間-虛擬量測(秒):" :content="recipe_READY.predict_result.AU" >
+                                <md-tag fill-color="#FC9153" type="fill" font-color="#fff">{{recipe_READY.predict_result.AU}}</md-tag>
+                            </md-detail-item>
+                        </div>
+                        <div v-else>
+                            <md-detail-item title="化鎳時間(秒):" :content="recipe_READY.recipe.ENiPlatedtime" />
+                            <md-detail-item title="化金時間(秒):" :content="recipe_READY.recipe.EAuPlatedtime" />
+                            <md-detail-item title="厚金時間(秒):" :content="recipe_READY.recipe.EHAuPlatedtime" />
+                        </div>
                     </md-field>
                 </el-col>
             </el-card>
@@ -60,9 +71,20 @@
                         <md-detail-item title="板寬:" :content="recipe_BUFFER.recipe.Width" />
                         <md-detail-item title="生產總片數:" :content="recipe_BUFFER.recipe.QTY" />
                         <md-detail-item title="每框片數:" :content="recipe_BUFFER.recipe.eachQTY" />
-                        <md-detail-item title="化鎳時間(秒):" :content="recipe_BUFFER.recipe.ENiPlatedtime" />
-                        <md-detail-item title="化金時間(秒)" :content="recipe_BUFFER.recipe.EAuPlatedtime" />
-                        <md-detail-item title="厚金時間(秒)" :content="recipe_BUFFER.recipe.EHAuPlatedtime" />
+                        <div v-if="recipe_BUFFER.use_mode == '虛擬量測'">
+                            <md-detail-item title="化鎳時間-虛擬量測(秒):" :content="recipe_READY.predict_result.NI" >
+                                <md-tag fill-color="#FC9153" type="fill" font-color="#fff">{{recipe_READY.predict_result.NI}}</md-tag>
+                            </md-detail-item>
+                            <md-detail-item title="化金時間(秒):" :content="recipe_BUFFER.recipe.EAuPlatedtime" />
+                            <md-detail-item title="厚金時間-虛擬量測(秒):" :content="recipe_READY.predict_result.AU" >
+                                <md-tag fill-color="#FC9153" type="fill" font-color="#fff">{{recipe_READY.predict_result.AU}}</md-tag>
+                            </md-detail-item>
+                        </div>
+                        <div v-else>
+                            <md-detail-item title="化鎳時間(秒):" :content="recipe_BUFFER.recipe.ENiPlatedtime" />
+                            <md-detail-item title="化金時間(秒):" :content="recipe_BUFFER.recipe.EAuPlatedtime" />
+                            <md-detail-item title="厚金時間(秒):" :content="recipe_BUFFER.recipe.EHAuPlatedtime" />
+                        </div>
                     </md-field>
                 </el-col>
             </el-card>
@@ -83,9 +105,20 @@
                         <md-detail-item title="板寬:" :content="recipe.recipe.Width" />
                         <md-detail-item title="生產總片數:" :content="recipe.recipe.QTY" />
                         <md-detail-item title="每框片數:" :content="recipe.recipe.eachQTY" />
-                        <md-detail-item title="化鎳時間(秒):" :content="recipe.recipe.ENiPlatedtime" />
-                        <md-detail-item title="化金時間(秒):" :content="recipe.recipe.EAuPlatedtime" />
-                        <md-detail-item title="厚金時間(秒):" :content="recipe.recipe.EHAuPlatedtime" />
+                        <div v-if="recipe.use_mode == '虛擬量測'">
+                            <md-detail-item title="化鎳時間-虛擬量測(秒):" :content="recipe_READY.predict_result.NI" >
+                                <md-tag fill-color="#FC9153" type="fill" font-color="#fff">{{recipe_READY.predict_result.NI}}</md-tag>
+                            </md-detail-item>
+                            <md-detail-item title="化金時間(秒):" :content="recipe.recipe.EAuPlatedtime" />
+                            <md-detail-item title="厚金時間-虛擬量測(秒):" :content="recipe_READY.predict_result.AU" >
+                                <md-tag fill-color="#FC9153" type="fill" font-color="#fff">{{recipe_READY.predict_result.AU}}</md-tag>
+                            </md-detail-item>
+                        </div>
+                        <div v-else>
+                            <md-detail-item title="化鎳時間(秒):" :content="recipe.recipe.ENiPlatedtime" />
+                            <md-detail-item title="化金時間(秒):" :content="recipe.recipe.EAuPlatedtime" />
+                            <md-detail-item title="厚金時間(秒):" :content="recipe.recipe.EHAuPlatedtime" />
+                        </div>
                     </md-tab-pane>
                 </md-tabs>
             </div>
@@ -95,10 +128,11 @@
 
 <script>
 import { Button, Toast, NumberKeyboard, Field, FieldItem, InputItem, Dialog, Switch, DetailItem
-        ,RadioBox, RadioGroup, Radio, ScrollView, Popup, PopupTitleBar, Tabs, TabPane} from "mand-mobile"
+        ,RadioBox, RadioGroup, Radio, ScrollView, Popup, PopupTitleBar, Tabs, TabPane, Tag} from "mand-mobile"
 export default {
     name: "Home",
     components: {
+        [Tag.name]: Tag,
         [Popup.name]: Popup,
         [TabPane.name]: TabPane,
         [Tabs.name]: Tabs,

@@ -53,7 +53,7 @@
                                 <md-radio-box name="虛擬量測">虛擬量測</md-radio-box>
                             </md-radio-group>
                             <div v-if="use_mode == '虛擬量測'">
-                                <md-input-item title="化鎳時間(秒):" :value="recipe.ENiPlatedtime" 
+                                <md-input-item title="化鎳時間(秒):" :value="predict_result.NI" 
                                     align="right" disabled>
                                     <div slot="left">
                                         <span>虛擬量測</span>
@@ -63,10 +63,10 @@
                                     @click.native="openDialog('recipe.EHAuPlatedtime')" 
                                     align="right">
                                 </md-input-item>
-                                <md-input-item title="厚金時間(秒):" :value="recipe.EHAuPlatedtime" 
+                                <md-input-item title="厚金時間(秒):" :value="predict_result.AU" 
                                     clearable align="right" disabled>
                                     <div slot="left">
-                                        <span>虛擬量測</span>
+                                        <span>虛擬量測(#{{predict_result.AU_TANK}})</span>
                                     </div>
                                 </md-input-item>
                             </div>
@@ -175,6 +175,11 @@ export default {
   data() 
   {
     return {
+        predict_result: {
+            NI: "",
+            AU: "",
+            AU_TANK: ""
+        },   
         number_jig: 0,
         use_mode: "系統設定",
         celebrate: require("@/assets/celebrate.png"),
@@ -364,6 +369,68 @@ export default {
     },
     watch:
     {
+        async use_mode(value)
+        {
+            if(value == "虛擬量測" && ! this.predict_result.AU_TANK)
+            {
+                //預測
+                this.$store.commit('update_isLoading', true)
+                await fetch('http://10.11.20.108:9999/api/predict/NI',
+                {
+                    method: "POST",
+                    body: JSON.stringify({
+                        lotdata: this.lotdata, 
+                        procdata: this.procdata,
+                        recipe: this.recipe,
+                    })
+                })
+                .then( response => {return response.json()})
+                .then( response =>
+                {
+                    if(response["Exception"])
+                    {
+                        throw response["Exception"]
+                    }
+                    this.predict_result.NI = response["response"]
+                })
+                .catch( err =>
+                {
+                    Toast.failed(err)
+                })
+                .finally( () =>
+                {
+                    this.$store.commit('update_isLoading', false)
+                })
+                this.$store.commit('update_isLoading', true)
+                await fetch('http://10.11.20.108:9999/api/predict/AU',
+                {
+                    method: "POST",
+                    body: JSON.stringify({
+                        lotdata: this.lotdata, 
+                        procdata: this.procdata,
+                        recipe: this.recipe,
+                    })
+                })
+                .then( response => {return response.json()})
+                .then( response =>
+                {
+                    if(response["Exception"])
+                    {
+                        throw response["Exception"]
+                    }
+                    this.predict_result.AU = response["response"]
+                    this.predict_result.AU_TANK = response["tank"]
+                })
+                .catch( err =>
+                {
+                    Toast.failed(err)
+                })
+                .finally( () =>
+                {
+                    this.$store.commit('update_isLoading', false)
+                })
+            }
+        },
         async isRefresh(val)
         {
             if(val)
@@ -607,6 +674,8 @@ export default {
                         lotdata: this.lotdata, 
                         procdata: this.procdata,
                         recipe: this.recipe,
+                        use_mode: this.use_mode,
+                        predict_result: this.predict_result
                     })
             })
             .then( response => {return response.json()})
@@ -701,6 +770,7 @@ export default {
                 this.operator = ''
                 this.procseq = ''
             }
+            this.predict_result.AU_TANK = ""
         },
         async spec_reload()
         {
