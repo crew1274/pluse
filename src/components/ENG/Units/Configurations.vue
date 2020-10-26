@@ -13,7 +13,7 @@
                 @confirm="confirm()">
             </md-popup-title-bar>
             <div class="e">
-                <el-row>
+                <el-row :gutter="10 ">
                     <el-col :span="12">
                         <el-card shadow="always" header="化金上下料系統與設備主站連線">
                             <el-row>
@@ -25,16 +25,19 @@
                                 <el-switch v-model="isLock" active-text="上鎖" inactive-text="解鎖" />
                             </el-row>
                         </el-card> 
+                        <el-card shadow="always" header="厚金時間線上即時預測">
+                            <el-row>
+                                <el-switch v-model="doOverWrite" active-text="打開" inactive-text="關閉" />
+                            </el-row>
+                        </el-card> 
                     </el-col>
                     <el-col :span="12">
-                        <el-card shadow="always" header="化金提早出料時間設定">
-                            <el-row>
-                                <md-field>
-                                    <md-field-item title="厚金結束前(秒)">
-                                        <md-stepper v-model="time" step="10"/>
-                                    </md-field-item>
-                                </md-field>
-                            </el-row>
+                        <el-card shadow="always" header="化金提早出料鎖定時間設定">
+                            <md-field>
+                                <md-field-item title="厚金結束前(秒)">
+                                    <md-stepper v-model="time" step="10"/>
+                                </md-field-item>
+                            </md-field>
                         </el-card> 
                     </el-col>
                 </el-row>
@@ -46,7 +49,7 @@
 <script>
 import { Button, Popup, PopupTitleBar, CheckBox, CheckGroup, Toast, Stepper, Field, FieldItem, Icon} from "mand-mobile"
 export default {
-    name: "Out",
+    name: "Configurations",
     components: {
         [Button.name]: Button,
         [PopupTitleBar.name]: PopupTitleBar,
@@ -67,6 +70,7 @@ export default {
             isLock: false,
             isConnect: false,
             isPopupShow: false,
+            doOverWrite: false,
             time: 180,
         }
     },
@@ -83,6 +87,7 @@ export default {
         await this.getLockStatus()
         await this.getTime()
         await this.getConnect()
+        await this.getdoOverWrite()
     },
     methods:
     {
@@ -91,6 +96,7 @@ export default {
             this.isPopupShow = false
             this.getLockStatus()
             this.getConnect()
+            this.getdoOverWrite()
         },
         async confirm()
         {

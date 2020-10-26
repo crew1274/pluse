@@ -19,6 +19,7 @@
                                     <el-table :data="data" border style="width: 100%" height="350">
                                         <el-table-column label="添加日期" prop="datetime" />
                                         <el-table-column label="槽位" prop="tank" />
+                                        <el-table-column label="添加量(公升))" prop="amount" />
                                     </el-table>
                                 </el-col>
                                 <el-col :span="1">
@@ -27,7 +28,7 @@
                                 <el-col :span="12">
                                     <el-row>
                                         <el-col :span="12">
-                                            <md-stepper :step="0.5" :min="0.5" />
+                                            <md-stepper :step="0.5" :min="0.5" v-model="amount"/>
                                         </el-col>
                                         <el-col :span="12">
                                             <md-button type="primary" icon="back" @click="pre_add('#31厚金槽')" >#31添加金鹽</md-button>
@@ -78,6 +79,7 @@ export default {
     {
         return {
             data: [],
+            amount: 0.5,
             date_range: [],
             isPopupShow: false,
         }
@@ -124,7 +126,8 @@ export default {
             {
                 method: "POST",
                 body: JSON.stringify({
-                    tank: tank
+                    tank: tank,
+                    amount: this.amount
                 })
             })
             .then( response => {return response.json()})

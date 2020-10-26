@@ -5,7 +5,7 @@
                 <PLC />
             </el-col>
             <el-col :span="6">
-                <Out />
+                <Configurations />
             </el-col>
             <el-col :span="6">
                 <TankSwitch />
@@ -38,7 +38,7 @@ import PLC from "@/components/Units/PLC.vue"
 import TankSwitch from "@/components/ENG/Units/TankSwitch.vue"
 import Period from "@/components/ENG/Units/Period.vue"
 import Pneumatic from "@/components/ENG/Units/Pneumatic.vue"
-import Out from "@/components/ENG/Units/Out.vue"
+import Configurations from "@/components/ENG/Units/Configurations.vue"
 import Target from "@/components/ENG/Units/Target.vue"
 import GoldSalt from "@/components/ENG/Units/GoldSalt.vue"
 import DownTank from "@/components/ENG/Units/DownTank.vue"
@@ -51,7 +51,7 @@ export default {
         TankSwitch,
         Period,
         Pneumatic,
-        Out,
+        Configurations,
         Target,
         GoldSalt,
         DownTank,
