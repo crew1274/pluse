@@ -25,11 +25,11 @@
                                 <el-switch v-model="isLock" active-text="上鎖" inactive-text="解鎖" />
                             </el-row>
                         </el-card> 
-                        <el-card shadow="always" header="厚金時間線上即時預測">
+                        <!-- <el-card shadow="always" header="厚金時間線上即時預測">
                             <el-row>
                                 <el-switch v-model="doOverWrite" active-text="打開" inactive-text="關閉" />
                             </el-row>
-                        </el-card> 
+                        </el-card>  -->
                     </el-col>
                     <el-col :span="12">
                         <el-card shadow="always" header="化金提早出料鎖定時間設定">
