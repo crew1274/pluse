@@ -18,9 +18,20 @@
                   <md-detail-item title="料號:" :content="recipe.lotdata.itemno"  />
                   <md-detail-item title="生產總片數:" :content="recipe.recipe.QTY" />
                   <md-detail-item title="每框片數:" :content="recipe.recipe.eachQTY" />
-                  <md-detail-item title="化鎳時間(秒):" :content="recipe.recipe.ENiPlatedtime" />
-                  <md-detail-item title="化金時間(秒):" :content="recipe.recipe.EAuPlatedtime" />
-                  <md-detail-item title="厚金時間(秒):" :content="recipe.recipe.EHAuPlatedtime" />
+                  <div v-if="recipe.use_mode == '虛擬量測'">
+                      <md-detail-item title="化鎳時間-虛擬量測(秒):" :content="recipe.predict_result.NI" >
+                          <md-tag fill-color="#FC9153" type="fill" font-color="#fff">{{recipe.predict_result.NI}}</md-tag>
+                      </md-detail-item>
+                      <md-detail-item title="化金時間(秒):" :content="recipe.recipe.EAuPlatedtime" />
+                      <md-detail-item title="厚金時間-虛擬量測(秒):" :content="recipe.predict_result.AU" >
+                          <md-tag fill-color="#FC9153" type="fill" font-color="#fff">{{recipe.predict_result.AU}}</md-tag>
+                      </md-detail-item>
+                  </div>
+                  <div v-else>
+                      <md-detail-item title="化鎳時間(秒):" :content="recipe.recipe.ENiPlatedtime" />
+                      <md-detail-item title="化金時間(秒):" :content="recipe.recipe.EAuPlatedtime" />
+                      <md-detail-item title="厚金時間(秒):" :content="recipe.recipe.EHAuPlatedtime" />
+                  </div>
               </md-tab-pane>
               <md-tab-pane name="2" label="生產資訊">
                   <md-detail-item title="入料時間:" :content="recipe.STARTDATETIME" />
@@ -57,12 +68,13 @@
 </template>
 
 <script>
-import { Dialog, Tabs, TabPane, DetailItem, Button, Icon, Toast, InputItem, Field} from "mand-mobile"
+import { Dialog, Tabs, TabPane, DetailItem, Button, Icon, Toast, InputItem, Field, Tag} from "mand-mobile"
 export default {
   name: "ENG10",
   components:
   {
     [Dialog.name]: Dialog,
+    [Tag.name]: Tag,
     [TabPane.name]: TabPane,
     [Button.name]: Button,
     [Tabs.name]: Tabs,

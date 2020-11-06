@@ -101,14 +101,17 @@
                     </center>
                 </el-row>
                 <el-row :gutter="10">
-                    <el-col :span="8">
+                    <el-col :span="6">
                         <md-button type="warning" @click="clean" icon="delete">清空/取消</md-button>
                     </el-col>
-                    <el-col :span="8">
+                    <el-col :span="6">
                         <md-button  @click="spec_reload" icon="switch">更新參數規範</md-button>
                     </el-col>
-                    <el-col :span="8">
-                        <md-button type="primary" @click="prod('ENG')" icon="security" :inactive="isValid">確認投料</md-button>
+                    <el-col :span="6">
+                        <md-button type="primary" @click="prod('ENG')" icon="motor-vehicle" :inactive="isValid">自動上板投料</md-button>
+                    </el-col>
+                    <el-col :span="6">
+                        <md-button type="primary" @click="prod('ENG_master')" icon="check">手動上板投料</md-button>
                     </el-col>
                 </el-row>
             </div>
