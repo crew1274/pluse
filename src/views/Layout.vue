@@ -1,67 +1,75 @@
 <template>
   <div id="Layout">
-    <div v-show="isLoading">
-      <div style="display:flex;justify-content:center;align-items:center;height:715px;">
-        <md-activity-indicator type="spinner" :size="50" :text-size="50">
-          處理中...
-        </md-activity-indicator>
+    <div v-if="status != 'ok'">
+      <div>
+      <img :src="wait">
       </div>
+      {{status}}
     </div>
-    <div v-show="!isLoading">
-      <div v-if="isMobile" class="fixed">
-        <md-scroll-view auto-reflow :scrolling-x="false" @refreshing="refreshingEvent" ref="scrollView" >
-          <md-scroll-view-refresh slot="refresh" slot-scope="{ scrollTop, isRefreshActive, isRefreshing }"
-              :scroll-top="scrollTop"
-              :is-refreshing="isRefreshing"
-              :is-refresh-active="isRefreshActive"
-              refresh-text="下拉刷新"
-              refreshing-text="更新資料中"
-              refresh-active-text="釋放可刷新" />
-        <div id="c">
-            {{version}}
+    <div v-else>
+      <div v-show="isLoading">
+        <div style="display:flex;justify-content:center;align-items:center;height:715px;">
+          <md-activity-indicator type="spinner" :size="50" :text-size="50">
+            處理中...
+          </md-activity-indicator>
         </div>
-        <div id="d">
-          <login />
-        </div>
-          <div id="nav">
-            <el-row>
-              <el-col :span="10" :offset="6">
-                <p>
-                  <router-link to="/Sand">噴砂</router-link> 
-                  || <router-link to="/ENG">化金</router-link> 
-                  || <router-link to="/graphical">整合圖控</router-link> 
-                </p>
-              </el-col>
-              <el-col :span="6" :offset="2">
-                <md-button @click="close()" inline plain size="small" icon="wrong">結束程式</md-button>
-              </el-col>
-            </el-row>
-          </div>
-          <router-view :isRefresh="isRefresh"  v-on:finishRefresh="finishRefresh"/>
-        </md-scroll-view>
       </div>
-      <div v-else>
-        <div id="c">
-          {{version}}
-        </div>
-        <div id="d">
-          <login />
-        </div>
-          <div id="nav">
-            <el-row>
-              <el-col :span="10" :offset="6">
-                <p>
-                  <router-link to="/Sand">噴砂</router-link> 
-                  || <router-link to="/ENG">化金</router-link> 
-                  || <router-link to="/graphical">整合圖控</router-link> 
-                </p>
-              </el-col>
-              <el-col :span="6" :offset="2">
-                <md-button @click="isRefresh = true" inline plain size="small" icon="refresh">刷新資料</md-button>
-              </el-col>
-            </el-row>
+      <div v-show="!isLoading">
+        <div v-if="isMobile" class="fixed">
+          <md-scroll-view auto-reflow :scrolling-x="false" @refreshing="refreshingEvent" ref="scrollView" >
+            <md-scroll-view-refresh slot="refresh" slot-scope="{ scrollTop, isRefreshActive, isRefreshing }"
+                :scroll-top="scrollTop"
+                :is-refreshing="isRefreshing"
+                :is-refresh-active="isRefreshActive"
+                refresh-text="下拉刷新"
+                refreshing-text="更新資料中"
+                refresh-active-text="釋放可刷新" />
+          <div id="c">
+              {{version}}
           </div>
-          <router-view :isRefresh="isRefresh"  v-on:finishRefresh="finishRefresh"/>
+          <div id="d">
+            <login />
+          </div>
+            <div id="nav">
+              <el-row>
+                <el-col :span="10" :offset="6">
+                  <p>
+                    <router-link to="/Sand">噴砂</router-link> 
+                    || <router-link to="/ENG">化金</router-link> 
+                    || <router-link to="/graphical">整合圖控</router-link> 
+                  </p>
+                </el-col>
+                <el-col :span="6" :offset="2">
+                  <md-button @click="close()" inline plain size="small" icon="wrong">結束程式</md-button>
+                </el-col>
+              </el-row>
+            </div>
+            <router-view :isRefresh="isRefresh"  v-on:finishRefresh="finishRefresh"/>
+          </md-scroll-view>
+        </div>
+        <div v-else>
+          <div id="c">
+            {{version}}
+          </div>
+          <div id="d">
+            <login />
+          </div>
+            <div id="nav">
+              <el-row>
+                <el-col :span="10" :offset="6">
+                  <p>
+                    <router-link to="/Sand">噴砂</router-link> 
+                    || <router-link to="/ENG">化金</router-link> 
+                    || <router-link to="/graphical">整合圖控</router-link> 
+                  </p>
+                </el-col>
+                <el-col :span="6" :offset="2">
+                  <md-button @click="isRefresh = true" inline plain size="small" icon="refresh">刷新資料</md-button>
+                </el-col>
+              </el-row>
+            </div>
+            <router-view :isRefresh="isRefresh"  v-on:finishRefresh="finishRefresh"/>
+        </div>
       </div>
     </div>
     <md-dialog title="到站通知" :closable="false" v-model="isDialogShow" :btns="DialogShowBtns" >
@@ -95,6 +103,7 @@ export default {
   data()
   {
     return {
+      wait: require("@/assets/wait.png"),
       windowHeight: window.innerHeight,
       token_timer: undefined,
       agv_timer: undefined,
@@ -112,6 +121,8 @@ export default {
         target: "",
       },
       isRefresh: false,
+      status: "ok",
+      status_timer: undefined,
     }
   },
   computed:
@@ -216,6 +227,7 @@ export default {
   async created()
   {
     await this.get_token()
+    await this.getStatus()
     await this.$store.dispatch('update_admin_settings_action', await this.$store.dispatch("_db", { url: "_db/ENG-10/_api/document/SETTINGS/ADMIN", method: "GET", payload: {}}))
     this.$store.commit('update_recipe_spec', await this.$store.dispatch("_db", { url: "_db/ENG-10/_api/document/SETTINGS/RECIPE", method: "GET", payload: {}}))
     this.$store.commit('update_agv_info', await this.$store.dispatch("_db", { url: "_db/ENG-10/_api/document/SETTINGS/AGV", method: "GET", payload: {}}))
@@ -225,6 +237,7 @@ export default {
     this.$refs.inflicted.volume = 1
     this.token_timer = await setInterval( () => { this.get_token() }, 60000) //定期更新token
     this.agv_timer = await setInterval( () => { this.getMyTunnel() }, 2000) 
+    this.status_timer = await setInterval( () => { this.getStatus() }, 15000) 
     this.$nextTick( () =>
     {
       window.addEventListener('resize', this.onResize)
@@ -234,6 +247,7 @@ export default {
   {
     clearInterval(this.token_timer)
     clearInterval(this.agv_timer)
+    clearInterval(this.status_timer)
     window.removeEventListener('resize', this.onResize)
   },
   destroy()
@@ -251,6 +265,17 @@ export default {
         let w = require('electron').remote.getCurrentWindow()
         w.close()
     },
+
+    async getStatus()
+    {
+
+      if(process.env.NODE_ENV != "development")
+      {
+        let status = await this.$store.dispatch("_db", { url: "_db/ENG-10/_api/document/SETTINGS/Status", method: "GET", payload: {}})
+        this.status = status["status"]
+      }
+    },
+
     async getMyTunnel()
     {
       // 背景擷取通道資訊
