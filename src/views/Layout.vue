@@ -9,7 +9,7 @@
     <div v-else>
       <div v-show="isLoading">
         <div style="display:flex;justify-content:center;align-items:center;height:715px;">
-          <md-activity-indicator type="spinner" :size="50" :text-size="50">
+          <md-activity-indicator type="spinner" :size="50" :text-size="50" @click.native="EasterEgg">
             處理中...
           </md-activity-indicator>
         </div>
@@ -371,6 +371,7 @@ export default {
     EasterEgg()
     {
       Toast({
+        duration: 25,
         content: '( ° ͜ʖ͡°)╭∩╮',
       })
     },
