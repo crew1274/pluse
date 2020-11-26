@@ -8,6 +8,7 @@
             text-color="#fff" active-text-color="#ffd04b">
             <el-menu-item index="Map">物料狀況</el-menu-item>
             <el-menu-item index="Error">異常履歷</el-menu-item>
+            <el-menu-item index="System">程式資訊</el-menu-item>
         </el-menu>
         <keep-alive>
             <component :is="activeIndex" :isRefresh="isRefresh" v-on:finishRefresh="finishRefresh" :realtimeData="realtimeData" />
@@ -18,6 +19,7 @@
 <script>
 import Map from "@/components/Map.vue"
 import Error from "@/components/Error.vue"
+import System from "@/components/System.vue"
 
 export default {
     name: "Graphical",
@@ -25,6 +27,7 @@ export default {
     {
         Map,
         Error,
+        System,
     },
     props: 
     {
