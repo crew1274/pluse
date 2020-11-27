@@ -1,22 +1,27 @@
 <template>
     <div>
         <el-row :gutter="10">
-            
-        </el-row>
-        <el-row>
-            <el-table :data="show_list.filter( data => station.includes(data.device))" style="width: 100%" :row-class-name="tableRowClassName" calss="hello">
-                <el-table-column label="開始時間" prop="start_time" />
-                <el-table-column label="結束時間" prop="end_time" />
-                <el-table-column label="詳細訊息" prop="message" />
-                <el-table-column label="來源" prop="device" />
-            </el-table>
+            <el-row :span="12">
+                <el-card header="執行緒健康度指標" class="normalText">
+                    <el-table :data="timer_data">
+                        <el-table-column prop="name" label="名稱" />
+                        <el-table-column prop="skip" label="跳過次數" />
+                        <el-table-column fixed="right" label="操作" >
+                            <template slot-scope="scope">
+                                <el-button @click="handleClick(scope.row)" type="danger" size="large">重新啟動</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </el-card>
+            </el-row>
         </el-row>
     </div>
 </template>
 
 <script>
 import * as moment from "moment/moment"
- 
+import { Toast } from 'mand-mobile'
+
 export default {
     name: "System",
     components:
@@ -30,7 +35,7 @@ export default {
     data()
     {
         return {
-            list: [],
+            timer_data: [],
             stations: [],
             station: "",
             loading: false,
@@ -79,11 +84,39 @@ export default {
         {
             this.$emit('finishRefresh')
         },
+        async handleClick(row)
+        {
+            await fetch("http://10.11.20.108:9999/api/system",
+            {
+                method: "POST",
+                body: JSON.stringify(
+                    {
+                        [row.name]: row.name, 
+                    })
+            })
+            .then( response => {return response.json()})
+            .then( response =>
+            {
+                if(response["Exception"])
+                {
+                    throw response["Exception"]
+                }
+                Toast.succeed("重新啟動成功")
+            })
+            .catch( err =>
+            {
+                this.$notify.warning({ title: 'Edge資料庫存取異常', message: err})
+            })
+            .finally( () =>
+            {
+                this.loading = false
+            })
+            await this.CheckData()
+        },
         async CheckData()
         {
             this.loading = true
-            let notes = []
-            await fetch("http://10.11.20.108:9999/api/ErrorHandle?start=" + this.date_range[0] + "&end=" + this.date_range[1],
+            await fetch("http://10.11.20.108:9999/api/system",
             {
                 method: "GET",
             })
@@ -94,39 +127,21 @@ export default {
                 {
                     throw response["Exception"]
                 }
-                this.list = response["result"].reverse()
-                this._(this.list).forEach( ele =>
+                this.timer_data = []
+                Object.keys(response["result"]).forEach( key =>
                 {
-                    if(! notes.includes(ele["device"]) )
-                    {
-                        notes.push(ele["device"])
-                    }
-                })
-                this.stations = []
-                let combine = ''
-                this._(notes).forEach( ele =>
-                {
-                    this.stations.push(
-                        {
-                            value: ele,
-                            label: ele
-                        }, 
+                    this.timer_data.push(
+                        { name: key, skip: response["result"][key] }
                     )
-                    combine = combine + ele + "||"
                 })
-                this.stations.push(
-                    {
-                        value: combine,
-                        label: "全部"
-                    }, 
-                ) 
-                this.station = combine
+
             })
             .catch( err =>
             {
                 this.$notify.warning({ title: 'Edge資料庫存取異常', message: err})
             })
-            .finally( () => {
+            .finally( () =>
+            {
                 this.loading = false
             })
         },
@@ -146,8 +161,12 @@ export default {
 </script>
 
 <style scoped>
-  .el-table >>> .warning-row
-  {
-    background: #f15c66;
-  }
+    .el-table >>> .warning-row
+    {
+        background: #f15c66;
+    }
+    .normalText
+    {
+        font-size: 24px;
+    }
 </style>
