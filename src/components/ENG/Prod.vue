@@ -758,6 +758,7 @@ export default {
             }
             if(await this.getRecipe())
             {
+                this.use_mode = "系統設定"
                 this.stage ++
             }
         },
