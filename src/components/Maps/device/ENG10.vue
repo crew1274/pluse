@@ -4,9 +4,17 @@
     <v-text :config="TextConfig" />
     <v-text :config="StatusTextConfig" />
     <v-rect :config="StatusConfig" />
-    <div v-for="(item, index) in bays" :key="index">
-      <v-rect :config="item.config" @click="showup(index)"/>
-      <v-text :config="item.TextConfig" />
+    <div>
+      <div v-for="(item, index) in bays" :key="index">
+        <v-rect :config="item.config" @click="showup(index)"/>
+        <v-text :config="item.TextConfig" />
+      </div>
+    </div>
+    <div>
+      <div v-for="(item, index) in m_bays" :key="index">
+        <v-rect :config="item.config"/>
+        <v-text :config="item.TextConfig" />
+      </div>
     </div>
   
     <md-dialog v-model="isPopupShow" class="info">
@@ -261,6 +269,7 @@ export default {
           fill: '#423c39',
       },
       bays: [],
+      m_bays: [],
     }
   },
   async created()
@@ -272,6 +281,7 @@ export default {
   async mounted()
   {
       await this.getdata()
+      this.updateStatus()
   },
   async beforeDestroy()
   {
@@ -343,10 +353,42 @@ export default {
           bay["config"]["visible"] = false
           bay["TextConfig"]["visible"] = false
       })
+      
+      this.m_bays.forEach( m_bay =>
+      {
+          m_bay["config"]["visible"] = false
+          m_bay["TextConfig"]["visible"] = false
+      })
+
       for(let i=0; i<this.target_note.length; i++)
       {
+        // // 手動上料用
+        // console.log(this.target_note[i]["number"])
+        // if(this.target_note[i]["number"].includes("@"))
+        // {
+        //   if(this.target_note[i]["pos"] == "天車")
+        //   {
+        //       this.m_bays[i]["config"]["y"] = this.ImageConfig.y - 20
+        //       this.m_bays[i]["TextConfig"]["y"] = this.ImageConfig.y + 55
+        //       this.m_bays[i]["config"]["visible"] = true
+        //       this.m_bays[i]["TextConfig"]["visible"] = true
+        //   }
+        //   else
+        //   {
+        //       this.m_bays[i]["config"]["x"] = this.ImageConfig.x + 20 * (36 - ( + this.target_note[i]["pos"]))
+        //       this.m_bays[i]["config"]["y"] = this.ImageConfig.y
+        //       this.m_bays[i]["config"]["visible"] = true
+
+        //       this.m_bays[i]["TextConfig"]["x"] = this.ImageConfig.x + 20 * (36 - ( + this.target_note[i]["pos"])) - 25
+        //       this.m_bays[i]["TextConfig"]["y"] = this.ImageConfig.y + 75
+        //       this.m_bays[i]["TextConfig"]["text"] = "#" + this.target_note[i]["pos"] + this.target_note[i]["number"]
+        //       this.m_bays[i]["TextConfig"]["visible"] = true
+        //       this.m_bays[i]["Tank"] = "#" + this.target_note[i]["pos"]
+        //   }
+        // }
+
         for(let k=0; k<this.bays.length; k++)
-        {
+        {        
           if(this.bays[k]["target_number"] == this.target_note[i]["number"])
           {
             if(this.target_note[i]["pos"] == "天車")
@@ -374,6 +416,7 @@ export default {
     },
     updateStatus()
     {
+        // console.log(this.realtimeData)
         // PLC 資料 render
         this.realtimeData["啟動允用"] ? this.StatusConfig["fill"] = "green" : this.StatusConfig["fill"] = "white"
 
@@ -381,28 +424,49 @@ export default {
         let now_targets = []
         this._(keys).forEach( key =>
         {
-          if( key.includes("料框編號"))
-          {
-            if(this.realtimeData[key]) // 有料框編號值
+            if( key.includes("批號編號") && this.realtimeData[key])
             {
-              if(key.includes("天車"))
-              {
+                // 批號編號 料號編號
+                let part = key.match(/\d+/)[0]
+                part  = "#" + part + "料號編號"
+                part = this.realtimeData[part]
+                if(key.includes("天車"))
+                {
+                  now_targets.push(
+                    {
+                      pos: "天車",
+                      number: part + "[" + this.realtimeData[key] + "]"
+                    })
+                } 
+                else
+                {
+                  now_targets.push(
+                    {
+                      pos: key.match(/\d+/)[0],
+                      number: "@" + part + "[" + this.realtimeData[key] + "]"
+                    })
+                }
+            }
+          
+          else if( key.includes("料框編號") && this.realtimeData[key])
+          {
+            if(key.includes("天車"))
+            {
                   now_targets.push(
                     {
                       pos: "天車",
                       number: this.realtimeData[key]
                     }
                   )
-              } 
-              else
-              {
-                  now_targets.push(
-                    {
-                      pos: key.match(/\d+/)[0],
-                      number: this.realtimeData[key]
-                    }
-                  )
-              }
+            } 
+            else
+            {
+              now_targets.push(
+                {
+                  pos: key.match(/\d+/)[0],
+                  number: this.realtimeData[key]
+                }
+              )
             }
           }        
         })
@@ -425,6 +489,36 @@ export default {
     },
     async getdata()
     {
+        // 初始化三個手動框架
+        for(let i=0; i<6; i++)
+        {
+          let a = {}
+          a["config"] = 
+          {
+              x: this.ImageConfig.x,
+              y: this.ImageConfig.y,
+              width: 15,
+              height: 75,
+              opacity: 1,
+              stroke: "#fcbb53",
+              strokeWidth: 3,
+              visible: false,
+          }
+          a["TextConfig"] = 
+          {
+              x: this.ImageConfig.x,
+              y: this.ImageConfig.y + 75,
+              text: '#',
+              fontSize: 20,
+              width: 75,
+              height: 75,
+              fill: "#fcbb53",
+              fontFamily: 'Microsoft JhengHei',
+              visible: false,
+          }
+          this.m_bays.push(a)
+        }
+        
         //取得料框資料
         for(let i=1; i<4; i++)
         {
