@@ -10,13 +10,26 @@
         <v-text :config="item.TextConfig" />
       </div>
     </div>
-    <div>
+
+    <div> 
       <div v-for="(item, index) in m_bays" :key="index">
-        <v-rect :config="item.config"/>
+        <v-rect :config="item.config" @click="m_showup(index)"/>
         <v-text :config="item.TextConfig" />
       </div>
     </div>
   
+    <md-dialog v-model="m_isPopupShow" class="info">
+      <div >
+      <center>手動上料(無料框編號)</center>
+      <md-tabs>
+              <md-tab-pane name="1" label="批號參數">
+                  <md-detail-item title="批號:" :content="lot" bold />
+                  <md-detail-item title="料號:" :content="part"  />
+              </md-tab-pane>
+      </md-tabs>
+      </div>
+    </md-dialog>
+
     <md-dialog v-model="isPopupShow" class="info">
       <div >
         <center>料框編號:{{recipe["target_number"]}}</center>
@@ -103,6 +116,8 @@ export default {
     let y = this.y
     return {
       arrow: "arrow-down",
+      lot: "",
+      part: "",
       edit_show: false,
       target_note: [],
       btns: [
@@ -225,6 +240,7 @@ export default {
         },
       },
       isPopupShow: false,
+      m_isPopupShow: false,
       ImageConfig:
       { 
         x: x,
@@ -363,29 +379,31 @@ export default {
       for(let i=0; i<this.target_note.length; i++)
       {
         // // 手動上料用
-        // console.log(this.target_note[i]["number"])
-        // if(this.target_note[i]["number"].includes("@"))
-        // {
-        //   if(this.target_note[i]["pos"] == "天車")
-        //   {
-        //       this.m_bays[i]["config"]["y"] = this.ImageConfig.y - 20
-        //       this.m_bays[i]["TextConfig"]["y"] = this.ImageConfig.y + 55
-        //       this.m_bays[i]["config"]["visible"] = true
-        //       this.m_bays[i]["TextConfig"]["visible"] = true
-        //   }
-        //   else
-        //   {
-        //       this.m_bays[i]["config"]["x"] = this.ImageConfig.x + 20 * (36 - ( + this.target_note[i]["pos"]))
-        //       this.m_bays[i]["config"]["y"] = this.ImageConfig.y
-        //       this.m_bays[i]["config"]["visible"] = true
+        if(this.target_note[i]["number"].includes("@"))
+        {
+          if(this.target_note[i]["pos"] == "天車")
+          {
+              this.m_bays[i]["config"]["y"] = this.ImageConfig.y - 20
+              this.m_bays[i]["TextConfig"]["y"] = this.ImageConfig.y + 55
+              this.m_bays[i]["config"]["visible"] = true
+              this.m_bays[i]["TextConfig"]["visible"] = true
+          }
+          else
+          {
+              this.m_bays[i]["config"]["x"] = this.ImageConfig.x + 20 * (36 - ( + this.target_note[i]["pos"]))
+              this.m_bays[i]["config"]["y"] = this.ImageConfig.y
+              this.m_bays[i]["config"]["visible"] = true
 
-        //       this.m_bays[i]["TextConfig"]["x"] = this.ImageConfig.x + 20 * (36 - ( + this.target_note[i]["pos"])) - 25
-        //       this.m_bays[i]["TextConfig"]["y"] = this.ImageConfig.y + 75
-        //       this.m_bays[i]["TextConfig"]["text"] = "#" + this.target_note[i]["pos"] + this.target_note[i]["number"]
-        //       this.m_bays[i]["TextConfig"]["visible"] = true
-        //       this.m_bays[i]["Tank"] = "#" + this.target_note[i]["pos"]
-        //   }
-        // }
+              this.m_bays[i]["TextConfig"]["x"] = this.ImageConfig.x + 20 * (36 - ( + this.target_note[i]["pos"])) - 25
+              this.m_bays[i]["TextConfig"]["y"] = this.ImageConfig.y + 75
+              this.m_bays[i]["TextConfig"]["text"] = "#" + this.target_note[i]["pos"] + "_手動"
+              this.m_bays[i]["TextConfig"]["visible"] = true
+              this.m_bays[i]["Tank"] = "#" + this.target_note[i]["pos"]
+              let s = this.target_note[i]["number"].split('@').join(',').split('[').join(',').split(']').join(',').split(',')
+              this.m_bays[i]["lot"] = s[2]
+              this.m_bays[i]["part"] = s[1]
+          }
+        }
 
         for(let k=0; k<this.bays.length; k++)
         {        
@@ -481,15 +499,22 @@ export default {
     onCancel()
     {
         this.isPopupShow = false
+        this.m_isPopupShow = false
     },
     showup(index)
     {
       this.isPopupShow = true
       this.recipe = this.bays[index]
     },
+    m_showup(index)
+    {
+      this.m_isPopupShow = true
+      this.lot = this.m_bays[index]["lot"]
+      this.part = this.m_bays[index]["part"]
+    },
     async getdata()
     {
-        // 初始化三個手動框架
+        // 初始化6個手動框架
         for(let i=0; i<6; i++)
         {
           let a = {}
@@ -500,7 +525,7 @@ export default {
               width: 15,
               height: 75,
               opacity: 1,
-              stroke: "#fcbb53",
+              stroke: "#6037db",
               strokeWidth: 3,
               visible: false,
           }
@@ -512,7 +537,7 @@ export default {
               fontSize: 20,
               width: 75,
               height: 75,
-              fill: "#fcbb53",
+              fill: "#6037db",
               fontFamily: 'Microsoft JhengHei',
               visible: false,
           }
