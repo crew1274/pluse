@@ -375,11 +375,10 @@ export default {
           m_bay["config"]["visible"] = false
           m_bay["TextConfig"]["visible"] = false
       })
-
-      for(let i=0; i<this.target_note.length; i++)
+      for(let i=0; i< this.target_note.length; i++)
       {
-        // // 手動上料用
-        if(this.target_note[i]["number"].includes("@"))
+        // 手動上料用
+        if( typeof this.target_note[i]["number"] == "string" && this.target_note[i]["number"].includes("@"))
         {
           if(this.target_note[i]["pos"] == "天車")
           {
@@ -405,6 +404,7 @@ export default {
           }
         }
 
+        // 自動上料用
         for(let k=0; k<this.bays.length; k++)
         {        
           if(this.bays[k]["target_number"] == this.target_note[i]["number"])
@@ -446,23 +446,26 @@ export default {
             {
                 // 批號編號 料號編號
                 let part = key.match(/\d+/)[0]
-                part  = "#" + part + "料號編號"
-                part = this.realtimeData[part]
-                if(key.includes("天車"))
+                if(! this.realtimeData["#" + part + "料框編號"] )
                 {
-                  now_targets.push(
-                    {
-                      pos: "天車",
-                      number: part + "[" + this.realtimeData[key] + "]"
-                    })
-                } 
-                else
-                {
-                  now_targets.push(
-                    {
-                      pos: key.match(/\d+/)[0],
-                      number: "@" + part + "[" + this.realtimeData[key] + "]"
-                    })
+                  part  = "#" + part + "料號編號"
+                  part = this.realtimeData[part]
+                  if(key.includes("天車"))
+                  {
+                    now_targets.push(
+                      {
+                        pos: "天車",
+                        number: part + "[" + this.realtimeData[key] + "]"
+                      })
+                  } 
+                  else
+                  {
+                    now_targets.push(
+                      {
+                        pos: key.match(/\d+/)[0],
+                        number: "@" + part + "[" + this.realtimeData[key] + "]"
+                      })
+                  }
                 }
             }
           
