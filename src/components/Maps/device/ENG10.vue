@@ -3,7 +3,7 @@
     <v-rect :config="ImageConfig"/>
     <v-text :config="TextConfig" />
     <v-text :config="StatusTextConfig" />
-    <v-rect :config="StatusConfig" />
+    <v-rect :config="StatusConfig" @click="s_isPopupShow = true" />
     <div>
       <div v-for="(item, index) in bays" :key="index">
         <v-rect :config="item.config" @click="showup(index)"/>
@@ -17,6 +17,12 @@
         <v-text :config="item.TextConfig" />
       </div>
     </div>
+    <md-dialog v-model="s_isPopupShow" class="info">
+      <div >
+        <center>啟動允用強制開關</center>
+        <md-switch v-model="D90" @change="D90Switch" />
+      </div>
+    </md-dialog>
   
     <md-dialog v-model="m_isPopupShow" class="info">
       <div >
@@ -89,7 +95,7 @@
 </template>
 
 <script>
-import { Dialog, Tabs, TabPane, DetailItem, Button, Icon, Toast, InputItem, Field, Tag} from "mand-mobile"
+import { Dialog, Tabs, TabPane, DetailItem, Button, Icon, Toast, InputItem, Field, Tag, Switch} from "mand-mobile"
 export default {
   name: "ENG10",
   components:
@@ -103,6 +109,7 @@ export default {
     [DetailItem.name]: DetailItem,
     [InputItem.name]: InputItem,
     [Field.name]: Field,
+    [Switch.name]: Switch,
   },
   props:
   {
@@ -116,6 +123,7 @@ export default {
     let y = this.y
     return {
       arrow: "arrow-down",
+      D90: false,
       lot: "",
       part: "",
       edit_show: false,
@@ -241,6 +249,7 @@ export default {
       },
       isPopupShow: false,
       m_isPopupShow: false,
+      s_isPopupShow: false,
       ImageConfig:
       { 
         x: x,
@@ -314,10 +323,44 @@ export default {
               this.updateStatus()
           },
           deep: true
+      },
+      D90(value)
+      {
+          value ? this.StatusConfig["fill"] = "green" : this.StatusConfig["fill"] = "white"
       }
   },
   methods:
   {
+    async D90Switch()
+    {
+      this.$store.commit('update_isLoading', true)
+      await fetch('http://10.11.20.108:9999/api/D90',
+      {
+          method: "POST",
+          body: JSON.stringify({ 
+                  D90: this.D90,
+              })
+      })
+      .then( response => {return response.json()})
+      .then( response =>
+      {
+          if(response["Exception"])
+          {
+              throw response["Exception"]
+          }
+          response["response"]? 
+          Toast.succeed("更新成功(狀態不會立即更動)") :
+          Toast.failed("更新失敗")
+      })
+      .catch( err =>
+      {
+          this.$notify.warning({ title: '更新失敗', message: err})
+      })
+      .finally( () =>
+      {
+          this.$store.commit('update_isLoading', false)
+      })
+    },
     async edit()
     { 
         this.$store.commit('update_isLoading', true)
@@ -436,7 +479,7 @@ export default {
     {
         // console.log(this.realtimeData)
         // PLC 資料 render
-        this.realtimeData["啟動允用"] ? this.StatusConfig["fill"] = "green" : this.StatusConfig["fill"] = "white"
+        this.D90 = !! this.realtimeData["啟動允用"]
 
         let keys = Object.keys(this.realtimeData)
         let now_targets = []

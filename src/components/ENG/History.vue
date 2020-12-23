@@ -5,16 +5,29 @@
                 <el-col :span="8">
                     <md-field>
                         <md-detail-item title="批號" :content="item.lotdata.no" bold >
-                            <div v-show="item.use_mode=='虛擬量測'">
-                                <md-tag size="small" shape="circle" type="fill" fill-color="#FC7353" font-color="#fff">
-                                    虛擬量測
-                                </md-tag>
-                            </div>
                             {{item.lotdata.no}}
                         </md-detail-item>
                         <md-detail-item title="料號" :content="item.lotdata.itemno" />
                         <md-detail-item title="開始時間" :content="item.STARTDATETIME" />
                         <md-detail-item title="結束時間" :content="item.ENDDATETIME" />
+                        <md-detail-item title="標註">
+                            <div v-show="item.use_mode=='虛擬量測'">
+                                <md-tag size="small" shape="circle" type="fill" fill-color="#FC7353" font-color="#fff">
+                                    虛擬量測
+                                </md-tag>
+                            </div>
+                            <div v-if="item.isManual == true">
+                                <md-tag size="small" shape="circle" type="fill" fill-color="#53c4fc" font-color="#fff">
+                                    手動上料
+                                </md-tag>
+                            </div>
+                            <div v-else>
+                                <md-tag size="small" shape="circle" type="fill" fill-color="#53fc80" font-color="#fff">
+                                    自動上料
+                                </md-tag>
+                            </div>
+                            
+                        </md-detail-item>
                         <md-detail-item title="詳細">
                             <md-button  icon="id-card" @click="check_detail(index)">
                                 查看詳細

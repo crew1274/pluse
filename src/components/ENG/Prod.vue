@@ -37,6 +37,18 @@
                             <md-detail-item title="料號版次:" :content="lotdata.itemno"  />
                             <md-detail-item title="製造版次:" :content="lotdata.mfver"  />
                         </md-field>
+                        <md-field title="規格資訊">
+                            <div v-if="use_mode == '虛擬量測'">
+                                <md-detail-item title='化鎳目標厚度(μ")-預測轉換' :content="predict_result.NI_SPEC"  />
+                                <md-detail-item title='化金目標厚度(μ")-預測轉換' :content="predict_result.AU_SPEC"  />
+                            </div>
+                            <div v-else>
+                                <md-detail-item title='化鎳目標厚度(μ")' :content="procdata.procprams.procpram[0].procvalue"  />
+                                <md-detail-item title='化金目標厚度(μ")' :content="procdata.procprams.procpram[1].procvalue"  />
+                            </div>
+                            <md-detail-item title="化金面積(上)SQ/IN" :content="procdata.procprams.procpram[2].procvalue"  />
+                            <md-detail-item title="化金面積(下)SQ/IN" :content="procdata.procprams.procpram[3].procvalue"  />
+                        </md-field>
                     </el-col>
                     <el-col :span="12">
                         <md-field title="詳細參數">
@@ -180,8 +192,10 @@ export default {
     return {
         predict_result: {
             NI: "",
+            NI_SPEC: "",
             AU: "",
-            AU_TANK: ""
+            AU_SPEC: "",
+            AU_TANK: "",
         },   
         number_jig: 0,
         use_mode: "系統設定",
@@ -395,6 +409,7 @@ export default {
                         throw response["Exception"]
                     }
                     this.predict_result.NI = response["response"]
+                    this.predict_result.NI_SPEC = response["targer_spec"]
                 })
                 .catch( err =>
                 {
@@ -422,6 +437,7 @@ export default {
                         throw response["Exception"]
                     }
                     this.predict_result.AU = response["response"]
+                    this.predict_result.AU_SPEC = response["targer_spec"]
                     this.predict_result.AU_TANK = response["tank"]
                 })
                 .catch( err =>
@@ -775,6 +791,8 @@ export default {
                 this.procseq = ''
             }
             this.predict_result.AU_TANK = ""
+            this.predict_result.AU_SPEC = ""
+            this.predict_result.NI_SPEC = ""
         },
         async spec_reload()
         {
