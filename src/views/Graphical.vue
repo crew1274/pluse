@@ -8,6 +8,7 @@
             text-color="#fff" active-text-color="#ffd04b">
             <el-menu-item index="Map">物料狀況</el-menu-item>
             <el-menu-item index="Error">異常履歷</el-menu-item>
+            <el-menu-item index="Action">化金自動上下料動作紀錄</el-menu-item>
             <el-menu-item index="System">程式資訊</el-menu-item>
         </el-menu>
         <keep-alive>
@@ -19,6 +20,7 @@
 <script>
 import Map from "@/components/Map.vue"
 import Error from "@/components/Error.vue"
+import Action from "@/components/Action.vue"
 import System from "@/components/System.vue"
 
 export default {
@@ -27,6 +29,7 @@ export default {
     {
         Map,
         Error,
+        Action,
         System,
     },
     props: 

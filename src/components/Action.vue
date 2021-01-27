@@ -7,7 +7,7 @@
                     :picker-options="pickerOptions"  @change="CheckData"
                     size="large"/>
             </el-col>
-            <el-col :span="12">
+            <!-- <el-col :span="12">
                 <el-select v-model="station" placeholder="">
                     <el-option
                     v-for="item in stations"
@@ -16,26 +16,25 @@
                     :value="item.value">
                     </el-option>
                 </el-select>
-            </el-col>
+            </el-col> -->
         </el-row>
         <el-row>
             <el-table :data="show_list.filter( data => station.includes(data.device))" style="width: 100%" :row-class-name="tableRowClassName" calss="hello">
                 <el-table-column label="開始時間" prop="start_time" />
                 <el-table-column label="結束時間" prop="end_time" />
                 <el-table-column label="詳細訊息" prop="message" />
-                <el-table-column label="設備狀態" prop="eqt_status" />
-                <el-table-column label="來源" prop="device" />
+                <el-table-column label="狀態" prop="eqt_status" />
             </el-table>
         </el-row>
     </div>
 </template>
 
-<script>  
+<script>
 import * as moment from "moment/moment"
 import { Toast} from "mand-mobile"
- 
+
 export default {
-    name: "Error",
+    name: "Action",
     components:
     {
 
@@ -142,15 +141,11 @@ export default {
     },
     methods:
     {
-        finishRefresh()
-        {
-            this.$emit('finishRefresh')
-        },
         async CheckData()
         {
             this.loading = true
             let notes = []
-            await fetch("http://10.11.20.108:9999/api/ErrorHandle?start=" + this.date_range[0] + "&end=" + this.date_range[1],
+            await fetch("http://10.11.20.108:9999/api/ActionHandle?start=" + this.date_range[0] + "&end=" + this.date_range[1],
             {
                 method: "GET",
             })
@@ -217,6 +212,6 @@ export default {
 <style scoped>
   .el-table >>> .warning-row
   {
-    background: #f15c66;
+    background: #fcce6a;
   }
 </style>
