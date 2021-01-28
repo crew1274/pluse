@@ -13,8 +13,11 @@
       <el-col :span="8">
         <md-button type="primary" @click="askCassete">取得料框</md-button>
       </el-col>
-      <el-col :span="16">
+      <el-col :span="8">
         <md-button type="primary" @click="confirmDialog.open = true" >送料到噴砂上料站(需先帶入參數)</md-button>
+      </el-col>
+      <el-col :span="8">
+        <md-button type="warning" @click="cancelDialog.open = true" >取消當前任務</md-button>
       </el-col>
     </el-row>
     <el-divider>手動操作類型</el-divider>
@@ -50,6 +53,19 @@
           </md-field>
       </div>
     </md-dialog>
+    <md-dialog title="取消叫車任務" v-model="cancelDialog.open" :btns="cancelDialog.btns" :closable="false">
+      <!-- <div style="height:600px"> -->
+      <div>
+          <md-field title="確認詳細資訊" brief="RFID感應工單、識別證可自動帶入">
+            <md-input-item title="批號:" v-model="cancelDialog.lot.target" :solid="false" >
+                <div slot="right">
+                    <span @click="doPaste()">貼上</span>
+                </div>
+            </md-input-item>
+            <md-input-item title="工號:" v-model="cancelDialog.op.target" :solid="false" />
+          </md-field>
+      </div>
+    </md-dialog>
     <div style="height:220px">
       <md-selector v-model="isSelectorShow" :data="cassette_info" 
       title="選擇料框來源" describe="需先進行料框定位(下拉頁面取得)" okText="確認" cancel-text="取消"
@@ -81,6 +97,7 @@ export default {
   data()
   {
     return {
+      ID: "",
       errMsg: "",
       wait_time: "0",
       checked: false,
@@ -109,6 +126,32 @@ export default {
             icon: "rectangle",
             handler: this.goCar,
             disabled: true,
+          },
+        ],
+      },
+      cancelDialog:
+      {
+        open: false, // 控制開關
+        lot: {
+          target: "",
+          code: ""
+        },
+        op: {
+          target: "",
+          code: ""
+        },
+        btns: [
+          {
+            text: '取消',
+            warning : true,
+            icon: "wrong",
+            handler: this.cancelCancel,
+          },
+          {
+            text: '刪除當前AGV任務',
+            warning : false,
+            icon: "rectangle",
+            handler: this.goCancel,
           },
         ],
       },
@@ -167,6 +210,7 @@ export default {
               if(this._.isArray(msg)) 
               {
                 this.wait_time = msg[this._.sortedIndexBy(msg, 'SORT')]["MSG"]
+                this.ID = msg[this._.sortedIndexBy(msg, 'SORT')]["ID"]
               }
             }
         })
@@ -217,6 +261,63 @@ export default {
   },
   methods:
   {
+    async goCancel()
+    {
+      this.cancelDialog.open = false
+      console.log("goCancel:" + this.ID)
+      // 取消任務
+      if(this.ID == "")
+      {
+        Toast.failed("當前無任務!")
+        return 
+      }
+      let msg = 
+      {
+        FROM: "210",
+        TO: "213",
+        LOT: this.cancelDialog.lot.target,
+        ID: this.ID,
+        SORT: "1",
+        MSG: "9999"
+      }
+      let payload =
+      {
+        EECODE: this.cancelDialog.op.code,
+        LOTNO: this.cancelDialog.lot.target,
+        RCCODE: this.cancelDialog.lot.code,
+        TITLE: "W",
+        MSGID: "3017",
+        CMD: "26",
+        FLOOR: "" ,
+        STOP: "",
+        EQPTID: "210",
+        MSGTYPE: "API",
+        MSG: JSON.stringify(msg),
+      } 
+      this.errMsg = ""
+      await this.$store.dispatch("call_agv", payload) /*發送指令*/
+      await Promise.race([
+        this.waitFor( () => this._.find(this.agv_response, {"CMD": payload["CMD"]})),
+        this.timeoutCheck(8000)]) /*等待回應*/
+      .then( (res) =>
+      {
+        if(res == "Timeout")
+        {
+          throw res
+        }
+        else if(res["CMD"] == "23")
+        {
+          throw "取消叫車任務失敗"
+        }
+      })
+      .catch( err =>
+      {
+        Toast.failed(err)
+        this.errMsg = err
+      })
+      Toast.info("取消成功")
+      this.ID = ""
+    },
     async onSelectorConfirm({value})
     {
       this.isSelectorShow = false

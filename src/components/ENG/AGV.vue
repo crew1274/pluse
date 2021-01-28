@@ -213,7 +213,6 @@ export default {
               {
                 this.wait_time = msg[this._.sortedIndexBy(msg, 'SORT')]["MSG"]
                 this.ID = msg[this._.sortedIndexBy(msg, 'SORT')]["ID"]
-                // console.log(msg[this._.sortedIndexBy(msg, 'SORT')]["ID"])
                 // this.ID需要清空
               }
             }
@@ -282,13 +281,20 @@ export default {
   {
     async goCancel()
     {
+      this.cancelDialog.open = false
+      // console.log("go:" + this.ID)
       // 取消任務
+      if(this.ID == "")
+      {
+        Toast.failed("當前無任務!")
+        return 
+      }
       let msg = 
       {
         FROM: "210",
         TO: "213",
         LOT: this.cancelDialog.lot.target,
-        ID: "",
+        ID: this.ID,
         SORT: "1",
         MSG: "9999"
       }
@@ -302,7 +308,7 @@ export default {
         CMD: "26",
         FLOOR: "" ,
         STOP: "",
-        EQPTID: "",
+        EQPTID: "210",
         MSGTYPE: "API",
         MSG: JSON.stringify(msg),
       } 
@@ -310,8 +316,7 @@ export default {
       await this.$store.dispatch("call_agv", payload) /*發送指令*/
       await Promise.race([
         this.waitFor( () => this._.find(this.agv_response, {"CMD": payload["CMD"]})),
-        this.waitFor( () => this._.find(this.agv_response, {"CMD": "23"})),
-        this.timeoutCheck(5000)]) /*等待回應*/
+        this.timeoutCheck(8000)]) /*等待回應*/
       .then( (res) =>
       {
         if(res == "Timeout")
@@ -322,13 +327,14 @@ export default {
         {
           throw "取消叫車任務失敗"
         }
-        Toast.info("取消叫車任務成功")
       })
       .catch( err =>
       {
         Toast.failed(err)
         this.errMsg = err
       })
+      Toast.info("取消成功")
+      this.ID = ""
     },
     async onSelectorConfirm({value})
     {

@@ -11,13 +11,12 @@
 export default {
   created()
   {
-    // this.resize()
+    this.resize()
   },
   methods:
   {
       resize()
       {
-        console.log("vue resize")
         var ww = window.innerWidth
         if (ww > window.screen.width)
         {
