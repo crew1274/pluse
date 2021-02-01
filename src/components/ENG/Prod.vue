@@ -52,10 +52,12 @@
                     </el-col>
                     <el-col :span="12">
                         <md-field title="詳細參數">
-                            <md-input-item title="板高:" :value="recipe.Height" @click.native="openDialog('recipe.Height')" 
+                            <md-input-item title="板高(mm):" :value="recipe.Height" @click.native="openDialog('recipe.Height')" 
                             clearable align="right" :error="isValidMsg.Height" />
-                            <md-input-item title="板寬:" :value="recipe.Width" @click.native="openDialog('recipe.Width')" 
+                            <md-input-item title="板寬(mm):" :value="recipe.Width" @click.native="openDialog('recipe.Width')" 
                             clearable align="right" :error="isValidMsg.Width" />
+                            <md-input-item title="板厚(mm):" :value="recipe.Thickness" @click.native="openDialog('recipe.Thickness')" 
+                            clearable align="right" :error="isValidMsg.Thickness" />
                             <md-input-item title="生產總片數:" :value="recipe.QTY" @click.native="openDialog('recipe.QTY')"
                             clearable align="right" :error="isValidMsg.QTY" />
                             <md-input-item title="每框片數:" :value="recipe.eachQTY" @click.native="openDialog('recipe.eachQTY')"
@@ -254,7 +256,8 @@ export default {
         recipe:
         {
             Height: "", //板高
-            Width: "", //版寬
+            Width: "", //板寬
+            Thickness: "", //板厚
             QTY: "", //片數
             eachQTY: 2, //片數
             ENiThick: "",
@@ -269,8 +272,10 @@ export default {
             {
                 HEIGHT_MAX: 650.00,
                 HEIGHT_MIN: 300.00,
-                WIDTH_MAX: 600.00,
+                WIDTH_MAX: 600.00, 
                 WIDTH_MIN: 300.00,
+                THICKNESS_MAX: 10.00,
+                THICKNESS_MIN: 3.00,
                 QTY_MAX: 9,
                 QTY_MIN: 0,
                 EACHQTY_MAX: 3,
@@ -338,6 +343,23 @@ export default {
             else
             {
                 ob["Width"] = ""
+            }
+
+            if(this.recipe["Thickness"] > this.spec.ENG.THICKNESS_MAX)
+            {
+                ob["Thickness"] = "不可大於" + this.spec.ENG.THICKNESS_MAX.toString()
+            }
+            else if(this.recipe["Thickness"] < this.spec.ENG.THICKNESS_MIN)
+            {
+                ob["Thickness"] = "不可小於" + + this.spec.ENG.THICKNESS_MIN.toString()
+            }
+            else if(isNaN(this.recipe["Thickness"]))
+            {
+                ob["Thickness"] = "不可為空值"
+            }
+            else
+            {
+                ob["Thickness"] = ""
             }
 
             if(this.recipe["QTY"] > this.spec.ENG.QTY_MAX)
@@ -800,6 +822,32 @@ export default {
             this.spec = this.$store.state.spec
             Toast.succeed("更新成功")
         },
+        
+        async getRD05M136(lotdata)
+        {
+            this.$store.commit('update_isLoading', true)
+            await fetch("http://10.11.30.61:9999/api/getRD05M136", {method: 'POST', body: JSON.stringify(lotdata)})
+            .then( response => {return response.json()})
+            .then( response =>
+            {
+                if(response["Exception"])
+                {
+                    throw response["Exception"]
+                }
+                this.recipe["Thickness"] = response["result"]
+                return true
+            })
+            .catch( err =>
+            {
+                this.$notify.warning({ title: 'MES查無板厚資訊', message: err})
+            })
+            .finally( () =>
+            {
+                this.$store.commit('update_isLoading', false)
+            })
+            return false
+        },
+
         async getRecipe()
         {
             this.$store.commit('update_isLoading', true)
@@ -810,7 +858,7 @@ export default {
             let x2js = new X2JS()
             x2js.js2xml(this.payload)
             return await this.$axios({ method: 'get', url: 'http://mesap/mesws_chpt/wsmes/wsmes.asmx/GetParameter?InXml='+x2js.js2xml(this.payload)})
-            .then( response =>
+            .then( async response => 
             {
                 let res = response["data"]
                 res = x2js.xml2js(res)
@@ -840,7 +888,9 @@ export default {
                 }
                 this.recipe["eachQTY"] = 2
                 Toast.succeed("成功取得製程參數")
-                return true
+                await this.getRD05M136(res["mfdata"]["lotdata"])
+                return  true
+
             })
             .catch( err =>
             {
