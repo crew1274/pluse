@@ -9,6 +9,7 @@ import VueLodash from 'vue-lodash'
 import lodash from 'lodash'
 import VueKonva from 'vue-konva'
 import VueClipboard from 'vue-clipboard2'
+import VCharts from 'v-charts'
 
 import * as Sentry from "@sentry/browser"
 import { Vue as VueIntegration } from '@sentry/integrations'
@@ -22,7 +23,7 @@ Sentry.init({
 Vue.use(VueKonva)
 Vue.use(VueLodash, {lodash: lodash})
 Vue.use(VueClipboard)
-
+Vue.use(VCharts)
 
 Vue.config.productionTip = false
 

@@ -9,6 +9,7 @@
             <el-menu-item index="Map">物料狀況</el-menu-item>
             <el-menu-item index="Error">異常履歷</el-menu-item>
             <el-menu-item index="Action">化金自動上下料動作紀錄</el-menu-item>
+            <el-menu-item index="ENG_chart">化金自動化使用率統計</el-menu-item>
             <el-menu-item index="System">程式資訊</el-menu-item>
         </el-menu>
         <keep-alive>
@@ -21,6 +22,7 @@
 import Map from "@/components/Map.vue"
 import Error from "@/components/Error.vue"
 import Action from "@/components/Action.vue"
+import ENG_chart from "@/components/ENG_chart.vue"
 import System from "@/components/System.vue"
 
 export default {
@@ -30,6 +32,7 @@ export default {
         Map,
         Error,
         Action,
+        ENG_chart,
         System,
     },
     props: 

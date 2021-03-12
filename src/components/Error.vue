@@ -32,7 +32,7 @@
 
 <script>  
 import * as moment from "moment/moment"
-import { Toast} from "mand-mobile"
+import { Toast } from "mand-mobile"
  
 export default {
     name: "Error",
