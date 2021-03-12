@@ -215,6 +215,13 @@ export default {
                 }
                 this._(response["result"]).forEach( ele =>
                 {
+                    for(let i=0; i<auto_data.length; i++)
+                    {
+                        if(ele["uid"] == auto_data[i]["uid"])
+                        {
+                            return
+                        }
+                    }
                     let x = {
                         "load_mode" : "manual",
                         "STARTDATETIME" : ele["datetime"],
