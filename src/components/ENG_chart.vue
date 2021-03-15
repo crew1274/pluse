@@ -213,12 +213,17 @@ export default {
                 {
                     throw response["Exception"]
                 }
+                let  isRepeat = []
+                console.log(auto_data)
+                console.log(response["result"].length)
                 this._(response["result"]).forEach( ele =>
                 {
                     for(let i=0; i<auto_data.length; i++)
                     {
-                        if(ele["uid"] == auto_data[i]["uid"])
+                        if(ele["uid"] == auto_data[i]["uid"] && ! this._.includes(isRepeat ,ele["uid"]) )
                         {
+                            isRepeat.push(ele["uid"])
+                            
                             return
                         }
                     }
@@ -228,6 +233,7 @@ export default {
                     }
                     this.list.push(x)
                 })
+                console.log(isRepeat)
                 this._ringChartData()
                 this._lineChartData()
             })
