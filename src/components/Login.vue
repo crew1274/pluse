@@ -84,7 +84,7 @@ export default {
     {
         Connection()
         {
-            this.$store.dispatch('_ws_login', {"User": "遠端帳號", "Password": "171104"})
+            this.$store.dispatch('_ws_login', {"User": "遠端帳號", "Password": "171104", "target": "ws://10.11.20.108:9999"})
             this.isPopupShow = false
         },
         check()

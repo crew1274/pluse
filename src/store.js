@@ -100,9 +100,13 @@ export default new Vuex.Store({
         {
             commit("_ws_message", message)
         },
+        _ws_close( { state })
+        {
+            state._ws.close()
+        },
         async _ws_login({ state, dispatch }, para) /*para為登入參數*/
         {
-            state._ws = new WebSocket("ws://10.11.20.108:9999")
+            state._ws = new WebSocket(para.target)
             state._ws.onopen = async function ()
             {
                 this.send(JSON.stringify(para))

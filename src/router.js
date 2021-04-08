@@ -29,6 +29,14 @@ const routes = [
                 component: () => import('@/views/ENG.vue')
             },
             {
+                path: '/fast',
+                name: 'fast',
+                meta: {
+                    title: "快速蝕刻"
+                },
+                component: () => import('@/views/Fast.vue')
+            },
+            {
                 path: '/graphical',
                 name: 'graphical',
                 meta: {
